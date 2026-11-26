@@ -208,7 +208,7 @@ export class Cat {
       this.walkTo({ x: me.x + 0.7, z: me.z + 0.6 }, () => {
         this.faceTo(this.avatar.root.position);
         this.setState('sit', rand(4, 7));
-        this.say();
+        this.say('visit');
       });
     } else {
       const pos = this.root.position;
@@ -286,17 +286,20 @@ export class Cat {
       case 'jump':
         this.setState('stay');
         this.startHop(0.6, 0.45);
+        this.say('jump');
         break;
       case 'speak':
         // continua sentado/deitado se já estava; senão para onde está
         if (this.state !== 'staySit' && this.state !== 'stayLie') this.setState('stay');
-        this.say();
+        this.say('speak');
         break;
       case 'sit':
         this.setState('staySit');
+        this.say('sit');
         break;
       case 'lie':
         this.setState('stayLie');
+        this.say('lie');
         break;
       case 'come':
         if (this.onBed) {
@@ -307,6 +310,7 @@ export class Cat {
         break;
       case 'free':
         this.release();
+        this.say('free');
         break;
     }
   }
@@ -320,7 +324,7 @@ export class Cat {
     this.walkTo(spot, () => {
       this.faceTo(a.root.position);
       this.setState('staySit');
-      this.say();
+      this.say('come');
     });
     // walkTo pode cair pra idle se não achar caminho; ainda assim mantém "obedecendo"
     if (this.state === 'idle') this.setState('stay');
@@ -350,8 +354,9 @@ export class Cat {
     );
   }
 
-  say(purr = false) {
-    this.onSay?.(purr ? 'purr' : 'meow');
+  /** Fala do gato; o texto vem de strings.js (pet.reply.<situação>). */
+  say(situation) {
+    this.onSay?.(situation);
   }
 
   update(dt, t) {

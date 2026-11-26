@@ -126,10 +126,24 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   const avatarBubble = labels.add(avatar.bubbleAnchor, { text: t('bubble.avatar') });
   onLangChange(() => (avatarBubble.text = t('bubble.avatar')));
 
-  cat.onSay = (kind) => {
-    const pool = t('bubble.meow');
-    const text = kind === 'purr' ? pool[2] : pool[[0, 1, 3][Math.floor(Math.random() * 3)]];
-    labels.flash(cat.bubbleAnchor, text);
+  // falas do Frajola: sorteia do conjunto da situação, sem repetir a última
+  const lastLine = {};
+  let catBubble = null;
+  cat.onSay = (situation) => {
+    const pool = t(`pet.reply.${situation}`);
+    if (!Array.isArray(pool)) return;
+    let line;
+    do line = pool[Math.floor(Math.random() * pool.length)];
+    while (pool.length > 1 && line === lastLine[situation]);
+    lastLine[situation] = line;
+    // tempo de leitura proporcional ao tamanho da frase
+    catBubble?.remove(); // fala nova substitui a anterior
+    catBubble = labels.flash(
+      cat.bubbleAnchor,
+      line,
+      Math.min(5000, 1500 + line.length * 45),
+      'bubble--cat',
+    );
   };
   let zzz = null;
   cat.onSleepChange = (sleeping) => {

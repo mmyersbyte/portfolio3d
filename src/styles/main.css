@@ -340,6 +340,16 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   opacity: 0;
 }
 
+/* falas do gato: frases maiores, quebram linha */
+.bubble--cat {
+  max-width: min(230px, 62vw);
+  white-space: normal;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
 .bubble--soft {
   background: transparent;
   border: 0;

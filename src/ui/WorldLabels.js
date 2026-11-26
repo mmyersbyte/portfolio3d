@@ -41,13 +41,14 @@ export class WorldLabels {
     return item;
   }
 
-  /** Balão temporário que some sozinho. */
-  flash(anchor, text, ms = 1600) {
-    const item = this.add(anchor, { text });
+  /** Balão temporário que some sozinho. Retorna o item (dá pra remover antes). */
+  flash(anchor, text, ms = 1600, className = '') {
+    const item = this.add(anchor, { text, className });
     setTimeout(() => {
       item.hide();
       setTimeout(() => item.remove(), 300);
     }, ms);
+    return item;
   }
 
   /** Balão de fala com nome em negrito, estilo chat do Habbo. */
