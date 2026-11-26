@@ -1,0 +1,110 @@
+import { askAvatar } from '../services/chatService.js';
+import { t, getLang, onLangChange } from './i18n.js';
+
+/**
+ * Painel de chat (bottom sheet no celular, lateral no desktop).
+ * Guarda o histórico em memória no formato { role, content } que a API vai receber.
+ */
+export class Chat {
+  constructor({ onOpenChange, onTalkingChange } = {}) {
+    this.el = document.getElementById('chat');
+    this.log = document.getElementById('chat-log');
+    this.form = document.getElementById('chat-form');
+    this.input = document.getElementById('chat-input');
+    this.suggestions = document.getElementById('chat-suggestions');
+    this.onOpenChange = onOpenChange;
+    this.onTalkingChange = onTalkingChange;
+    this.history = [];
+    this.busy = false;
+
+    document.getElementById('chat-close').addEventListener('click', () => this.close());
+    this.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.send(this.input.value);
+    });
+    this.el.addEventListener('keydown', (e) => e.key === 'Escape' && this.close());
+    onLangChange(() => this.renderSuggestions());
+    this.renderSuggestions();
+  }
+
+  get isOpen() {
+    return this.el.classList.contains('is-open');
+  }
+
+  open() {
+    if (this.isOpen) return;
+    this.el.classList.add('is-open');
+    this.el.setAttribute('aria-hidden', 'false');
+    if (!this.history.length) this.push('assistant', t('chat.greeting'));
+    // no celular, focar abre o teclado e cobre o quarto: só foca no desktop
+    if (!matchMedia('(pointer: coarse)').matches) this.input.focus();
+    this.onOpenChange?.(true);
+  }
+
+  close() {
+    if (!this.isOpen) return;
+    this.el.classList.remove('is-open');
+    this.el.setAttribute('aria-hidden', 'true');
+    this.input.blur();
+    this.onOpenChange?.(false);
+  }
+
+  toggle() {
+    this.isOpen ? this.close() : this.open();
+  }
+
+  renderSuggestions() {
+    this.suggestions.replaceChildren(
+      ...t('chat.suggestions').map((text) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.textContent = text;
+        chip.addEventListener('click', () => this.send(text));
+        return chip;
+      }),
+    );
+  }
+
+  push(role, content) {
+    this.history.push({ role, content });
+    const msg = document.createElement('div');
+    msg.className = `msg msg--${role === 'user' ? 'user' : 'bot'}`;
+    msg.textContent = content;
+    this.log.append(msg);
+    this.log.scrollTop = this.log.scrollHeight;
+  }
+
+  async send(raw) {
+    const text = raw.trim();
+    if (!text || this.busy) return;
+    this.busy = true;
+    this.input.value = '';
+    this.push('user', text);
+
+    const typing = document.createElement('div');
+    typing.className = 'msg msg--bot msg--typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    this.log.append(typing);
+    this.log.scrollTop = this.log.scrollHeight;
+
+    let reply;
+    try {
+      reply = await askAvatar(this.history.slice(-12), getLang());
+    } catch (err) {
+      console.error(err);
+      reply = t('chat.error');
+    }
+    typing.remove();
+    this.push('assistant', reply);
+    this.busy = false;
+
+    // boca do boneco mexe proporcional ao tamanho da resposta
+    this.onTalkingChange?.(true);
+    clearTimeout(this.talkTimer);
+    this.talkTimer = setTimeout(
+      () => this.onTalkingChange?.(false),
+      Math.min(4000, 600 + reply.length * 25),
+    );
+  }
+}
