@@ -7,7 +7,9 @@
  *  - swatches: escolhe uma cor (valor = hex)
  *  - toggles:  cada opção é um liga/desliga (outfit[option.id] = boolean)
  *
- * Pra adicionar algo novo: inclua a opção aqui e desenhe a peça em Avatar.js.
+ * Pra adicionar algo novo: inclua a opção aqui e desenhe a peça em Avatar.js
+ * (o enquadramento da miniatura fica em core/PreviewStudio.js → FRAMES).
+ * `icon` das abas: chave de ui/icons.js.
  */
 
 const color = (id, pt, en) => ({ id, name: { pt, en } });
@@ -54,7 +56,7 @@ const opt = (id, pt, en) => ({ id, name: { pt, en } });
 export const WARDROBE_TABS = [
   {
     id: 'clothes',
-    icon: '👕',
+    icon: 'shirt',
     name: { pt: 'Roupa', en: 'Clothes' },
     groups: [
       {
@@ -74,7 +76,7 @@ export const WARDROBE_TABS = [
   },
   {
     id: 'head',
-    icon: '🧢',
+    icon: 'cap',
     name: { pt: 'Cabeça', en: 'Head' },
     groups: [
       {
@@ -99,7 +101,7 @@ export const WARDROBE_TABS = [
   },
   {
     id: 'face',
-    icon: '😎',
+    icon: 'glasses',
     name: { pt: 'Rosto', en: 'Face' },
     groups: [
       {
@@ -126,7 +128,7 @@ export const WARDROBE_TABS = [
   },
   {
     id: 'extras',
-    icon: '🎒',
+    icon: 'bag',
     name: { pt: 'Extras', en: 'Extras' },
     groups: [
       {
@@ -134,10 +136,10 @@ export const WARDROBE_TABS = [
         type: 'toggles',
         label: { pt: 'Itens', en: 'Items' },
         options: [
-          opt('backpack', '🎒 Mochila', '🎒 Backpack'),
-          opt('chain', '⛓️ Corrente', '⛓️ Chain'),
-          opt('watch', '⌚ Relógio', '⌚ Watch'),
-          opt('mug', '☕ Caneca', '☕ Mug'),
+          opt('backpack', 'Mochila', 'Backpack'),
+          opt('chain', 'Corrente', 'Chain'),
+          opt('watch', 'Relógio', 'Watch'),
+          opt('mug', 'Caneca', 'Mug'),
         ],
       },
     ],

@@ -3,7 +3,7 @@
 Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feito com **Three.js** puro.
 
 - 🚶 Clique no chão para andar pelos tiles (estilo Habbo), na cadeira para sentar e na cama para deitar
-- 👕 Clique no guarda-roupa (ou em "Roupa" na barra) para vestir o boneco: roupa, cabeça (boné, gorro, fone, bandana), rosto (óculos, barba) e extras (mochila, corrente, relógio, caneca). A escolha fica salva no navegador de quem visitou
+- 👕 Clique no guarda-roupa (ou em "Roupa" na barra) para vestir o boneco: roupa, cabeça (boné, gorro, fone, bandana), rosto (óculos, barba) e extras (mochila, corrente, relógio, caneca). Cada item tem miniatura 3D do próprio boneco e, no celular, uma prévia ao vivo girável. A escolha fica salva no navegador de quem visitou
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
@@ -31,6 +31,7 @@ src/
 ├── core/
 │   ├── Experience.js    # renderer, cena, loop
 │   ├── CameraRig.js     # câmera ortográfica isométrica, zoom/rotação limitados, resize
+│   ├── PreviewStudio.js # prévia 3D do guarda-roupa + miniaturas de cada item
 │   └── Interaction.js   # raycast de hover/clique (diferencia toque de arrasto)
 ├── world/
 │   ├── layout.js        # planta do quarto: posição dos móveis e obstáculos do gato

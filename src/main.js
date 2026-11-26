@@ -125,6 +125,7 @@ async function boot() {
     onReady: finishLoading,
   });
   scene.avatar.setOutfit(loadOutfit());
+  wardrobePanel.setStudio(scene.studio);
   // facilita depurar pelo console no `pnpm dev` (não vai pro build)
   if (import.meta.env.DEV) window.__scene = scene;
 }

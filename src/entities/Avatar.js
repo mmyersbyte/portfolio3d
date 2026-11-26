@@ -18,6 +18,7 @@ const POSES = {
   lie: { lie: -Math.PI / 2, leg: 0, arm: 0 },
 };
 
+const ZERO_NDC = new THREE.Vector2();
 const shortest = (a) => Math.atan2(Math.sin(a), Math.cos(a));
 const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2);
 
@@ -29,12 +30,19 @@ const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2);
  * Estados: idle → walk → idle | enter → seated → leave → ...
  */
 export class Avatar {
-  constructor(exp) {
+  /**
+   * @param exp Experience (null quando standalone)
+   * @param opts.scene cena onde entrar (padrão: a do quarto)
+   * @param opts.standalone cópia "de vitrine" (prévia do guarda-roupa):
+   *   não anda, não olha pro mouse e quem chama update() é o dono.
+   */
+  constructor(exp, { scene = exp?.scene, standalone = false } = {}) {
     this.exp = exp;
+    this.standalone = standalone;
     this.root = new THREE.Group();
-    this.root.name = 'avatar';
-    this.root.position.set(LAYOUT.avatar.x, 0, LAYOUT.avatar.z);
-    this.root.rotation.y = FACE_CAMERA;
+    this.root.name = standalone ? 'avatar-preview' : 'avatar';
+    if (!standalone) this.root.position.set(LAYOUT.avatar.x, 0, LAYOUT.avatar.z);
+    this.root.rotation.y = standalone ? 0 : FACE_CAMERA;
     this.heading = FACE_CAMERA;
 
     this.state = 'idle';
@@ -55,8 +63,8 @@ export class Avatar {
 
     this.build();
     this.setOutfit(DEFAULT_OUTFIT);
-    exp.scene.add(this.root);
-    exp.onUpdate((dt, t) => this.update(dt, t));
+    scene.add(this.root);
+    if (!standalone) exp.onUpdate((dt, t) => this.update(dt, t));
   }
 
   build() {
@@ -565,8 +573,11 @@ export class Avatar {
 
   animateFace(dt, t, k) {
     // olha pro ponteiro só quando está mais ou menos de frente pra câmera
-    const facing = this.isStanding ? Math.max(0, Math.cos(this.root.rotation.y - FACE_CAMERA)) : 0;
-    const ndc = this.exp.interaction.ndc;
+    const facing =
+      this.isStanding && !this.standalone
+        ? Math.max(0, Math.cos(this.root.rotation.y - FACE_CAMERA))
+        : 0;
+    const ndc = this.exp?.interaction.ndc ?? ZERO_NDC;
     const yaw = THREE.MathUtils.clamp(ndc.x * 0.7, -0.6, 0.6) * facing;
     const pitch = THREE.MathUtils.clamp(-ndc.y * 0.25, -0.2, 0.25) * facing;
     this.head.rotation.y += (yaw - this.head.rotation.y) * k;

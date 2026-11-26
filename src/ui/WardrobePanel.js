@@ -2,9 +2,11 @@ import { WARDROBE_TABS, DEFAULT_OUTFIT } from '../data/wardrobe.js';
 import { saveOutfit, sanitize } from '../services/outfitStore.js';
 import { tr, onLangChange } from './i18n.js';
 import { esc } from './views/escape.js';
+import { icon } from './icons.js';
 
 /**
  * Painel do guarda-roupa, com abas por categoria (montadas de data/wardrobe.js).
+ * Cada opção é um card com miniatura 3D do boneco usando aquilo (via PreviewStudio).
  * Cada mudança é aplicada no boneco na hora (preview);
  * Salvar grava no localStorage, Cancelar/fechar volta pra roupa salva.
  */
@@ -19,6 +21,7 @@ export class WardrobePanel {
     this.saved = null;
     this.draft = null;
     this.tab = WARDROBE_TABS[0].id;
+    this.studio = null; // ligado quando o 3D carrega
 
     this.form.addEventListener('submit', (e) => e.preventDefault());
     this.form.addEventListener('change', (e) => {
@@ -28,6 +31,7 @@ export class WardrobePanel {
         [input.name]: input.type === 'checkbox' ? input.checked : input.value,
       });
       this.onPreview(this.draft);
+      this.refreshThumbs();
     });
 
     this.tabsEl.addEventListener('click', (e) => {
@@ -52,8 +56,13 @@ export class WardrobePanel {
       this.render();
       this.onPreview(this.draft);
     });
+    window.addEventListener('resize', () => this.isOpen && this.refreshThumbs());
     this.el.addEventListener('keydown', (e) => e.key === 'Escape' && this.cancel());
     onLangChange(() => this.isOpen && this.render());
+  }
+
+  setStudio(studio) {
+    this.studio = studio;
   }
 
   get isOpen() {
@@ -63,9 +72,10 @@ export class WardrobePanel {
   open(current) {
     this.saved = { ...current };
     this.draft = { ...current };
-    this.render();
     this.el.classList.add('is-open');
     this.el.setAttribute('aria-hidden', 'false');
+    this.studio?.setActive(true);
+    this.render();
     this.tabsEl.querySelector('[aria-selected="true"]')?.focus({ preventScroll: true });
     this.onOpenChange?.(true);
   }
@@ -85,6 +95,7 @@ export class WardrobePanel {
   }
 
   hide() {
+    this.studio?.setActive(false);
     this.el.classList.remove('is-open');
     this.el.setAttribute('aria-hidden', 'true');
     this.onOpenChange?.(false);
@@ -101,12 +112,13 @@ export class WardrobePanel {
       const on = tab.id === this.tab;
       return `<button type="button" role="tab" class="wr-tab" data-tab="${tab.id}" id="wr-tab-${tab.id}"
         aria-selected="${on}" aria-controls="wardrobe-body" tabindex="${on ? 0 : -1}">
-        <span aria-hidden="true">${tab.icon}</span>${esc(tr(tab.name))}</button>`;
+        ${icon(tab.icon)}<span>${esc(tr(tab.name))}</span></button>`;
     }).join('');
     this.form.setAttribute('aria-labelledby', `wr-tab-${this.tab}`);
 
     const tab = WARDROBE_TABS.find((x) => x.id === this.tab);
     this.form.innerHTML = tab.groups.map((group) => this.renderGroup(group)).join('');
+    this.refreshThumbs();
   }
 
   renderGroup(group) {
@@ -114,17 +126,38 @@ export class WardrobePanel {
     const options = group.options
       .map((o) => {
         const label = esc(tr(o.name));
-        if (group.type === 'toggles') {
-          const checked = d[o.id] ? 'checked' : '';
-          return `<label class="pill"><input type="checkbox" name="${o.id}" ${checked}><span>${label}</span></label>`;
+        if (group.type === 'swatches') {
+          const checked = d[group.key] === o.id ? 'checked' : '';
+          return `<label class="swatch" title="${label}" style="--c:${esc(o.id)}">
+            <input type="radio" name="${group.key}" value="${esc(o.id)}" ${checked} aria-label="${label}"><span></span></label>`;
         }
-        const checked = d[group.key] === o.id ? 'checked' : '';
-        const input = `<input type="radio" name="${group.key}" value="${esc(o.id)}" ${checked} aria-label="${label}">`;
-        return group.type === 'swatches'
-          ? `<label class="swatch" title="${label}" style="--c:${esc(o.id)}">${input}<span></span></label>`
-          : `<label class="pill">${input}<span>${label}</span></label>`;
+        const toggle = group.type === 'toggles';
+        const checked = (toggle ? d[o.id] : d[group.key] === o.id) ? 'checked' : '';
+        const input = toggle
+          ? `<input type="checkbox" name="${o.id}" ${checked}>`
+          : `<input type="radio" name="${group.key}" value="${esc(o.id)}" ${checked}>`;
+        return `<label class="card">${input}<span class="card__inner">
+            <canvas class="card__thumb" width="160" height="160" data-group="${group.key}"
+              data-option="${esc(o.id)}" data-toggle="${toggle}" aria-hidden="true"></canvas>
+            <span class="card__label">${label}</span>
+            ${toggle ? icon('check', 'card__check') : ''}
+          </span></label>`;
       })
       .join('');
-    return `<fieldset class="wr-group"><legend>${esc(tr(group.label))}</legend><div class="wr-options">${options}</div></fieldset>`;
+    const cls = group.type === 'swatches' ? 'wr-options' : 'wr-options wr-options--cards';
+    return `<fieldset class="wr-group"><legend>${esc(tr(group.label))}</legend><div class="${cls}">${options}</div></fieldset>`;
+  }
+
+  /** Redesenha as miniaturas da aba atual (dependem das cores escolhidas). */
+  refreshThumbs() {
+    if (!this.studio) return;
+    for (const canvas of this.form.querySelectorAll('.card__thumb')) {
+      const { group, option, toggle } = canvas.dataset;
+      // miniatura mostra o item vestido, mesmo que ainda não esteja marcado
+      const outfit =
+        toggle === 'true' ? { ...this.draft, [option]: true } : { ...this.draft, [group]: option };
+      this.studio.thumbnail(canvas, outfit, toggle === 'true' ? option : group);
+    }
+    this.studio.setOutfit(this.draft);
   }
 }
