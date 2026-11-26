@@ -3,7 +3,8 @@ import { createRoom } from './world/Room.js';
 import { createFurniture } from './world/Furniture.js';
 import { createPostIts } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
-import { AVATAR_SPOTS } from './world/layout.js';
+import { Wardrobe } from './world/Wardrobe.js';
+import { AVATAR_SPOTS, WARDROBE_SPOT } from './world/layout.js';
 import { Avatar } from './entities/Avatar.js';
 import { Cat } from './entities/Cat.js';
 import { WorldLabels } from './ui/WorldLabels.js';
@@ -20,6 +21,7 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   createRoom(exp.scene);
   const { laptop, bed, chair } = createFurniture(exp);
   const notes = createPostIts(exp.scene);
+  const wardrobe = new Wardrobe(exp);
   const avatar = new Avatar(exp);
   const cat = new Cat(exp);
   cat.avatar = avatar;
@@ -49,6 +51,38 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   });
   it.register(chair, { label: furnitureLabel('chair'), onClick: useFurniture('chair') });
 
+  // ---------- guarda-roupa ----------
+  it.register(wardrobe.group, {
+    label: 'label.wardrobe',
+    onClick: actions.wardrobe,
+    hoverScale: 1.02,
+  });
+
+  let wardrobeTimer = 0;
+  /** Boneco vai até o guarda-roupa, abre as portas, vira pra câmera e a câmera aproxima. */
+  function visitWardrobe(onReady) {
+    clearTimeout(wardrobeTimer);
+    tiles.mark(WARDROBE_SPOT);
+    avatar.walkTo(WARDROBE_SPOT, () => {
+      avatar.heading = WARDROBE_SPOT.heading;
+      wardrobe.setOpen(true);
+      wardrobeTimer = setTimeout(() => {
+        avatar.faceCamera();
+        const head = avatar.root.position.clone().setY(1.2);
+        // painel embaixo no celular, na direita no desktop: desloca o boneco pro lado livre
+        const shift = window.innerWidth < 768 ? { shiftY: 0.22 } : { shiftX: -0.18 };
+        exp.rig.focus(head, { zoom: 2.2, ...shift });
+        onReady();
+      }, 650);
+    });
+  }
+
+  function closeWardrobe() {
+    clearTimeout(wardrobeTimer);
+    wardrobe.setOpen(false);
+    exp.rig.reset();
+  }
+
   // ---------- andar pelo piso (estilo Habbo) ----------
   const walkableTile = (point) => {
     if (!point) return null;
@@ -58,7 +92,10 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   it.onFloorHover = (point) => tiles.show(walkableTile(point));
   it.onFloorClick = (point) => {
     const tile = walkableTile(point);
-    if (tile && avatar.walkTo(tile)) tiles.mark(tile);
+    if (tile && avatar.walkTo(tile)) {
+      tiles.mark(tile);
+      actions.onWalk?.();
+    }
   };
 
   it.onHover = (entry, x, y) => {
@@ -87,5 +124,5 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   };
 
   exp.start(onReady);
-  return { exp, avatar, cat, avatarBubble };
+  return { exp, avatar, cat, avatarBubble, visitWardrobe, closeWardrobe };
 }

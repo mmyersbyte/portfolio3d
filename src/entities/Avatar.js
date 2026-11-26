@@ -2,12 +2,11 @@ import * as THREE from 'three';
 import { box, seeded } from '../world/helpers.js';
 import { LAYOUT, AVATAR_SPOTS } from '../world/layout.js';
 import { NavGrid } from './pathfinding.js';
+import { DEFAULT_OUTFIT } from '../data/wardrobe.js';
 
 const SKIN = '#f2d3bd';
 const HAIR = '#151312';
 const HAIR_LIGHT = '#2b2420';
-const HOODIE = '#2a9d8f';
-const JEANS = '#2f3e5c';
 
 const SPEED = 1.5;
 const FACE_CAMERA = Math.PI / 4;
@@ -55,6 +54,7 @@ export class Avatar {
     this.nextBlink = 2;
 
     this.build();
+    this.setOutfit(DEFAULT_OUTFIT);
     exp.scene.add(this.root);
     exp.onUpdate((dt, t) => this.update(dt, t));
   }
@@ -65,51 +65,69 @@ export class Avatar {
     this.root.add(this.body);
     const r = this.body;
 
+    // materiais da roupa são do boneco (não compartilhados): trocar cor = mudar .color
+    const cloth = () => new THREE.MeshStandardMaterial({ roughness: 0.85, flatShading: true });
+    this.mats = {
+      top: cloth(),
+      topDetail: cloth(),
+      sleeveLow: cloth(), // antebraço: cor da blusa ou pele (camiseta)
+      inner: cloth(), // camiseta por baixo da jaqueta / cordões do moletom
+      pants: cloth(),
+      shoes: cloth(),
+      sole: cloth(),
+    };
+    const M = this.mats;
+
     // pernas e tênis
     this.legs = [-1, 1].map((side) => {
       const pivot = new THREE.Group();
       pivot.position.set(side * 0.13, 0.75, 0);
-      box(0.2, 0.68, 0.22, JEANS, { y: -0.68, parent: pivot });
-      box(0.22, 0.1, 0.32, '#f1f1f1', { y: -0.75, z: 0.04, parent: pivot });
-      box(0.22, 0.03, 0.32, '#e76f51', { y: -0.75, z: 0.04, parent: pivot });
+      box(0.2, 0.68, 0.22, M.pants, { y: -0.68, parent: pivot });
+      box(0.22, 0.1, 0.32, M.shoes, { y: -0.75, z: 0.04, parent: pivot });
+      box(0.225, 0.03, 0.325, M.sole, { y: -0.755, z: 0.04, parent: pivot });
       r.add(pivot);
       return pivot;
     });
 
-    // tronco: moletom
+    // tronco
     this.torso = new THREE.Group();
     this.torso.position.y = 0.72;
     r.add(this.torso);
-    box(0.6, 0.62, 0.32, HOODIE, { parent: this.torso });
-    box(0.36, 0.16, 0.02, '#238579', { y: 0.12, z: 0.16, parent: this.torso, shadow: false });
-    box(0.03, 0.14, 0.02, '#f1f1f1', {
-      x: -0.06,
-      y: 0.42,
-      z: 0.165,
-      parent: this.torso,
-      shadow: false,
-    });
-    box(0.03, 0.14, 0.02, '#f1f1f1', {
-      x: 0.06,
-      y: 0.42,
-      z: 0.165,
-      parent: this.torso,
-      shadow: false,
-    });
+    const T = this.torso;
+    box(0.6, 0.62, 0.32, M.top, { parent: T });
 
-    // braços com pivô no ombro
+    // peças específicas de cada estilo (ligadas/desligadas em setOutfit)
+    const noShadow = { parent: T, shadow: false };
+    this.styleParts = {
+      hoodie: [
+        box(0.36, 0.16, 0.02, M.topDetail, { y: 0.12, z: 0.16, ...noShadow }),
+        box(0.03, 0.14, 0.02, M.inner, { x: -0.06, y: 0.42, z: 0.165, ...noShadow }),
+        box(0.03, 0.14, 0.02, M.inner, { x: 0.06, y: 0.42, z: 0.165, ...noShadow }),
+        box(0.46, 0.14, 0.1, M.topDetail, { y: 0.54, z: -0.17, parent: T }), // capuz
+      ],
+      tshirt: [box(0.22, 0.03, 0.02, M.topDetail, { y: 0.58, z: 0.162, ...noShadow })],
+      jacket: [
+        box(0.16, 0.6, 0.02, M.inner, { y: 0.01, z: 0.162, ...noShadow }),
+        box(0.02, 0.6, 0.025, M.topDetail, { x: -0.09, y: 0.01, z: 0.162, ...noShadow }),
+        box(0.02, 0.6, 0.025, M.topDetail, { x: 0.09, y: 0.01, z: 0.162, ...noShadow }),
+        box(0.64, 0.08, 0.36, M.topDetail, { y: 0.56, parent: T }), // gola
+      ],
+    };
+
+    // braços com pivô no ombro: manga (cima) + antebraço + mão
     this.arms = [-1, 1].map((side) => {
       const pivot = new THREE.Group();
       pivot.position.set(side * 0.39, 0.56, 0);
-      box(0.17, 0.52, 0.2, HOODIE, { y: -0.52, parent: pivot });
+      box(0.17, 0.26, 0.2, M.top, { y: -0.26, parent: pivot });
+      box(0.17, 0.26, 0.2, M.sleeveLow, { y: -0.52, parent: pivot });
       box(0.15, 0.13, 0.17, SKIN, { y: -0.65, parent: pivot });
-      this.torso.add(pivot);
+      T.add(pivot);
       return pivot;
     });
     // braço direito do boneco = lado -x (ele está de frente pra gente)
     this.waveArm = this.arms[0];
 
-    box(0.18, 0.08, 0.18, SKIN, { y: 0.62, parent: this.torso });
+    box(0.18, 0.08, 0.18, SKIN, { y: 0.62, parent: T });
 
     // cabeça
     this.head = new THREE.Group();
@@ -134,6 +152,22 @@ export class Avatar {
       box(0.11, 0.025, 0.02, HAIR, { x: side * 0.11, y: 0.33, z: 0.245, parent: h, shadow: false });
     }
     this.mouth = box(0.13, 0.035, 0.02, '#b5523b', { y: 0.09, z: 0.245, parent: h, shadow: false });
+
+    // óculos (acessório do guarda-roupa)
+    this.glasses = new THREE.Group();
+    const frame = '#1d1b2e';
+    const g = { parent: this.glasses, shadow: false };
+    for (const side of [-1, 1]) {
+      const cx = side * 0.11;
+      box(0.16, 0.022, 0.02, frame, { x: cx, y: 0.31, ...g });
+      box(0.16, 0.022, 0.02, frame, { x: cx, y: 0.17, ...g });
+      box(0.022, 0.16, 0.02, frame, { x: cx - 0.08, y: 0.17, ...g });
+      box(0.022, 0.16, 0.02, frame, { x: cx + 0.08, y: 0.17, ...g });
+      box(0.02, 0.022, 0.26, frame, { x: side * 0.265, y: 0.29, z: -0.12, ...g });
+    }
+    box(0.06, 0.022, 0.02, frame, { y: 0.27, ...g });
+    this.glasses.position.z = 0.26;
+    h.add(this.glasses);
 
     this.buildHair(h);
 
@@ -224,6 +258,35 @@ export class Avatar {
     });
     mesh.castShadow = true;
     head.add(mesh);
+  }
+
+  /** Aplica uma roupa { style, top, pants, shoes, glasses } (preview ao vivo do guarda-roupa). */
+  setOutfit(outfit) {
+    const M = this.mats;
+    const top = new THREE.Color(outfit.top);
+    M.top.color.copy(top);
+    // detalhes (bolso, gola, capuz) um tom abaixo da cor da blusa
+    M.topDetail.color.copy(top).offsetHSL(0, 0, top.getHSL({}).l > 0.85 ? -0.12 : -0.07);
+    M.sleeveLow.color.set(outfit.style === 'tshirt' ? SKIN : outfit.top);
+    M.inner.color.set(
+      outfit.style === 'jacket' ? '#f4f1ea' : top.getHSL({}).l > 0.85 ? '#bbbbbb' : '#f1f1f1',
+    );
+    M.pants.color.set(outfit.pants);
+
+    const shoes = new THREE.Color(outfit.shoes);
+    M.shoes.color.copy(shoes);
+    // solado contrasta com o tênis
+    M.sole.color.set(shoes.getHSL({}).l > 0.6 ? '#9a9aa5' : '#efefef');
+
+    for (const [style, parts] of Object.entries(this.styleParts)) {
+      for (const part of parts) part.visible = style === outfit.style;
+    }
+    this.glasses.visible = Boolean(outfit.glasses);
+  }
+
+  /** Vira de frente pra câmera (usado no guarda-roupa). */
+  faceCamera() {
+    this.heading = FACE_CAMERA;
   }
 
   get isStanding() {

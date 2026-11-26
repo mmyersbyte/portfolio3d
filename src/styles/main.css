@@ -340,8 +340,8 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   display: none;
 }
 
-/* ---------- chat ---------- */
-.chat {
+/* ---------- painéis laterais (chat, guarda-roupa) ---------- */
+.sheet {
   position: fixed;
   z-index: 30;
   display: flex;
@@ -362,13 +362,13 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   transform: translateY(calc(100% + 40px));
 }
 
-.chat.is-open {
+.sheet.is-open {
   transform: none;
   visibility: visible;
 }
 
 @media (min-width: 768px) {
-  .chat {
+  .sheet {
     left: auto;
     top: 88px;
     right: var(--gutter);
@@ -379,7 +379,8 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   }
 }
 
-.chat__header {
+.chat__header,
+.sheet__header {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -750,4 +751,148 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 
 .cv .tags {
   padding-left: 0;
+}
+
+/* ---------- guarda-roupa ---------- */
+.sheet__title {
+  flex: 1;
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: 1.15rem;
+}
+
+@media (max-width: 767px) {
+  /* menor que o chat: o boneco precisa ficar visível em cima pro preview */
+  .wardrobe {
+    height: min(50dvh, 440px);
+  }
+}
+
+.wardrobe__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  overscroll-behavior: contain;
+}
+
+.wr-group {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+
+.wr-group legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-family: var(--font-pixel);
+  font-weight: 600;
+}
+
+.wr-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.wr-options input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill span {
+  display: block;
+  padding: 6px 12px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.pill input:checked + span {
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.swatch span {
+  display: block;
+  width: 36px;
+  height: 36px;
+  background: var(--c);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.swatch input:checked + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.wr-options input:focus-visible + span {
+  outline: 3px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+.wardrobe__footer {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 3px solid var(--line);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn {
+  padding: 8px 14px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  font-family: var(--font-pixel);
+  font-weight: 600;
+}
+
+.btn--primary {
+  background: var(--accent);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  text-decoration: underline;
+}
+
+/* ---------- toast ---------- */
+.toast {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--safe-t) + 80px);
+  z-index: 45;
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: 8px 14px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+  translate: -50% -10px;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s,
+    translate 0.25s;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+.wr-options label {
+  position: relative;
 }

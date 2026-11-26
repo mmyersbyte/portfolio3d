@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { box, mat, canvasTexture, seeded } from './helpers.js';
+import { box, mat, canvasTexture } from './helpers.js';
 import { LAYOUT } from './layout.js';
 
 const WOOD = '#9b6a45';
@@ -14,7 +14,6 @@ export function createFurniture(exp) {
   const desk = createDesk(g, exp);
   const chair = createChair(g);
   createPlant(g);
-  createBookshelf(g);
 
   exp.scene.add(g);
   return { laptop: desk.laptop, bed, chair };
@@ -235,39 +234,5 @@ function createPlant(parent) {
   g.traverse((o) => {
     if (o.isMesh) o.castShadow = o.receiveShadow = true;
   });
-  parent.add(g);
-}
-
-function createBookshelf(parent) {
-  const { x, z, w, d } = LAYOUT.bookshelf;
-  const h = 1.7;
-  const g = new THREE.Group();
-  g.position.set(x, 0, z);
-
-  box(0.04, h, d, WOOD_DARK, { x: -w / 2 + 0.02, parent: g });
-  for (const sz of [-d / 2 + 0.02, d / 2 - 0.02]) box(w, h, 0.04, WOOD, { z: sz, parent: g });
-  const shelves = [0, 0.55, 1.1, h - 0.04];
-  for (const sy of shelves) box(w, 0.04, d, WOOD, { y: sy, parent: g });
-
-  const rand = seeded(7);
-  const colors = ['#e63946', '#457b9d', '#f1faee', '#2a9d8f', '#e9c46a', '#8338ec', '#fb8500'];
-  for (const sy of shelves.slice(0, 3)) {
-    let bz = -d / 2 + 0.08;
-    while (bz < d / 2 - 0.2) {
-      const t = 0.06 + rand() * 0.06;
-      const bh = 0.3 + rand() * 0.15;
-      if (rand() < 0.12) {
-        bz += 0.15; // buraco na prateleira, pra não ficar certinho demais
-        continue;
-      }
-      box(w - 0.12, bh, t, colors[Math.floor(rand() * colors.length)], {
-        x: 0.02,
-        y: sy + 0.04,
-        z: bz + t / 2,
-        parent: g,
-      });
-      bz += t + 0.01;
-    }
-  }
   parent.add(g);
 }

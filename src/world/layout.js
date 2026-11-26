@@ -14,7 +14,7 @@ export const LAYOUT = {
   desk: { x: 1.6, z: -3.4, w: 2.8, d: 1.2, top: 0.95 },
   chair: { x: 1.5, z: -2.35, w: 0.75, d: 0.75 },
   plant: { x: 3.5, z: -3.5, w: 0.7, d: 0.7 },
-  bookshelf: { x: -3.75, z: 2.3, w: 0.5, d: 1.6 },
+  wardrobe: { x: -3.66, z: 2.3, w: 0.68, d: 1.5, h: 2.15 },
   // posição inicial do boneco (ele anda, então não é obstáculo fixo)
   avatar: { x: 0, z: -0.3, w: 0.7, d: 0.7 },
   rug: { x: 0.4, z: 0.6, w: 3.6, d: 2.6 },
@@ -46,6 +46,9 @@ export const AVATAR_SPOTS = {
   },
 };
 
-export const OBSTACLES = ['bed', 'nightstand', 'desk', 'chair', 'plant', 'bookshelf'].map(
+/** Onde eu paro pra trocar de roupa (de frente pro guarda-roupa). */
+export const WARDROBE_SPOT = { x: -2.75, z: 2.3, heading: -Math.PI / 2 };
+
+export const OBSTACLES = ['bed', 'nightstand', 'desk', 'chair', 'plant', 'wardrobe'].map(
   (key) => LAYOUT[key],
 );

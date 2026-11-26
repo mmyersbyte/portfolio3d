@@ -5,6 +5,8 @@ import { Modal } from './ui/Modal.js';
 import { Chat } from './ui/Chat.js';
 import { cvView } from './ui/views/cvView.js';
 import { projectsView } from './ui/views/projectsView.js';
+import { WardrobePanel } from './ui/WardrobePanel.js';
+import { loadOutfit } from './services/outfitStore.js';
 
 const $ = (id) => document.getElementById(id);
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -12,18 +14,50 @@ const isTouch = matchMedia('(pointer: coarse)').matches;
 let scene = null; // preenchido quando o 3D carregar
 
 const modal = new Modal($('modal'));
+
+// balão "fala comigo" só aparece quando nenhum painel está aberto
+const syncBubble = () =>
+  scene?.avatarBubble[chat.isOpen || wardrobePanel.isOpen ? 'hide' : 'show']();
+
 const chat = new Chat({
   onOpenChange(open) {
-    if (open) scene?.avatar.wave();
-    scene?.avatarBubble[open ? 'hide' : 'show']();
+    if (open) {
+      wardrobePanel.cancel();
+      scene?.avatar.wave();
+    }
+    syncBubble();
   },
   onTalkingChange: (on) => scene?.avatar.setTalking(on),
 });
+
+const wardrobePanel = new WardrobePanel({
+  onPreview: (outfit) => scene?.avatar.setOutfit(outfit),
+  onOpenChange(open) {
+    if (!open) scene?.closeWardrobe();
+    syncBubble();
+  },
+  onSaved: (ok) => toast(t(ok ? 'wardrobe.saved' : 'wardrobe.notSaved')),
+});
+
+let toastTimer = 0;
+function toast(text) {
+  const el = $('toast');
+  el.textContent = text;
+  el.classList.add('is-visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('is-visible'), 2800);
+}
 
 const openLink = (url) => window.open(url, '_blank', 'noopener');
 
 const actions = {
   chat: () => chat.toggle(),
+  wardrobe: () => {
+    chat.close();
+    scene?.visitWardrobe(() => wardrobePanel.open(loadOutfit()));
+  },
+  // andou pra longe do guarda-roupa: fecha sem salvar
+  onWalk: () => wardrobePanel.cancel(),
   projects: () => modal.open(projectsView),
   cv: () => modal.open(cvView),
   github: () => openLink(links.github),
@@ -90,6 +124,7 @@ async function boot() {
     actions,
     onReady: finishLoading,
   });
+  scene.avatar.setOutfit(loadOutfit());
   // facilita depurar pelo console no `pnpm dev` (não vai pro build)
   if (import.meta.env.DEV) window.__scene = scene;
 }

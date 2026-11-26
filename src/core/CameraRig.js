@@ -13,7 +13,8 @@ const FIT_WIDTH = 13;
 const FIT_WIDTH_PORTRAIT = 9.6;
 const FIT_HEIGHT = 10.5;
 
-const PAN_LIMIT = new THREE.Vector3(3, 1.5, 3);
+const PAN_LIMIT = new THREE.Vector3(4, 1.5, 4);
+const FOCUS_TIME = 0.9; // s
 
 export class CameraRig {
   constructor(exp) {
@@ -44,6 +45,41 @@ export class CameraRig {
     this._min = TARGET.clone().sub(PAN_LIMIT);
     this._max = TARGET.clone().add(PAN_LIMIT);
     this._tmp = new THREE.Vector3();
+    this.move = null;
+    this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * Leva a câmera até um ponto com zoom. shiftX/shiftY (fração da tela) deslocam
+   * o ponto do centro, pra ele não ficar atrás de um painel aberto.
+   */
+  focus(point, { zoom = 2, shiftX = 0, shiftY = 0 } = {}) {
+    const cam = this.camera;
+    cam.updateMatrixWorld();
+    const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0);
+    const up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1);
+    const viewW = (cam.right - cam.left) / zoom;
+    const viewH = (cam.top - cam.bottom) / zoom;
+    const target = point
+      .clone()
+      .addScaledVector(right, -shiftX * viewW)
+      .addScaledVector(up, -shiftY * viewH);
+    this.startMove(target, zoom);
+  }
+
+  /** Volta pro enquadramento inicial. */
+  reset() {
+    this.startMove(TARGET, 1);
+  }
+
+  startMove(target, zoom) {
+    this.move = {
+      fromT: this.controls.target.clone(),
+      toT: target.clone(),
+      fromZ: this.camera.zoom,
+      toZ: zoom,
+      t: this.reducedMotion ? 1 : 0,
+    };
   }
 
   resize(w, h) {
@@ -66,6 +102,18 @@ export class CameraRig {
       this.camera.zoom = THREE.MathUtils.lerp(0.65, 1, e);
       this.camera.updateProjectionMatrix();
       if (this.intro === 1) this.controls.enabled = true;
+    }
+
+    if (this.move) {
+      const m = this.move;
+      m.t = Math.min(1, m.t + dt / FOCUS_TIME);
+      const e = 1 - Math.pow(1 - m.t, 3);
+      const next = this._tmp.lerpVectors(m.fromT, m.toT, e);
+      this.camera.position.add(next.clone().sub(this.controls.target));
+      this.controls.target.copy(next);
+      this.camera.zoom = THREE.MathUtils.lerp(m.fromZ, m.toZ, e);
+      this.camera.updateProjectionMatrix();
+      if (m.t === 1) this.move = null;
     }
 
     this.controls.update();

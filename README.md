@@ -3,6 +3,7 @@
 Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feito com **Three.js** puro.
 
 - 🚶 Clique no chão para andar pelos tiles (estilo Habbo), na cadeira para sentar e na cama para deitar
+- 👕 Clique no guarda-roupa para trocar a roupa do boneco (estilo, cores, óculos). A escolha fica salva no navegador de quem visitou
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
@@ -34,9 +35,10 @@ src/
 ├── world/
 │   ├── layout.js        # planta do quarto: posição dos móveis e obstáculos do gato
 │   ├── Room.js          # piso, paredes, janela, tapete, luzes
-│   ├── Furniture.js     # cama, mesa + notebook, cadeira, estante, planta...
+│   ├── Furniture.js     # cama, mesa + notebook, cadeira, planta...
 │   ├── PostIts.js
 │   ├── TileHighlight.js # quadrado branco no piso (hover/destino)
+│   ├── Wardrobe.js      # guarda-roupa com portas animadas
 │   └── helpers.js       # box(), materiais, texturas em canvas
 ├── entities/
 │   ├── Avatar.js        # boneco: anda, senta, deita, olha pro mouse, acena
@@ -44,9 +46,11 @@ src/
 │   └── pathfinding.js   # NavGrid: A* na grade do piso (com obstáculos dinâmicos)
 ├── ui/                  # chat, modal, i18n, balões 3D→HTML
 ├── services/
-│   └── chatService.js   # mock hoje; POST pro backend quando existir
+│   ├── chatService.js   # mock hoje; POST pro backend quando existir
+│   └── outfitStore.js   # roupa escolhida no localStorage (validada ao carregar)
 ├── data/
 │   ├── content.js       # ✏️ CV, links e projetos (edite aqui)
+│   ├── wardrobe.js      # ✏️ estilos/cores do guarda-roupa e meu visual padrão
 │   └── strings.js       # textos da interface PT/EN
 └── styles/main.css
 ```
