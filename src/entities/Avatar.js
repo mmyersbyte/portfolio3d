@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import { box, mat, seeded } from '../world/helpers.js';
+import { box, seeded } from '../world/helpers.js';
 import { LAYOUT, AVATAR_SPOTS } from '../world/layout.js';
 import { NavGrid } from './pathfinding.js';
 
 const SKIN = '#f2d3bd';
 const HAIR = '#151312';
+const HAIR_LIGHT = '#2b2420';
 const HOODIE = '#2a9d8f';
 const JEANS = '#2f3e5c';
 
@@ -142,44 +143,84 @@ export class Avatar {
     this.root.add(this.bubbleAnchor);
   }
 
+  /**
+   * Cabelo cacheado em voxel: uma "carapaça" de blocos colada na cabeça
+   * + cubinhos numa grade por cima (os cachos). A silhueta continua quadrada
+   * como o resto do boneco, só com volume e textura.
+   *
+   * Referência da cabeça (local): x ±0.26, y 0..0.5, z ±0.24 (rosto em +z).
+   */
   buildHair(head) {
-    // "touca" pra não aparecer pele entre os cachos
-    box(0.5, 0.14, 0.46, HAIR, { y: 0.38, parent: head });
-    box(0.5, 0.3, 0.1, HAIR, { y: 0.15, z: -0.2, parent: head });
-
-    // cachos = várias bolinhas low-poly espalhadas por um elipsoide
-    const rand = seeded(42);
-    const center = new THREE.Vector3(0, 0.27, 0);
-    const curls = [];
-    while (curls.length < 85) {
-      const theta = rand() * Math.PI * 2;
-      const y = rand() * 1.15 - 0.15; // -0.15..1 (mais em cima)
-      const ring = Math.sqrt(Math.max(0, 1 - y * y));
-      const p = new THREE.Vector3(
-        Math.sin(theta) * ring * 0.34,
-        y * 0.3,
-        Math.cos(theta) * ring * 0.32,
-      );
-      // libera o rosto: nada na frente abaixo da testa
-      if (p.z > 0.1 && p.y < 0.13) continue;
-      // nada na altura das orelhas/bochechas dos lados da frente
-      if (p.y < 0 && p.z > -0.05) continue;
-      curls.push(p.add(center));
+    // carapaça: topo, nuca e laterais acima da orelha
+    box(0.56, 0.17, 0.52, HAIR, { y: 0.43, z: -0.01, parent: head });
+    box(0.56, 0.34, 0.1, HAIR, { y: 0.1, z: -0.22, parent: head });
+    for (const side of [-1, 1]) {
+      box(0.04, 0.14, 0.34, HAIR, { x: side * 0.27, y: 0.3, z: -0.06, parent: head });
     }
 
+    const rand = seeded(42);
+    const jitter = (n) => (rand() - 0.5) * n;
+    const curls = []; // [x, y, z, tamanho]
+
+    // topo: grade 5x5 com alturas variadas (é o que dá o "fofo" do cacho)
+    for (const x of [-0.22, -0.11, 0, 0.11, 0.22]) {
+      for (const z of [-0.2, -0.1, 0, 0.1, 0.2]) {
+        const edge = Math.abs(x) > 0.2 || Math.abs(z) > 0.18;
+        curls.push([
+          x + jitter(0.02),
+          0.6 + (edge ? 0 : 0.015) + rand() * 0.035,
+          z + jitter(0.02),
+          0.12,
+        ]);
+      }
+    }
+
+    // franja: fileira na testa com a borda de baixo irregular (para acima das sobrancelhas)
+    [-0.21, -0.105, 0, 0.105, 0.21].forEach((x, i) => {
+      curls.push([x + jitter(0.015), i % 2 ? 0.43 : 0.465, 0.235, 0.11]);
+    });
+
+    // laterais: cachinhos acima das orelhas
+    for (const side of [-1, 1]) {
+      for (const z of [-0.17, -0.06, 0.06]) {
+        curls.push([side * 0.27, 0.4 + rand() * 0.06, z + jitter(0.02), 0.095]);
+      }
+    }
+
+    // nuca: três fileiras que vão diminuindo
+    [0.46, 0.33, 0.2].forEach((y, row) => {
+      for (const x of [-0.2, -0.07, 0.07, 0.2]) {
+        curls.push([x + jitter(0.02), y + jitter(0.03), -0.255, 0.115 - row * 0.01]);
+      }
+    });
+
+    // cachinhos menores por cima: quebram os blocos e dão a textura de cacho
+    for (let i = 0; i < 16; i++) {
+      curls.push([jitter(0.46), 0.68 + rand() * 0.03, jitter(0.42), 0.065 + rand() * 0.02]);
+    }
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 3; i++) {
+        curls.push([side * 0.3, 0.5 + rand() * 0.1, jitter(0.4), 0.06]);
+      }
+    }
+
+    // dois tons pra dar profundidade entre os cachos
     const mesh = new THREE.InstancedMesh(
-      new THREE.IcosahedronGeometry(1, 0),
-      mat(HAIR),
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }),
       curls.length,
     );
     const m = new THREE.Matrix4();
     const q = new THREE.Quaternion();
-    const e = new THREE.Euler();
-    const s = new THREE.Vector3();
-    curls.forEach((p, i) => {
-      s.setScalar(0.075 + rand() * 0.05);
-      q.setFromEuler(e.set(rand() * 3, rand() * 3, rand() * 3));
-      mesh.setMatrixAt(i, m.compose(p, q, s));
+    const pos = new THREE.Vector3();
+    const scale = new THREE.Vector3();
+    const dark = new THREE.Color(HAIR);
+    const light = new THREE.Color(HAIR_LIGHT);
+    curls.forEach(([x, y, z, size], i) => {
+      // giro pequeno só no eixo y: quebra a grade sem sair do estilo voxel
+      q.setFromAxisAngle(THREE.Object3D.DEFAULT_UP, jitter(0.5));
+      mesh.setMatrixAt(i, m.compose(pos.set(x, y, z), q, scale.setScalar(size)));
+      mesh.setColorAt(i, rand() < 0.35 ? light : dark);
     });
     mesh.castShadow = true;
     head.add(mesh);
