@@ -7,6 +7,7 @@ import { cvView } from './ui/views/cvView.js';
 import { projectsView } from './ui/views/projectsView.js';
 import { WardrobePanel } from './ui/WardrobePanel.js';
 import { loadOutfit } from './services/outfitStore.js';
+import { PetPanel } from './ui/PetPanel.js';
 
 const $ = (id) => document.getElementById(id);
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -17,12 +18,13 @@ const modal = new Modal($('modal'));
 
 // balão "fala comigo" só aparece quando nenhum painel está aberto
 const syncBubble = () =>
-  scene?.avatarBubble[chat.isOpen || wardrobePanel.isOpen ? 'hide' : 'show']();
+  scene?.avatarBubble[chat.isOpen || wardrobePanel.isOpen || petPanel.isOpen ? 'hide' : 'show']();
 
 const chat = new Chat({
   onOpenChange(open) {
     if (open) {
       wardrobePanel.cancel();
+      petPanel.close();
       scene?.avatar.wave();
     }
     syncBubble();
@@ -39,6 +41,20 @@ const wardrobePanel = new WardrobePanel({
   onSaved: (ok) => toast(t(ok ? 'wardrobe.saved' : 'wardrobe.notSaved')),
 });
 
+// chat e painel do gato ocupam o mesmo lugar: abrir o gato minimiza o chat
+const petPanel = new PetPanel({
+  onCommand: (cmd) => scene?.commandCat(cmd),
+  getActivity: () => scene?.cat.activity,
+  onOpenChange(open) {
+    if (open) {
+      chat.minimize();
+      wardrobePanel.cancel();
+    }
+    scene?.framePet(open);
+    syncBubble();
+  },
+});
+
 let toastTimer = 0;
 function toast(text) {
   const el = $('toast');
@@ -52,8 +68,10 @@ const openLink = (url) => window.open(url, '_blank', 'noopener');
 
 const actions = {
   chat: () => chat.toggle(),
+  cat: () => petPanel.toggle(),
   wardrobe: () => {
     chat.close();
+    petPanel.close();
     scene?.visitWardrobe(() => wardrobePanel.open(loadOutfit()));
   },
   // andou pra longe do guarda-roupa: fecha sem salvar

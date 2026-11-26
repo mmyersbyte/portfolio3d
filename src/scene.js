@@ -10,6 +10,10 @@ import { Avatar } from './entities/Avatar.js';
 import { Cat } from './entities/Cat.js';
 import { WorldLabels } from './ui/WorldLabels.js';
 import { t, onLangChange } from './ui/i18n.js';
+import { petLine } from './ui/PetPanel.js';
+
+const THREE_CLAMP = (v, min, max) => Math.min(max, Math.max(min, v));
+import { profile } from './data/content.js';
 
 /**
  * Monta a cena 3D e liga os objetos clicáveis às ações da interface.
@@ -33,7 +37,7 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   const it = exp.interaction;
   it.register(avatar.root, { label: 'label.avatar', onClick: actions.chat });
   it.register(laptop, { label: 'label.laptop', onClick: actions.projects });
-  it.register(cat.root, { label: 'label.cat', onClick: () => cat.poke() });
+  it.register(cat.root, { label: 'label.cat', onClick: actions.cat });
   for (const note of notes) {
     it.register(note.group, { label: `label.${note.id}`, onClick: actions[note.id] });
   }
@@ -136,5 +140,60 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   };
 
   exp.start(onReady);
-  return { exp, avatar, cat, avatarBubble, studio, visitWardrobe, closeWardrobe };
+  /**
+   * No celular o painel do gato cobre a parte de baixo da tela: a câmera
+   * enquadra eu + gato na faixa visível de cima pra dar pra ver ele obedecendo.
+   */
+  let petFraming = false;
+  function framePet(open = petFraming) {
+    petFraming = open;
+    if (window.innerWidth >= 768) return;
+    if (!open) {
+      exp.rig.reset();
+      return;
+    }
+    const a = avatar.root.position;
+    const c = cat.root.position;
+    const mid = a.clone().add(c).multiplyScalar(0.5).setY(1.2);
+    const spread = Math.hypot(a.x - c.x, a.z - c.z);
+
+    // faixa livre: entre o cabeçalho e o topo do painel
+    const H = window.innerHeight;
+    const bandTop = document.querySelector('.topbar').getBoundingClientRect().bottom + 8;
+    const bandBottom = H - document.getElementById('pet').offsetHeight - 16;
+    const band = Math.max(80, bandBottom - bandTop);
+
+    // zoom que cabe ~3 unidades de altura (boneco + balão) na faixa e os dois na largura
+    const cam = exp.camera;
+    const byHeight = ((band / H) * (cam.top - cam.bottom)) / 3.2;
+    const byWidth = (cam.right - cam.left) / (spread + 2);
+    const zoom = THREE_CLAMP(Math.min(byHeight, byWidth), 0.9, 2.2);
+    const shiftY = 0.5 - (bandTop + band / 2) / H;
+    exp.rig.focus(mid, { zoom, shiftY });
+  }
+
+  /** Eu falo o comando (balão que sobe), viro pro gato e ele obedece. */
+  function commandCat(cmd) {
+    labels.say(avatar.bubbleAnchor, profile.name, petLine(`pet.say.${cmd}`));
+    if (avatar.state === 'idle') {
+      const a = avatar.root.position;
+      const c = cat.root.position;
+      avatar.heading = Math.atan2(c.x - a.x, c.z - a.z);
+    }
+    setTimeout(() => cat.command(cmd), 350);
+    // "vem": reenquadra quando ele chegar perto de mim
+    if (petFraming) setTimeout(() => framePet(), cmd === 'come' ? 2500 : 400);
+  }
+
+  return {
+    exp,
+    avatar,
+    cat,
+    avatarBubble,
+    studio,
+    visitWardrobe,
+    closeWardrobe,
+    commandCat,
+    framePet,
+  };
 }

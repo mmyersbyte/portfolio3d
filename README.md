@@ -7,7 +7,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
-- 🐈‍⬛ O gato anda sozinho pelo quarto, desvia dos móveis e às vezes sobe na cama pra dormir
+- 🐈‍⬛ O Frajola anda sozinho pelo quarto, desvia dos móveis e às vezes sobe na cama pra dormir. Clicando nele abre a ficha dele e dá pra dar comandos estilo Habbo (pular, falar, sentar, deitar, vem, livre): eu falo num balão que sobe e ele obedece
 - 🌎 PT/EN, funciona no celular e em telas grandes
 
 ## Rodando
@@ -52,6 +52,7 @@ src/
 ├── data/
 │   ├── content.js       # ✏️ CV, links e projetos (edite aqui)
 │   ├── wardrobe.js      # ✏️ abas/opções do guarda-roupa e meu visual padrão
+│   ├── pet.js           # ✏️ nome, nascimento e comandos do gato
 │   └── strings.js       # textos da interface PT/EN
 └── styles/main.css
 ```

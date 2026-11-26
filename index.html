@@ -117,6 +117,37 @@
       </form>
     </aside>
 
+    <aside class="sheet pet" id="pet" aria-hidden="true" aria-labelledby="pet-name">
+      <header class="sheet__header">
+        <div class="pet__avatar" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <path d="M5 28V9l5 5h12l5-5v19z" fill="#17171c" />
+            <rect x="10" y="17" width="4" height="3" fill="#c6f36b" />
+            <rect x="18" y="17" width="4" height="3" fill="#c6f36b" />
+            <rect x="11.5" y="17" width="1" height="3" fill="#000" />
+            <rect x="19.5" y="17" width="1" height="3" fill="#000" />
+            <rect x="15" y="22" width="2" height="1.5" fill="#d77a8a" />
+          </svg>
+        </div>
+        <div class="chat__who">
+          <strong id="pet-name">Frajola</strong>
+          <small id="pet-status"></small>
+        </div>
+        <button type="button" class="icon-btn" id="pet-close" data-i18n-aria="close">✕</button>
+      </header>
+      <div class="pet__body">
+        <dl class="pet__info" id="pet-info"></dl>
+        <h3 class="pet__title" data-i18n="pet.commands">Comandos</h3>
+        <p class="pet__hint" data-i18n="pet.hint"></p>
+        <ul class="pet__commands" id="pet-commands"></ul>
+      </div>
+    </aside>
+
+    <button type="button" class="chat-mini" id="chat-mini" hidden data-i18n-aria="chat.restore">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg>
+      <span data-i18n="chat.minimized">Chat</span>
+    </button>
+
     <aside class="sheet wardrobe" id="wardrobe" aria-hidden="true" aria-labelledby="wardrobe-title">
       <header class="sheet__header">
         <h2 class="sheet__title" id="wardrobe-title" data-i18n="wardrobe.title">Guarda-roupa</h2>

@@ -17,6 +17,8 @@ export class Chat {
     this.history = [];
     this.busy = false;
 
+    this.mini = document.getElementById('chat-mini');
+    this.mini.addEventListener('click', () => this.open());
     document.getElementById('chat-close').addEventListener('click', () => this.close());
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -31,7 +33,19 @@ export class Chat {
     return this.el.classList.contains('is-open');
   }
 
+  /** Minimizado: painel some, mas a conversa fica e um botão traz ela de volta. */
+  get isMinimized() {
+    return !this.mini.hidden;
+  }
+
+  minimize() {
+    if (!this.isOpen) return;
+    this.close();
+    this.mini.hidden = false;
+  }
+
   open() {
+    this.mini.hidden = true;
     if (this.isOpen) return;
     this.el.classList.add('is-open');
     this.el.setAttribute('aria-hidden', 'false');
@@ -42,6 +56,7 @@ export class Chat {
   }
 
   close() {
+    this.mini.hidden = true;
     if (!this.isOpen) return;
     this.el.classList.remove('is-open');
     this.el.setAttribute('aria-hidden', 'true');

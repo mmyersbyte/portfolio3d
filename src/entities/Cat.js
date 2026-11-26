@@ -4,6 +4,7 @@ import { LAYOUT, CAT_SPOTS } from '../world/layout.js';
 import { NavGrid } from './pathfinding.js';
 
 const FUR = '#17171c';
+const OBEY_TIME = 45; // s: depois disso o gato "esquece" o comando e volta a ser livre
 const SPEED = 0.85;
 const JUMP_TIME = 0.55;
 
@@ -70,6 +71,8 @@ const POSES = {
     tailSide: 0.5,
   },
 };
+// deitado acordado (comando "deitar"): igual dormir, mas de olho aberto e cabeça erguida
+POSES.lie = { ...POSES.sleep, eyes: 1, headPitch: 0.05, headY: -0.07, tailSide: 0.3 };
 
 const rand = (a, b) => a + Math.random() * (b - a);
 const angleTo = (from, to) => Math.atan2(to.x - from.x, to.z - from.z);
@@ -97,6 +100,10 @@ export class Cat {
     this.walkAmount = 0;
     this.walkPhase = 0;
     this.hop = 0;
+    this.hopDur = 0.35;
+    this.hopHeight = 0.18;
+    this.pending = null; // comando recebido no meio de um pulo
+    this.obeyUntil = 0;
 
     this.state = 'idle';
     this.timer = rand(1.5, 3);
@@ -254,14 +261,93 @@ export class Cat {
     this.setState('jump');
   }
 
-  /** Clique no gato. */
-  poke() {
-    if (this.state === 'sleep') {
-      this.say(true);
+  startHop(duration, height) {
+    if (this.state === 'jump' || this.hop > 0) return;
+    this.hop = this.hopDur = duration;
+    this.hopHeight = height;
+  }
+
+  /**
+   * Comandos estilo Habbo: jump, speak, sit, lie, come, free.
+   * O gato obedece até receber "free" ou passar OBEY_TIME.
+   */
+  command(cmd) {
+    // no meio de um pulo: executa quando aterrissar
+    if (this.state === 'jump') {
+      this.pending = cmd;
       return;
     }
-    this.say();
-    if (this.state !== 'jump' && this.hop <= 0) this.hop = 0.35;
+    if (this.state === 'sleep') this.onSleepChange?.(false);
+    this.path = [];
+    this.onArrive = null;
+    this.obeyUntil = this.exp.elapsed + OBEY_TIME;
+
+    switch (cmd) {
+      case 'jump':
+        this.setState('stay');
+        this.startHop(0.6, 0.45);
+        break;
+      case 'speak':
+        // continua sentado/deitado se já estava; senão para onde está
+        if (this.state !== 'staySit' && this.state !== 'stayLie') this.setState('stay');
+        this.say();
+        break;
+      case 'sit':
+        this.setState('staySit');
+        break;
+      case 'lie':
+        this.setState('stayLie');
+        break;
+      case 'come':
+        if (this.onBed) {
+          this.jump(CAT_SPOTS.bedLand, 0, () => this.command('come'));
+          return;
+        }
+        this.comeToAvatar();
+        break;
+      case 'free':
+        this.release();
+        break;
+    }
+  }
+
+  comeToAvatar() {
+    const a = this.avatar;
+    if (!a) return;
+    // em pé: do lado dele; sentado/deitado: no ponto de onde ele sai do móvel
+    const me = a.root.position;
+    const spot = (!a.isStanding && a.spot?.approach) || { x: me.x + 0.7, z: me.z + 0.6 };
+    this.walkTo(spot, () => {
+      this.faceTo(a.root.position);
+      this.setState('staySit');
+      this.say();
+    });
+    // walkTo pode cair pra idle se não achar caminho; ainda assim mantém "obedecendo"
+    if (this.state === 'idle') this.setState('stay');
+  }
+
+  /** Volta a ser livre (desce da cama se estiver lá). */
+  release() {
+    this.obeyUntil = 0;
+    if (this.onBed) this.setState('wake', 0.4);
+    else this.setState('idle', rand(0.5, 1.5));
+  }
+
+  /** Resumo do que ele está fazendo (mostrado no painel). */
+  get activity() {
+    return (
+      {
+        sleep: 'sleeping',
+        wake: 'waking',
+        walk: 'walking',
+        sit: 'sitting',
+        staySit: 'sitting',
+        stayLie: 'lying',
+        jump: 'jumping',
+        prep: 'jumping',
+        stay: 'waiting',
+      }[this.state] ?? 'idle'
+    );
   }
 
   say(purr = false) {
@@ -304,6 +390,14 @@ export class Cat {
           this.onSleepChange?.(false);
           this.setState('wake', 1.2);
         }
+        break;
+
+      case 'stay':
+      case 'staySit':
+      case 'stayLie':
+        this.targetPose =
+          this.state === 'staySit' ? POSES.sit : this.state === 'stayLie' ? POSES.lie : POSES.stand;
+        if (this.exp.elapsed > this.obeyUntil) this.release();
         break;
 
       case 'wake':
@@ -361,6 +455,11 @@ export class Cat {
     if (p >= 1) {
       this.setState('idle', 1);
       j.onLand();
+      if (this.pending) {
+        const cmd = this.pending;
+        this.pending = null;
+        this.command(cmd);
+      }
     }
   }
 
@@ -375,8 +474,8 @@ export class Cat {
 
     let hopY = 0;
     if (this.hop > 0) {
-      this.hop -= dt;
-      hopY = Math.sin((1 - this.hop / 0.35) * Math.PI) * 0.18;
+      this.hop = Math.max(0, this.hop - dt);
+      hopY = Math.sin((1 - this.hop / this.hopDur) * Math.PI) * this.hopHeight;
     }
 
     this.body.position.y =

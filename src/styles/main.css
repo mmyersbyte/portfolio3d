@@ -368,7 +368,10 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   left: 8px;
   right: 8px;
   bottom: calc(var(--safe-b) + 8px);
-  height: min(72dvh, 620px);
+  height: min(
+    60dvh,
+    560px
+  ); /* deixa o quarto visível em cima (o gato obedecendo, o boneco falando) */
   border-radius: 16px;
   transform: translateY(calc(100% + 40px));
 }
@@ -1073,4 +1076,190 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 .card input:checked + .card__inner .card__check {
   background: var(--accent-2);
   color: #fff;
+}
+
+/* ---------- balão de fala que sobe (estilo Habbo) ---------- */
+.bubble--say {
+  max-width: min(280px, 70vw);
+  white-space: normal;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.3;
+  opacity: 0;
+  transition: none;
+}
+
+.bubble--say b {
+  font-family: var(--font-pixel);
+}
+
+/* ---------- painel do gato ---------- */
+.pet__avatar {
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  background: #fff3c4;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+}
+
+.pet__avatar svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pet__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+  overscroll-behavior: contain;
+}
+
+.pet__info {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.pet__info div {
+  padding: 6px 9px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+}
+
+.pet__info dt {
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pet__info dd {
+  margin: 2px 0 0;
+  font-family: var(--font-pixel);
+  font-weight: 600;
+}
+
+.pet__title {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+}
+
+.pet__hint {
+  margin: 2px 0 8px;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.pet__commands {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pet-cmd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 10px;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  text-align: left;
+  transition:
+    transform 0.1s,
+    box-shadow 0.1s;
+}
+
+.pet-cmd:hover {
+  background: #fffaf0;
+  box-shadow: 2px 2px 0 var(--line);
+  transform: translate(-1px, -1px);
+}
+
+.pet-cmd.is-sent {
+  animation: sent 0.35s ease;
+}
+
+@keyframes sent {
+  40% {
+    background: var(--accent);
+    transform: scale(0.98);
+  }
+}
+
+.pet-cmd__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  background: var(--accent);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+}
+
+.pet-cmd__icon .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.pet-cmd__text {
+  display: grid;
+  line-height: 1.2;
+}
+
+.pet-cmd__text strong {
+  font-family: var(--font-pixel);
+}
+
+.pet-cmd__text small {
+  color: var(--ink-soft);
+}
+
+/* ---------- chat minimizado ---------- */
+.chat-mini {
+  position: fixed;
+  right: var(--gutter);
+  bottom: calc(var(--safe-b) + 92px);
+  z-index: 31;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--accent);
+  border: 3px solid var(--line);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+}
+
+.chat-mini[hidden] {
+  display: none;
+}
+
+.chat-mini svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+@media (max-width: 767px) {
+  /* no celular o painel ocupa a parte de baixo: o chip fica em cima dele */
+  .chat-mini {
+    top: calc(var(--safe-t) + 76px);
+    bottom: auto;
+  }
 }

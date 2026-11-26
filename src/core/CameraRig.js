@@ -13,7 +13,8 @@ const FIT_WIDTH = 13;
 const FIT_WIDTH_PORTRAIT = 9.6;
 const FIT_HEIGHT = 10.5;
 
-const PAN_LIMIT = new THREE.Vector3(4, 1.5, 4);
+// y folgado: os enquadramentos com painel aberto deslocam o alvo bem pra baixo
+const PAN_LIMIT = new THREE.Vector3(4, 3, 4);
 const FOCUS_TIME = 0.9; // s
 
 export class CameraRig {
