@@ -9,15 +9,15 @@ export function createFurniture(exp) {
   const g = new THREE.Group();
   g.name = 'furniture';
 
-  createBed(g);
+  const bed = createBed(g);
   createNightstand(g);
   const desk = createDesk(g, exp);
-  createChair(g);
+  const chair = createChair(g);
   createPlant(g);
   createBookshelf(g);
 
   exp.scene.add(g);
-  return { laptop: desk.laptop };
+  return { laptop: desk.laptop, bed, chair };
 }
 
 function createBed(parent) {
@@ -36,6 +36,7 @@ function createBed(parent) {
   box(w + 0.06, 0.08, 0.16, WOOD, { y: 1.05, z: -d / 2 + 0.06, parent: g });
 
   parent.add(g);
+  return g;
 }
 
 function createNightstand(parent) {
@@ -210,6 +211,7 @@ function createChair(parent) {
   box(0.6, 0.09, 0.58, fabric, { y: 0.45, parent: g });
   box(0.58, 0.62, 0.08, fabric, { y: 0.56, z: 0.27, parent: g });
   parent.add(g);
+  return g;
 }
 
 function createPlant(parent) {

@@ -2,6 +2,8 @@ import { Experience } from './core/Experience.js';
 import { createRoom } from './world/Room.js';
 import { createFurniture } from './world/Furniture.js';
 import { createPostIts } from './world/PostIts.js';
+import { TileHighlight, snapToTile } from './world/TileHighlight.js';
+import { AVATAR_SPOTS } from './world/layout.js';
 import { Avatar } from './entities/Avatar.js';
 import { Cat } from './entities/Cat.js';
 import { WorldLabels } from './ui/WorldLabels.js';
@@ -16,10 +18,12 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   const exp = new Experience(canvas);
 
   createRoom(exp.scene);
-  const { laptop } = createFurniture(exp);
+  const { laptop, bed, chair } = createFurniture(exp);
   const notes = createPostIts(exp.scene);
   const avatar = new Avatar(exp);
   const cat = new Cat(exp);
+  cat.avatar = avatar;
+  const tiles = new TileHighlight(exp);
   const labels = new WorldLabels(exp, labelsEl);
 
   // ---------- clicáveis ----------
@@ -31,10 +35,36 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     it.register(note.group, { label: `label.${note.id}`, onClick: actions[note.id] });
   }
 
+  // móveis que o boneco usa: clicar de novo faz ele levantar
+  const furnitureLabel = (name) => () =>
+    avatar.spot === AVATAR_SPOTS[name] ? 'label.getUp' : `label.${name}`;
+  const useFurniture = (name) => () => {
+    tiles.mark(AVATAR_SPOTS[name].approach);
+    avatar.use(name);
+  };
+  it.register(bed, {
+    label: furnitureLabel('bed'),
+    onClick: useFurniture('bed'),
+    hoverScale: 1.02,
+  });
+  it.register(chair, { label: furnitureLabel('chair'), onClick: useFurniture('chair') });
+
+  // ---------- andar pelo piso (estilo Habbo) ----------
+  const walkableTile = (point) => {
+    if (!point) return null;
+    const tile = snapToTile(point);
+    return avatar.canWalk(tile.x, tile.z) ? tile : null;
+  };
+  it.onFloorHover = (point) => tiles.show(walkableTile(point));
+  it.onFloorClick = (point) => {
+    const tile = walkableTile(point);
+    if (tile && avatar.walkTo(tile)) tiles.mark(tile);
+  };
+
   it.onHover = (entry, x, y) => {
     tooltipEl.classList.toggle('is-visible', Boolean(entry));
     if (!entry) return;
-    tooltipEl.textContent = t(entry.label);
+    tooltipEl.textContent = t(typeof entry.label === 'function' ? entry.label() : entry.label);
     const maxX = window.innerWidth - tooltipEl.offsetWidth - 8;
     tooltipEl.style.transform = `translate(${Math.min(x + 16, maxX)}px, ${y + 18}px)`;
   };

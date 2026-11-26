@@ -21,7 +21,11 @@ export async function askAvatar(messages, lang) {
   return mockReply(messages.at(-1)?.content ?? '', lang);
 }
 
-const normalize = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const normalize = (s) =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 
 const RULES = [
   {

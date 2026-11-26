@@ -1,15 +1,32 @@
 import * as THREE from 'three';
 import { box, mat, seeded } from '../world/helpers.js';
-import { LAYOUT } from '../world/layout.js';
+import { LAYOUT, AVATAR_SPOTS } from '../world/layout.js';
+import { NavGrid } from './pathfinding.js';
 
 const SKIN = '#f2d3bd';
 const HAIR = '#151312';
 const HOODIE = '#2a9d8f';
 const JEANS = '#2f3e5c';
 
+const SPEED = 1.5;
+const FACE_CAMERA = Math.PI / 4;
+
+// poses do corpo (interpoladas): deitar gira o corpo inteiro, sentar dobra pernas e braços
+const POSES = {
+  stand: { lie: 0, leg: 0, arm: 0 },
+  sit: { lie: 0, leg: -1.45, arm: -1.0 },
+  lie: { lie: -Math.PI / 2, leg: 0, arm: 0 },
+};
+
+const shortest = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+const easeInOut = (x) => (x < 0.5 ? 2 * x * x : 1 - (-2 * x + 2) ** 2 / 2);
+
 /**
  * Meu boneco: voxel, cabeção estilo Habbo, cabelo cacheado preto.
- * Fica olhando pro mouse, pisca, acena e mexe a boca quando "fala".
+ * Anda pelos tiles (A*), senta na cadeira, deita na cama, olha pro mouse,
+ * pisca, acena e mexe a boca quando "fala".
+ *
+ * Estados: idle → walk → idle | enter → seated → leave → ...
  */
 export class Avatar {
   constructor(exp) {
@@ -17,7 +34,20 @@ export class Avatar {
     this.root = new THREE.Group();
     this.root.name = 'avatar';
     this.root.position.set(LAYOUT.avatar.x, 0, LAYOUT.avatar.z);
-    this.root.rotation.y = Math.PI / 4; // de frente pra câmera
+    this.root.rotation.y = FACE_CAMERA;
+    this.heading = FACE_CAMERA;
+
+    this.state = 'idle';
+    this.spot = null; // móvel em uso (AVATAR_SPOTS)
+    this.path = [];
+    this.onArrive = null;
+    this.tween = null;
+    this.nav = new NavGrid({ margin: 0.25 });
+
+    this.pose = { ...POSES.stand };
+    this.targetPose = POSES.stand;
+    this.walkAmount = 0;
+    this.walkPhase = 0;
 
     this.waveT = 0;
     this.talking = false;
@@ -29,7 +59,10 @@ export class Avatar {
   }
 
   build() {
-    const r = this.root;
+    // root = posição/direção no quarto; body = pose (deitar gira só ele)
+    this.body = new THREE.Group();
+    this.root.add(this.body);
+    const r = this.body;
 
     // pernas e tênis
     this.legs = [-1, 1].map((side) => {
@@ -106,7 +139,7 @@ export class Avatar {
     // âncora pro balão de fala
     this.bubbleAnchor = new THREE.Object3D();
     this.bubbleAnchor.position.y = 2.25;
-    r.add(this.bubbleAnchor);
+    this.root.add(this.bubbleAnchor);
   }
 
   buildHair(head) {
@@ -152,8 +185,70 @@ export class Avatar {
     head.add(mesh);
   }
 
+  get isStanding() {
+    return this.state === 'idle' || this.state === 'walk';
+  }
+
+  /** Andar até um ponto do piso (levanta antes, se estiver sentado/deitado). */
+  walkTo(point, onArrive) {
+    if (!this.isStanding) {
+      this.leave(() => this.walkTo(point, onArrive));
+      return true;
+    }
+    const pos = this.root.position;
+    const path = this.nav.findPath({ x: pos.x, z: pos.z }, point);
+    if (!path.length) return false;
+    this.path = path;
+    this.onArrive = onArrive ?? null;
+    this.state = 'walk';
+    return true;
+  }
+
+  /** Usar um móvel: 'chair' (sentar) ou 'bed' (deitar). Clicar de novo levanta. */
+  use(name) {
+    const spot = AVATAR_SPOTS[name];
+    if (this.spot === spot && this.state === 'seated') {
+      this.leave();
+      return;
+    }
+    this.walkTo(spot.approach, () => this.enter(spot));
+  }
+
+  /** Tile é livre pra andar? (usado pelo destaque do piso) */
+  canWalk(x, z) {
+    return !this.nav.isBlocked(x, z);
+  }
+
+  enter(spot) {
+    this.spot = spot;
+    this.state = 'enter';
+    this.targetPose = POSES[spot.pose];
+    this.heading = spot.heading;
+    this.startTween(spot.pos, spot.pose === 'lie' ? 0.75 : 0.5, () => (this.state = 'seated'));
+  }
+
+  leave(then) {
+    const spot = this.spot;
+    if (!spot) return then?.();
+    this.state = 'leave';
+    this.targetPose = POSES.stand;
+    const to = { x: spot.approach.x, y: 0, z: spot.approach.z };
+    this.startTween(to, 0.5, () => {
+      this.spot = null;
+      this.state = 'idle';
+      then?.();
+    });
+  }
+
+  startTween(to, dur, onDone) {
+    const from = this.root.position.clone();
+    this.tween = { from, to: new THREE.Vector3(to.x, to.y ?? 0, to.z), t: 0, dur, onDone };
+  }
+
   wave() {
     this.waveT = 1.8;
+    // se estiver parado, vira pra quem está falando comigo
+    if (this.state === 'idle') this.heading = FACE_CAMERA;
   }
 
   setTalking(on) {
@@ -163,23 +258,78 @@ export class Avatar {
   update(dt, t) {
     const k = 1 - Math.exp(-dt * 8);
 
-    // respiração
-    this.torso.scale.y = 1 + Math.sin(t * 2.2) * 0.012;
+    if (this.state === 'walk') this.followPath(dt);
+    if (this.tween) this.updateTween(dt);
 
-    // olha pro ponteiro
-    const ndc = this.exp.interaction.ndc;
-    this.head.rotation.y +=
-      (THREE.MathUtils.clamp(ndc.x * 0.7, -0.6, 0.6) - this.head.rotation.y) * k;
-    this.head.rotation.x +=
-      (THREE.MathUtils.clamp(-ndc.y * 0.25, -0.2, 0.25) - this.head.rotation.x) * k;
+    const turn = shortest(this.heading - this.root.rotation.y);
+    this.root.rotation.y += turn * (1 - Math.exp(-dt * 10));
 
-    // piscada
-    this.nextBlink -= dt;
-    const closed = this.nextBlink < 0.12;
-    if (this.nextBlink < 0) this.nextBlink = 2 + Math.random() * 3;
-    for (const eye of this.eyes) eye.scale.y = closed ? 0.15 : 1;
+    this.animateBody(dt, t, k);
+    this.animateFace(dt, t, k);
+  }
 
-    // aceno
+  followPath(dt) {
+    const pos = this.root.position;
+    const wp = this.path[0];
+    if (!wp) {
+      this.state = 'idle';
+      const cb = this.onArrive;
+      this.onArrive = null;
+      cb?.();
+      return;
+    }
+    const dx = wp.x - pos.x;
+    const dz = wp.z - pos.z;
+    const dist = Math.hypot(dx, dz);
+    if (dist < 0.04) {
+      this.path.shift();
+      return;
+    }
+    this.heading = Math.atan2(dx, dz);
+    const turning = Math.abs(shortest(this.heading - this.root.rotation.y));
+    const step = Math.min(dist, SPEED * Math.max(0.2, 1 - turning / 1.5) * dt);
+    pos.x += (dx / dist) * step;
+    pos.z += (dz / dist) * step;
+  }
+
+  updateTween(dt) {
+    const tw = this.tween;
+    tw.t = Math.min(1, tw.t + dt / tw.dur);
+    const e = easeInOut(tw.t);
+    this.root.position.lerpVectors(tw.from, tw.to, e);
+    // pulinho pra subir/descer da cama
+    if (Math.abs(tw.to.y - tw.from.y) > 0.3)
+      this.root.position.y += Math.sin(tw.t * Math.PI) * 0.25;
+    if (tw.t >= 1) {
+      this.tween = null;
+      tw.onDone();
+    }
+  }
+
+  animateBody(dt, t, k) {
+    for (const key in this.pose) this.pose[key] += (this.targetPose[key] - this.pose[key]) * k;
+    const P = this.pose;
+
+    const walking = this.state === 'walk' ? 1 : 0;
+    this.walkAmount += (walking - this.walkAmount) * (1 - Math.exp(-dt * 12));
+    this.walkPhase += dt * 9 * this.walkAmount;
+    const swing = Math.sin(this.walkPhase) * 0.55 * this.walkAmount;
+
+    this.body.rotation.x = P.lie;
+    this.body.position.y = Math.abs(Math.cos(this.walkPhase)) * 0.04 * this.walkAmount;
+    this.torso.scale.y = 1 + Math.sin(t * 2.2) * 0.012; // respiração
+
+    this.legs[0].rotation.x = P.leg + swing;
+    this.legs[1].rotation.x = P.leg - swing;
+
+    // digitando no notebook quando está na cadeira
+    const typing = this.state === 'seated' && this.spot?.pose === 'sit' ? 1 : 0;
+    this.arms.forEach((arm, i) => {
+      const side = i === 0 ? 1 : -1;
+      arm.rotation.x = P.arm - swing * side * 0.8 + Math.sin(t * 18 + i * 2) * 0.06 * typing;
+    });
+
+    // aceno (braço direito) e leve balanço do esquerdo
     let armZ = -0.08;
     if (this.waveT > 0) {
       this.waveT -= dt;
@@ -188,6 +338,22 @@ export class Avatar {
     }
     this.waveArm.rotation.z += (armZ - this.waveArm.rotation.z) * Math.min(1, k * 2);
     this.arms[1].rotation.z = 0.08 + Math.sin(t * 2.2) * 0.02;
+  }
+
+  animateFace(dt, t, k) {
+    // olha pro ponteiro só quando está mais ou menos de frente pra câmera
+    const facing = this.isStanding ? Math.max(0, Math.cos(this.root.rotation.y - FACE_CAMERA)) : 0;
+    const ndc = this.exp.interaction.ndc;
+    const yaw = THREE.MathUtils.clamp(ndc.x * 0.7, -0.6, 0.6) * facing;
+    const pitch = THREE.MathUtils.clamp(-ndc.y * 0.25, -0.2, 0.25) * facing;
+    this.head.rotation.y += (yaw - this.head.rotation.y) * k;
+    this.head.rotation.x += (pitch - this.head.rotation.x) * k;
+
+    // piscada
+    this.nextBlink -= dt;
+    const closed = this.nextBlink < 0.12;
+    if (this.nextBlink < 0) this.nextBlink = 2 + Math.random() * 3;
+    for (const eye of this.eyes) eye.scale.y = closed ? 0.15 : 1;
 
     // boca mexendo quando fala
     this.mouth.scale.y = this.talking ? 1 + Math.abs(Math.sin(t * 16)) * 2.5 : 1;

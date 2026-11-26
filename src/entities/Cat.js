@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { box, mat } from '../world/helpers.js';
 import { LAYOUT, CAT_SPOTS } from '../world/layout.js';
-import { findPath, freeCells } from './pathfinding.js';
+import { NavGrid } from './pathfinding.js';
 
 const FUR = '#17171c';
 const SPEED = 0.85;
@@ -103,6 +103,8 @@ export class Cat {
     this.path = [];
     this.onArrive = null;
     this.lastBed = -20; // primeira ida pra cama já pode acontecer cedo
+    this.nav = new NavGrid({ margin: 0.22 });
+    this.avatar = null; // ligado em scene.js: o gato desvia de mim e às vezes vem me visitar
 
     this.build();
     exp.scene.add(this.root);
@@ -193,31 +195,40 @@ export class Cat {
       this.walkTo(CAT_SPOTS.bedLaunch, () => this.prepareJumpUp());
     } else if (r < 0.5) {
       this.setState('sit', rand(3, 6));
-    } else if (r < 0.62) {
-      // vai "conversar" com o boneco
-      const spot = { x: LAYOUT.avatar.x + 0.75, z: LAYOUT.avatar.z + 0.65 };
-      this.walkTo(spot, () => {
-        this.faceTo(LAYOUT.avatar);
+    } else if (r < 0.62 && this.avatar?.isStanding) {
+      // vai "conversar" com o boneco (do lado dele que fica de frente pra câmera)
+      const me = this.avatar.root.position;
+      this.walkTo({ x: me.x + 0.7, z: me.z + 0.6 }, () => {
+        this.faceTo(this.avatar.root.position);
         this.setState('sit', rand(4, 7));
         this.say();
       });
     } else {
       const pos = this.root.position;
       let target;
-      do target = freeCells[Math.floor(Math.random() * freeCells.length)];
-      while (Math.hypot(target.x - pos.x, target.z - pos.z) < 1.5);
+      let tries = 0;
+      do target = this.nav.randomFree();
+      while (Math.hypot(target.x - pos.x, target.z - pos.z) < 1.5 && ++tries < 20);
       this.walkTo(target, () => this.setState('idle', rand(1.5, 4)));
     }
   }
 
   walkTo(target, onArrive) {
-    this.path = findPath({ x: this.root.position.x, z: this.root.position.z }, target);
+    const pos = this.root.position;
+    this.path = this.nav.findPath({ x: pos.x, z: pos.z }, target, this.avatarObstacle());
     this.onArrive = onArrive;
     if (!this.path.length) {
       this.setState('idle', 1);
       return;
     }
     this.setState('walk');
+  }
+
+  /** Onde o boneco está agora (se estiver em pé no chão). */
+  avatarObstacle() {
+    if (!this.avatar?.isStanding) return [];
+    const { x, z } = this.avatar.root.position;
+    return [{ x, z, w: 0.6, d: 0.6 }];
   }
 
   faceTo(point) {

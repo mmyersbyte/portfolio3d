@@ -62,6 +62,7 @@ function createFloor(room) {
   top.rotation.x = -Math.PI / 2;
   top.position.y = 0.001;
   top.receiveShadow = true;
+  top.userData.floor = true;
   room.add(top);
 
   box(H * 2 + WT, 0.35, H * 2 + WT, COLORS.floorSide, {
@@ -125,6 +126,7 @@ function createRug(room) {
   rug.rotation.x = -Math.PI / 2;
   rug.position.set(x, 0.01, z);
   rug.receiveShadow = true;
+  rug.userData.floor = true;
   room.add(rug);
 }
 

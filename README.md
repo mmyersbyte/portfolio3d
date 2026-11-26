@@ -2,6 +2,7 @@
 
 Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feito com **Three.js** puro.
 
+- 🚶 Clique no chão para andar pelos tiles (estilo Habbo), na cadeira para sentar e na cama para deitar
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
@@ -35,11 +36,12 @@ src/
 │   ├── Room.js          # piso, paredes, janela, tapete, luzes
 │   ├── Furniture.js     # cama, mesa + notebook, cadeira, estante, planta...
 │   ├── PostIts.js
+│   ├── TileHighlight.js # quadrado branco no piso (hover/destino)
 │   └── helpers.js       # box(), materiais, texturas em canvas
 ├── entities/
-│   ├── Avatar.js        # boneco (olha pro mouse, pisca, acena, "fala")
+│   ├── Avatar.js        # boneco: anda, senta, deita, olha pro mouse, acena
 │   ├── Cat.js           # gato + máquina de estados
-│   └── pathfinding.js   # A* na grade do piso
+│   └── pathfinding.js   # NavGrid: A* na grade do piso (com obstáculos dinâmicos)
 ├── ui/                  # chat, modal, i18n, balões 3D→HTML
 ├── services/
 │   └── chatService.js   # mock hoje; POST pro backend quando existir
@@ -52,7 +54,10 @@ src/
 ## Editando o conteúdo
 
 Tudo fica em `src/data/content.js`. Campos com `{ pt, en }` são traduzidos automaticamente.
-Para mexer na posição dos móveis, edite `src/world/layout.js`: o gato usa os mesmos retângulos pra desviar.
+Para mexer na posição dos móveis, edite `src/world/layout.js`: o boneco e o gato usam os mesmos retângulos pra desviar,
+e `AVATAR_SPOTS` define onde ele senta/deita.
+
+No `pnpm dev`, a cena fica em `window.__scene` pra depurar pelo console.
 
 ## Chat / IA
 

@@ -90,6 +90,8 @@ async function boot() {
     actions,
     onReady: finishLoading,
   });
+  // facilita depurar pelo console no `pnpm dev` (não vai pro build)
+  if (import.meta.env.DEV) window.__scene = scene;
 }
 
 boot().catch((err) => {
