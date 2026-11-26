@@ -3,7 +3,7 @@
 Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feito com **Three.js** puro.
 
 - 🚶 Clique no chão para andar pelos tiles (estilo Habbo), na cadeira para sentar e na cama para deitar
-- 👕 Clique no guarda-roupa para trocar a roupa do boneco (estilo, cores, óculos). A escolha fica salva no navegador de quem visitou
+- 👕 Clique no guarda-roupa (ou em "Roupa" na barra) para vestir o boneco: roupa, cabeça (boné, gorro, fone, bandana), rosto (óculos, barba) e extras (mochila, corrente, relógio, caneca). A escolha fica salva no navegador de quem visitou
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
@@ -50,7 +50,7 @@ src/
 │   └── outfitStore.js   # roupa escolhida no localStorage (validada ao carregar)
 ├── data/
 │   ├── content.js       # ✏️ CV, links e projetos (edite aqui)
-│   ├── wardrobe.js      # ✏️ estilos/cores do guarda-roupa e meu visual padrão
+│   ├── wardrobe.js      # ✏️ abas/opções do guarda-roupa e meu visual padrão
 │   └── strings.js       # textos da interface PT/EN
 └── styles/main.css
 ```

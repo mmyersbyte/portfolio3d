@@ -262,11 +262,22 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   border-color: var(--line);
 }
 
-@media (max-width: 420px) {
+@media (max-width: 440px) {
+  /* 7 atalhos precisam caber num celular de 360px sem rolar */
+  .dock {
+    gap: 2px;
+    padding: 4px;
+  }
+
   .dock__btn {
-    min-width: 48px;
-    padding: 6px 4px;
-    font-size: 0.68rem;
+    min-width: 0;
+    padding: 5px 3px;
+    font-size: 0.6rem;
+  }
+
+  .dock__btn svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -895,4 +906,44 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 
 .wr-options label {
   position: relative;
+}
+
+.wr-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 10px 0;
+  border-bottom: 3px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.wr-tab {
+  display: flex;
+  flex: 1 1 0;
+  min-width: max-content;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: -3px;
+  padding: 7px 10px;
+  background: var(--panel-2);
+  border: 2px solid var(--line);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  font-family: var(--font-pixel);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 440px) {
+  .wr-tab {
+    padding: 7px 5px;
+    font-size: 0.78rem;
+  }
+}
+
+.wr-tab[aria-selected='true'] {
+  background: var(--panel);
+  border-bottom: 3px solid var(--panel);
+  font-weight: 700;
 }

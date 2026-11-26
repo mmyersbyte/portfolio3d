@@ -1,4 +1,4 @@
-import { WARDROBE, DEFAULT_OUTFIT } from '../data/wardrobe.js';
+import { WARDROBE_TABS, DEFAULT_OUTFIT } from '../data/wardrobe.js';
 
 /**
  * Roupa escolhida pelo visitante, salva no navegador dele.
@@ -7,19 +7,25 @@ import { WARDROBE, DEFAULT_OUTFIT } from '../data/wardrobe.js';
  */
 const KEY = 'portfolio3d:outfit';
 
-const valid = {
-  style: (v) => WARDROBE.styles.some((o) => o.id === v),
-  top: (v) => WARDROBE.top.some((o) => o.id === v),
-  pants: (v) => WARDROBE.pants.some((o) => o.id === v),
-  shoes: (v) => WARDROBE.shoes.some((o) => o.id === v),
-  glasses: (v) => typeof v === 'boolean',
-};
+// validadores gerados a partir das abas do guarda-roupa
+const validators = {};
+for (const tab of WARDROBE_TABS) {
+  for (const group of tab.groups) {
+    if (group.type === 'toggles') {
+      for (const o of group.options) validators[o.id] = (v) => typeof v === 'boolean';
+    } else {
+      const ids = new Set(group.options.map((o) => o.id));
+      validators[group.key] = (v) => ids.has(v);
+    }
+  }
+}
 
 export function sanitize(raw) {
   const outfit = { ...DEFAULT_OUTFIT };
-  if (raw && typeof raw === 'object') {
-    for (const key in valid) if (valid[key](raw[key])) outfit[key] = raw[key];
-  }
+  if (!raw || typeof raw !== 'object') return outfit;
+  // formato antigo: óculos era só liga/desliga
+  if (typeof raw.glasses === 'boolean') raw = { ...raw, glasses: raw.glasses ? 'regular' : 'none' };
+  for (const key in validators) if (validators[key](raw[key])) outfit[key] = raw[key];
   return outfit;
 }
 

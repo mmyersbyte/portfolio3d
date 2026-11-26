@@ -1,21 +1,24 @@
-import { WARDROBE, DEFAULT_OUTFIT } from '../data/wardrobe.js';
+import { WARDROBE_TABS, DEFAULT_OUTFIT } from '../data/wardrobe.js';
 import { saveOutfit, sanitize } from '../services/outfitStore.js';
-import { t, tr, onLangChange } from './i18n.js';
+import { tr, onLangChange } from './i18n.js';
 import { esc } from './views/escape.js';
 
 /**
- * Painel do guarda-roupa. Cada mudança é aplicada no boneco na hora (preview);
+ * Painel do guarda-roupa, com abas por categoria (montadas de data/wardrobe.js).
+ * Cada mudança é aplicada no boneco na hora (preview);
  * Salvar grava no localStorage, Cancelar/fechar volta pra roupa salva.
  */
 export class WardrobePanel {
   constructor({ onPreview, onOpenChange, onSaved }) {
     this.el = document.getElementById('wardrobe');
+    this.tabsEl = document.getElementById('wardrobe-tabs');
     this.form = document.getElementById('wardrobe-body');
     this.onPreview = onPreview;
     this.onOpenChange = onOpenChange;
     this.onSaved = onSaved;
     this.saved = null;
     this.draft = null;
+    this.tab = WARDROBE_TABS[0].id;
 
     this.form.addEventListener('submit', (e) => e.preventDefault());
     this.form.addEventListener('change', (e) => {
@@ -26,6 +29,21 @@ export class WardrobePanel {
       });
       this.onPreview(this.draft);
     });
+
+    this.tabsEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-tab]');
+      if (btn) this.selectTab(btn.dataset.tab);
+    });
+    // setas do teclado trocam de aba (padrão de tablist acessível)
+    this.tabsEl.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const i = WARDROBE_TABS.findIndex((tab) => tab.id === this.tab);
+      const n = WARDROBE_TABS.length;
+      const next = WARDROBE_TABS[(i + (e.key === 'ArrowRight' ? 1 : n - 1)) % n];
+      this.selectTab(next.id);
+      this.tabsEl.querySelector(`[data-tab="${next.id}"]`).focus();
+    });
+
     document.getElementById('wardrobe-close').addEventListener('click', () => this.cancel());
     document.getElementById('wardrobe-cancel').addEventListener('click', () => this.cancel());
     document.getElementById('wardrobe-save').addEventListener('click', () => this.save());
@@ -48,7 +66,7 @@ export class WardrobePanel {
     this.render();
     this.el.classList.add('is-open');
     this.el.setAttribute('aria-hidden', 'false');
-    this.el.querySelector('input:checked')?.focus({ preventScroll: true });
+    this.tabsEl.querySelector('[aria-selected="true"]')?.focus({ preventScroll: true });
     this.onOpenChange?.(true);
   }
 
@@ -72,32 +90,41 @@ export class WardrobePanel {
     this.onOpenChange?.(false);
   }
 
+  selectTab(id) {
+    this.tab = id;
+    this.render();
+    this.form.scrollTop = 0;
+  }
+
   render() {
+    this.tabsEl.innerHTML = WARDROBE_TABS.map((tab) => {
+      const on = tab.id === this.tab;
+      return `<button type="button" role="tab" class="wr-tab" data-tab="${tab.id}" id="wr-tab-${tab.id}"
+        aria-selected="${on}" aria-controls="wardrobe-body" tabindex="${on ? 0 : -1}">
+        <span aria-hidden="true">${tab.icon}</span>${esc(tr(tab.name))}</button>`;
+    }).join('');
+    this.form.setAttribute('aria-labelledby', `wr-tab-${this.tab}`);
+
+    const tab = WARDROBE_TABS.find((x) => x.id === this.tab);
+    this.form.innerHTML = tab.groups.map((group) => this.renderGroup(group)).join('');
+  }
+
+  renderGroup(group) {
     const d = this.draft;
-    const radios = (name, options, kind) =>
-      options
-        .map((o) => {
-          const label = esc(tr(o.name));
-          const checked = d[name] === o.id ? 'checked' : '';
-          const input = `<input type="radio" name="${name}" value="${esc(o.id)}" ${checked} aria-label="${label}">`;
-          return kind === 'swatch'
-            ? `<label class="swatch" title="${label}" style="--c:${esc(o.id)}">${input}<span></span></label>`
-            : `<label class="pill">${input}<span>${label}</span></label>`;
-        })
-        .join('');
-
-    const group = (title, body) =>
-      `<fieldset class="wr-group"><legend>${esc(t(title))}</legend><div class="wr-options">${body}</div></fieldset>`;
-
-    this.form.innerHTML = [
-      group('wardrobe.style', radios('style', WARDROBE.styles, 'pill')),
-      group('wardrobe.top', radios('top', WARDROBE.top, 'swatch')),
-      group('wardrobe.pants', radios('pants', WARDROBE.pants, 'swatch')),
-      group('wardrobe.shoes', radios('shoes', WARDROBE.shoes, 'swatch')),
-      group(
-        'wardrobe.extras',
-        `<label class="pill"><input type="checkbox" name="glasses" ${d.glasses ? 'checked' : ''}><span>🤓 ${esc(t('wardrobe.glasses'))}</span></label>`,
-      ),
-    ].join('');
+    const options = group.options
+      .map((o) => {
+        const label = esc(tr(o.name));
+        if (group.type === 'toggles') {
+          const checked = d[o.id] ? 'checked' : '';
+          return `<label class="pill"><input type="checkbox" name="${o.id}" ${checked}><span>${label}</span></label>`;
+        }
+        const checked = d[group.key] === o.id ? 'checked' : '';
+        const input = `<input type="radio" name="${group.key}" value="${esc(o.id)}" ${checked} aria-label="${label}">`;
+        return group.type === 'swatches'
+          ? `<label class="swatch" title="${label}" style="--c:${esc(o.id)}">${input}<span></span></label>`
+          : `<label class="pill">${input}<span>${label}</span></label>`;
+      })
+      .join('');
+    return `<fieldset class="wr-group"><legend>${esc(tr(group.label))}</legend><div class="wr-options">${options}</div></fieldset>`;
   }
 }

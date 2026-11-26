@@ -58,6 +58,12 @@
         </svg>
         <span data-i18n="dock.cv">CV</span>
       </button>
+      <button type="button" class="dock__btn" data-action="wardrobe">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 6a2 2 0 1 1 2-2M12 6v2L3 14v2h18v-2l-9-6" />
+        </svg>
+        <span data-i18n="dock.wardrobe">Roupa</span>
+      </button>
       <button type="button" class="dock__btn" data-action="github">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path
@@ -116,7 +122,8 @@
         <h2 class="sheet__title" id="wardrobe-title" data-i18n="wardrobe.title">Guarda-roupa</h2>
         <button type="button" class="icon-btn" id="wardrobe-close" data-i18n-aria="close">✕</button>
       </header>
-      <form class="wardrobe__body" id="wardrobe-body"></form>
+      <div class="wr-tabs" id="wardrobe-tabs" role="tablist" data-i18n-aria="wardrobe.title"></div>
+      <form class="wardrobe__body" id="wardrobe-body" role="tabpanel"></form>
       <footer class="wardrobe__footer">
         <button type="button" class="btn btn--ghost" id="wardrobe-reset" data-i18n="wardrobe.reset">
           Padrão

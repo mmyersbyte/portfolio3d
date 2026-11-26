@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { box, mat } from './helpers.js';
 import { LAYOUT } from './layout.js';
-import { WARDROBE } from '../data/wardrobe.js';
+import { TOPS } from '../data/wardrobe.js';
 
 const WOOD = '#8a5a3b';
 const WOOD_LIGHT = '#a8724b';
@@ -42,7 +42,7 @@ export class Wardrobe {
     rod.rotation.x = Math.PI / 2;
     rod.position.set(-0.02, h - 0.2, 0);
     g.add(rod);
-    const colors = WARDROBE.top.map((o) => o.id);
+    const colors = TOPS.map((o) => o.id);
     const step = (d - 0.25) / (colors.length - 1);
     colors.forEach((c, i) => {
       const cz = -d / 2 + 0.125 + i * step;

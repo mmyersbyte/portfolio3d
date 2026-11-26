@@ -75,6 +75,8 @@ export class Avatar {
       pants: cloth(),
       shoes: cloth(),
       sole: cloth(),
+      accent: cloth(), // boné, gorro, fone, mochila, caneca...
+      accentDetail: cloth(),
     };
     const M = this.mats;
 
@@ -166,10 +168,19 @@ export class Avatar {
       box(0.02, 0.022, 0.26, frame, { x: side * 0.265, y: 0.29, z: -0.12, ...g });
     }
     box(0.06, 0.022, 0.02, frame, { y: 0.27, ...g });
+    // lentes escuras (óculos de sol)
+    this.sunLenses = new THREE.Group();
+    for (const side of [-1, 1]) {
+      const lens = { parent: this.sunLenses, shadow: false };
+      box(0.14, 0.12, 0.008, '#141418', { x: side * 0.11, y: 0.185, z: -0.004, ...lens });
+      box(0.03, 0.03, 0.004, '#9aa7c7', { x: side * 0.11 - 0.035, y: 0.26, z: 0.002, ...lens });
+    }
+    this.glasses.add(this.sunLenses);
     this.glasses.position.z = 0.26;
     h.add(this.glasses);
 
     this.buildHair(h);
+    this.buildAccessories();
 
     // âncora pro balão de fala
     this.bubbleAnchor = new THREE.Object3D();
@@ -281,12 +292,120 @@ export class Avatar {
     for (const [style, parts] of Object.entries(this.styleParts)) {
       for (const part of parts) part.visible = style === outfit.style;
     }
-    this.glasses.visible = Boolean(outfit.glasses);
+    const accent = new THREE.Color(outfit.accent);
+    M.accent.color.copy(accent);
+    M.accentDetail.color.copy(accent).offsetHSL(0, 0, accent.getHSL({}).l > 0.85 ? -0.15 : -0.1);
+
+    for (const [id, hat] of Object.entries(this.hats)) hat.visible = id === outfit.hat;
+    this.glasses.visible = outfit.glasses !== 'none';
+    this.sunLenses.visible = outfit.glasses === 'sun';
+    for (const [id, part] of Object.entries(this.beards)) part.visible = id === outfit.beard;
+    for (const [id, part] of Object.entries(this.extras)) part.visible = Boolean(outfit[id]);
   }
 
   /** Vira de frente pra câmera (usado no guarda-roupa). */
   faceCamera() {
     this.heading = FACE_CAMERA;
+  }
+
+  /**
+   * Acessórios do guarda-roupa. Tudo é criado uma vez e só liga/desliga
+   * em setOutfit (trocar é instantâneo, sem recriar geometria).
+   */
+  buildAccessories() {
+    const M = this.mats;
+    const h = this.head;
+    const group = (parent) => {
+      const g = new THREE.Group();
+      parent.add(g);
+      return g;
+    };
+    const DARK = '#2b2d35';
+
+    // ----- cabeça -----
+    const cap = group(h);
+    box(0.62, 0.18, 0.6, M.accent, { y: 0.58, z: -0.01, parent: cap });
+    box(0.08, 0.04, 0.08, M.accentDetail, { y: 0.76, parent: cap });
+    box(0.52, 0.035, 0.28, M.accentDetail, { y: 0.58, z: 0.4, parent: cap }); // aba
+
+    const beanie = group(h);
+    // dois blocos: o de cima mais estreito "arredonda" o gorro
+    box(0.62, 0.16, 0.6, M.accent, { y: 0.55, z: -0.01, parent: beanie });
+    box(0.52, 0.07, 0.5, M.accent, { y: 0.71, z: -0.01, parent: beanie });
+    box(0.64, 0.08, 0.62, M.accentDetail, { y: 0.5, z: -0.01, parent: beanie });
+    box(0.12, 0.1, 0.12, '#f4f1ea', { y: 0.78, parent: beanie }); // pompom
+
+    const headphones = group(h);
+    box(0.68, 0.05, 0.09, M.accentDetail, { y: 0.76, parent: headphones });
+    for (const side of [-1, 1]) {
+      box(0.04, 0.5, 0.07, M.accentDetail, { x: side * 0.33, y: 0.28, parent: headphones });
+      box(0.08, 0.18, 0.18, M.accent, { x: side * 0.31, y: 0.12, parent: headphones });
+    }
+
+    const bandana = group(h);
+    box(0.6, 0.08, 0.6, M.accent, { y: 0.45, z: -0.01, parent: bandana });
+    box(0.1, 0.1, 0.06, M.accentDetail, { y: 0.43, z: -0.33, parent: bandana }); // nó
+    box(0.05, 0.14, 0.03, M.accentDetail, { x: 0.03, y: 0.3, z: -0.33, parent: bandana });
+
+    this.hats = { cap, beanie, headphones, bandana };
+
+    // ----- rosto -----
+    const mustache = group(h);
+    box(0.22, 0.045, 0.03, HAIR, { y: 0.125, z: 0.245, parent: mustache, shadow: false });
+
+    const beard = group(h);
+    box(0.22, 0.045, 0.03, HAIR, { y: 0.125, z: 0.245, parent: beard, shadow: false });
+    box(0.46, 0.09, 0.03, HAIR, { y: 0, z: 0.245, parent: beard, shadow: false });
+    for (const side of [-1, 1]) {
+      box(0.03, 0.22, 0.32, HAIR, { x: side * 0.258, y: 0, z: 0.06, parent: beard, shadow: false });
+    }
+    this.beards = { mustache, beard };
+
+    // ----- extras -----
+    const T = this.torso;
+    const backpack = group(T);
+    box(0.44, 0.46, 0.16, M.accent, { y: 0.08, z: -0.24, parent: backpack });
+    box(0.3, 0.16, 0.04, M.accentDetail, { y: 0.12, z: -0.33, parent: backpack });
+    for (const side of [-1, 1]) {
+      box(0.06, 0.52, 0.02, DARK, { x: side * 0.17, y: 0.08, z: 0.165, parent: backpack });
+      box(0.06, 0.02, 0.34, DARK, { x: side * 0.17, y: 0.62, parent: backpack });
+    }
+
+    const gold = new THREE.MeshStandardMaterial({
+      color: '#e9c46a',
+      metalness: 0.6,
+      roughness: 0.3,
+    });
+    const chain = group(T);
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 7; i++) {
+        const k = i / 6;
+        box(0.028, 0.028, 0.02, gold, {
+          x: side * 0.13 * (1 - k),
+          y: 0.58 - 0.17 * k,
+          z: 0.17,
+          parent: chain,
+          shadow: false,
+        });
+      }
+    }
+    box(0.06, 0.07, 0.02, gold, { y: 0.32, z: 0.172, parent: chain, shadow: false });
+
+    // relógio no pulso direito (braço -x), caneca na mão esquerda
+    const watch = group(this.arms[0]);
+    box(0.19, 0.06, 0.22, '#1f1f26', { y: -0.5, parent: watch });
+    const screen = new THREE.MeshBasicMaterial({ color: '#7fd1ff', toneMapped: false });
+    box(0.012, 0.045, 0.08, screen, { x: -0.1, y: -0.493, parent: watch, shadow: false });
+
+    const mug = group(this.arms[1]);
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.065, 0.15, 10), M.accent);
+    cup.position.set(0, -0.62, 0.15);
+    cup.castShadow = true;
+    mug.add(cup);
+    box(0.11, 0.01, 0.11, '#5a3a24', { y: -0.551, z: 0.15, parent: mug, shadow: false }); // café
+    box(0.025, 0.08, 0.05, M.accent, { x: 0, y: -0.66, z: 0.06, parent: mug });
+
+    this.extras = { backpack, chain, watch, mug };
   }
 
   get isStanding() {
