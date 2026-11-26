@@ -180,13 +180,9 @@ function createPoster(room) {
     ctx.fillStyle = '#264653';
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = '#e9c46a';
-    ctx.font = `bold 64px ${PIXEL_FONT}`;
+    ctx.font = `bold 72px ${PIXEL_FONT}`;
     ctx.textAlign = 'center';
-    ctx.fillText('</>', w / 2, 120);
-    ctx.font = `28px ${PIXEL_FONT}`;
-    ctx.fillStyle = '#f4a261';
-    ctx.fillText('npm run', w / 2, 180);
-    ctx.fillText('dreams', w / 2, 212);
+    ctx.fillText('</>', w / 2, 150);
   });
   const poster = new THREE.Mesh(
     new THREE.PlaneGeometry(0.9, 1.2),

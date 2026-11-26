@@ -40,7 +40,7 @@ export const cv = {
     },
     {
       role: { pt: 'Desenvolvedor Front-end', en: 'Front-end Developer' },
-      company: 'Café & Código Studio',
+      company: 'Estúdio Aurora',
       period: { pt: '2022 — 2024', en: '2022 — 2024' },
       bullets: {
         pt: [
