@@ -8,6 +8,8 @@ import { projectsView } from './ui/views/projectsView.js';
 import { WardrobePanel } from './ui/WardrobePanel.js';
 import { loadOutfit } from './services/outfitStore.js';
 import { PetPanel } from './ui/PetPanel.js';
+import { LofiPlayer } from './audio/LofiPlayer.js';
+import { icon } from './ui/icons.js';
 
 const $ = (id) => document.getElementById(id);
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -84,6 +86,20 @@ const actions = {
   instagram: () => openLink(links.instagram),
 };
 
+// ---------- música lo-fi (botão ao lado dos idiomas) ----------
+const music = new LofiPlayer();
+const musicBtn = $('music-toggle');
+function renderMusicButton() {
+  const on = music.isPlaying;
+  $('music-icon').innerHTML = icon(on ? 'pause' : 'play');
+  musicBtn.setAttribute('aria-pressed', String(on));
+  musicBtn.dataset.i18nAria = on ? 'music.pause' : 'music.play';
+  musicBtn.setAttribute('aria-label', t(musicBtn.dataset.i18nAria));
+}
+music.onChange(renderMusicButton);
+musicBtn.addEventListener('click', () => music.toggle());
+renderMusicButton();
+
 // ---------- interface fixa ----------
 document.querySelector('.dock').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action]');
@@ -144,9 +160,13 @@ async function boot() {
     onReady: finishLoading,
   });
   scene.avatar.setOutfit(loadOutfit());
+  scene.attachMusic(music);
   wardrobePanel.setStudio(scene.studio);
   // facilita depurar pelo console no `pnpm dev` (não vai pro build)
-  if (import.meta.env.DEV) window.__scene = scene;
+  if (import.meta.env.DEV) {
+    window.__scene = scene;
+    window.__music = music;
+  }
 }
 
 boot().catch((err) => {

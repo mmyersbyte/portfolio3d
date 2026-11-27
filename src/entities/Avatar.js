@@ -649,8 +649,11 @@ export class Avatar {
     const pitch = THREE.MathUtils.clamp(-ndc.y * 0.25, -0.2, 0.25) * facing;
     this.head.rotation.y += (yaw - this.head.rotation.y) * k;
     const laugh = this.laughAmount ?? 0;
+    // com música tocando e parado, balança a cabeça no ritmo (72 bpm)
+    const nod =
+      this.groove && this.state === 'idle' ? Math.sin(t * Math.PI * 2 * (72 / 60)) * 0.09 : 0;
     // rindo, a cabeça vai pra trás
-    this.head.rotation.x += (pitch - laugh * 0.35 - this.head.rotation.x) * k;
+    this.head.rotation.x += (pitch + nod - laugh * 0.35 - this.head.rotation.x) * k;
 
     // piscada
     this.nextBlink -= dt;

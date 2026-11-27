@@ -5,6 +5,7 @@ import { RoomWindow } from './world/Window.js';
 import { Environment } from './world/Environment.js';
 import { LightSwitch } from './world/LightSwitch.js';
 import { WallClock } from './world/WallClock.js';
+import { Speaker } from './world/Speaker.js';
 import { createPostIts } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
 import { Wardrobe } from './world/Wardrobe.js';
@@ -122,6 +123,21 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
         pickLine('me.say.time').replace('{time}', clock.text),
       ),
   });
+
+  // ---------- caixinha de som (lo-fi) ----------
+  const speaker = new Speaker(exp);
+  let music = null;
+  it.register(speaker.group, {
+    label: () => (music?.isPlaying ? 'label.speakerPause' : 'label.speakerPlay'),
+    hoverScale: 1.15,
+    onClick: () => music?.toggle(),
+  });
+  /** Liga o player (que vive na UI) à caixinha e ao boneco. */
+  function attachMusic(player) {
+    music = player;
+    speaker.attach(player);
+    player.onChange((playing) => (avatar.groove = playing));
+  }
 
   // ---------- interruptor ----------
   const lightSwitch = new LightSwitch(exp.scene);
@@ -276,6 +292,8 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
         return;
       case 'light':
         return lightSwitch.set(env.toggleLight());
+      case 'music':
+        return music?.toggle();
       case 'sun': {
         const changed = env.commandSun();
         return changed ? meSay('me.say.sun') : meSay('me.say.sunAlready');
@@ -316,5 +334,6 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     commandCat,
     framePet,
     runCommand,
+    attachMusic,
   };
 }

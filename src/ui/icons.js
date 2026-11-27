@@ -9,6 +9,11 @@ const PATHS = {
     '<circle cx="6.5" cy="13" r="3.5"/><circle cx="17.5" cy="13" r="3.5"/><path d="M10 12.5h4M3 13 2 9M21 13l1-4"/>',
   bag: '<path d="M6 9h12l-.8 12H6.8z"/><path d="M9 9V7a3 3 0 0 1 6 0v2M9 14h6"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  // música
+  play: '<path d="M7 4.5v15l12-7.5z"/>',
+  pause: '<path d="M8 5v14M16 5v14"/>',
+  music:
+    '<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
   // comandos do chat
   command: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M12.5 15H17"/>',
   hand: '<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 10.5V6a1.5 1.5 0 0 1 3 0v8a7 7 0 0 1-7 7h-.5A6.5 6.5 0 0 1 4 15.7l-1-3.2a1.5 1.5 0 0 1 2.7-1.2L8 14"/>',

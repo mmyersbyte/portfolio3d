@@ -36,9 +36,22 @@
         <strong class="brand__name" id="brand-name">Pedro Victor</strong>
         <span class="brand__role" id="brand-role"></span>
       </div>
-      <button class="lang-toggle" id="lang-toggle" type="button" data-i18n-aria="lang.aria">
-        <span data-lang="pt">PT</span><span data-lang="en">EN</span>
-      </button>
+      <div class="topbar__actions">
+        <button
+          class="music-toggle"
+          id="music-toggle"
+          type="button"
+          aria-pressed="false"
+          data-i18n-aria="music.play"
+        >
+          <span class="music-toggle__icon" id="music-icon" aria-hidden="true"></span>
+          <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="music-toggle__label">lo-fi</span>
+        </button>
+        <button class="lang-toggle" id="lang-toggle" type="button" data-i18n-aria="lang.aria">
+          <span data-lang="pt">PT</span><span data-lang="en">EN</span>
+        </button>
+      </div>
     </header>
 
     <p class="hint" id="hint" data-i18n="hint.desktop"></p>
