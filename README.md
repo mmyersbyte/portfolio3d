@@ -4,6 +4,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 
 - 🚶 Clique no chão para andar pelos tiles (estilo Habbo), na cadeira para sentar e na cama para deitar
 - 👕 Clique no guarda-roupa (ou em "Roupa" na barra) para vestir o boneco: roupa, cabeça (boné, gorro, fone, bandana), rosto (óculos, barba) e extras (mochila, corrente, relógio, caneca). Cada item tem miniatura 3D do próprio boneco e, no celular, uma prévia ao vivo girável. A escolha fica salva no navegador de quem visitou
+- ⌨️ No chat, o botão ao lado do X lista os comandos (ou digite `:acenar`, `:rir`, `:dormir`, `:acordar`, `:luz`, `:sol`, `:chuva`, `:dia`, `:noite`, `:agora`). Indo dormir, eu deito na cama e o Frajola dorme no parapeito
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
@@ -58,6 +59,7 @@ src/
 │   ├── content.js       # ✏️ CV, links e projetos (edite aqui)
 │   ├── wardrobe.js      # ✏️ abas/opções do guarda-roupa e meu visual padrão
 │   ├── pet.js           # ✏️ nome, nascimento e comandos do gato
+│   ├── commands.js      # ✏️ comandos do chat e as palavras aceitas (:acenar, :wave…)
 │   └── strings.js       # textos da interface PT/EN
 └── styles/main.css
 ```

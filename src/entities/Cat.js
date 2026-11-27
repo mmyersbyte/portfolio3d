@@ -255,7 +255,7 @@ export class Cat {
   }
 
   /** Agacha, pula na cama (dorme) ou no parapeito (fica olhando lá fora). */
-  climb(where) {
+  climb(where, { nap = false } = {}) {
     const bed = where === 'bed';
     const spot = bed ? CAT_SPOTS.bedSleep : CAT_SPOTS.windowSit;
     this.faceTo(spot);
@@ -268,6 +268,8 @@ export class Cat {
           this.heading = Math.PI / 4 + rand(-0.5, 0.5);
           this.setState('sleep', rand(14, 24));
           this.onSleepChange?.(true);
+        } else if (nap) {
+          this.fallAsleepOnSill();
         } else {
           this.lastWindow = this.exp.elapsed;
           this.heading = -Math.PI / 2; // de costas pra gente, olhando a rua
@@ -278,6 +280,13 @@ export class Cat {
           }
         }
       });
+  }
+
+  /** Deita no parapeito (ao comprido, cabe certinho) e dorme até alguém liberar. */
+  fallAsleepOnSill() {
+    this.heading = 0;
+    this.setState('sleep', Infinity);
+    this.onSleepChange?.(true);
   }
 
   /** Onde ele cai quando desce do móvel em que está. */
@@ -346,6 +355,20 @@ export class Cat {
         this.release();
         this.say('free');
         break;
+      case 'nap':
+        // eu fui dormir: ele vai pro parapeito e dorme lá até eu acordar
+        this.obeyUntil = Infinity;
+        if (this.perch === 'window') {
+          this.fallAsleepOnSill();
+        } else if (this.onBed) {
+          this.jump(this.landSpot(), 0, () => {
+            this.perch = null;
+            this.command('nap');
+          });
+        } else {
+          this.walkTo(CAT_SPOTS.windowLaunch, () => this.climb('window', { nap: true }));
+        }
+        break;
     }
   }
 
@@ -367,6 +390,7 @@ export class Cat {
   /** Volta a ser livre (desce da cama se estiver lá). */
   release() {
     this.obeyUntil = 0;
+    if (this.state === 'sleep') this.onSleepChange?.(false);
     if (this.onBed) this.setState('wake', 0.4);
     else this.setState('idle', rand(0.5, 1.5));
   }

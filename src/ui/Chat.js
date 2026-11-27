@@ -1,12 +1,15 @@
 import { askAvatar } from '../services/chatService.js';
 import { t, getLang, onLangChange } from './i18n.js';
+import { COMMAND_GROUPS, parseCommand, mainAlias } from '../data/commands.js';
+import { esc } from './views/escape.js';
+import { icon } from './icons.js';
 
 /**
  * Painel de chat (bottom sheet no celular, lateral no desktop).
  * Guarda o histórico em memória no formato { role, content } que a API vai receber.
  */
 export class Chat {
-  constructor({ onOpenChange, onTalkingChange } = {}) {
+  constructor({ onOpenChange, onTalkingChange, onCommand } = {}) {
     this.el = document.getElementById('chat');
     this.log = document.getElementById('chat-log');
     this.form = document.getElementById('chat-form');
@@ -14,6 +17,21 @@ export class Chat {
     this.suggestions = document.getElementById('chat-suggestions');
     this.onOpenChange = onOpenChange;
     this.onTalkingChange = onTalkingChange;
+    this.onCommand = onCommand;
+
+    // lista de comandos (botão ao lado do X)
+    this.cmdToggle = document.getElementById('chat-cmd-toggle');
+    this.cmdView = document.getElementById('chat-commands');
+    this.cmdToggle.innerHTML = icon('command');
+    this.cmdToggle.addEventListener('click', () => this.showCommands(this.cmdView.hidden));
+    this.cmdView.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-cmd]');
+      if (!btn) return;
+      this.onCommand?.(btn.dataset.cmd);
+      btn.classList.remove('is-sent');
+      void btn.offsetWidth;
+      btn.classList.add('is-sent');
+    });
     this.history = [];
     this.busy = false;
 
@@ -25,8 +43,12 @@ export class Chat {
       this.send(this.input.value);
     });
     this.el.addEventListener('keydown', (e) => e.key === 'Escape' && this.close());
-    onLangChange(() => this.renderSuggestions());
+    onLangChange(() => {
+      this.renderSuggestions();
+      this.renderCommands();
+    });
     this.renderSuggestions();
+    this.renderCommands();
   }
 
   get isOpen() {
@@ -64,6 +86,44 @@ export class Chat {
     this.onOpenChange?.(false);
   }
 
+  /** Alterna entre a conversa e a lista de comandos. */
+  showCommands(show) {
+    this.cmdView.hidden = !show;
+    this.log.hidden = show;
+    this.suggestions.hidden = show;
+    this.cmdToggle.setAttribute('aria-pressed', String(show));
+    this.cmdToggle.setAttribute('aria-label', t(show ? 'chat.back' : 'chat.commands'));
+    if (!show) this.log.scrollTop = this.log.scrollHeight;
+  }
+
+  renderCommands() {
+    const lang = getLang();
+    this.cmdView.innerHTML =
+      `<p class="pet__hint">${esc(t('cmd.hint'))}</p>` +
+      COMMAND_GROUPS.map(
+        (group) => `<h3 class="pet__title">${esc(t(`cmd.group.${group.id}`))}</h3>
+        <ul class="pet__commands">${group.commands
+          .map(
+            (cmd) => `<li><button type="button" class="pet-cmd" data-cmd="${cmd.id}">
+              <span class="pet-cmd__icon">${icon(cmd.icon)}</span>
+              <span class="pet-cmd__text"><strong>${esc(t(`cmd.${cmd.id}`))}</strong>
+              <small>${esc(t(`cmd.${cmd.id}.hint`))}</small></span>
+              <code class="pet-cmd__alias">:${esc(mainAlias(cmd, lang))}</code>
+            </button></li>`,
+          )
+          .join('')}</ul>`,
+      ).join('');
+  }
+
+  /** Linha de sistema (não vai pro histórico da IA). */
+  note(text) {
+    const msg = document.createElement('div');
+    msg.className = 'msg msg--system';
+    msg.textContent = text;
+    this.log.append(msg);
+    this.log.scrollTop = this.log.scrollHeight;
+  }
+
   toggle() {
     this.isOpen ? this.close() : this.open();
   }
@@ -93,6 +153,20 @@ export class Chat {
   async send(raw) {
     const text = raw.trim();
     if (!text || this.busy) return;
+
+    // ":acenar", "/chuva"... são comandos, não perguntas
+    const cmd = parseCommand(text);
+    if (cmd !== null) {
+      this.input.value = '';
+      if (cmd) {
+        this.onCommand?.(cmd);
+        this.note(t('cmd.ran').replace('{name}', t(`cmd.${cmd}`)));
+      } else {
+        this.note(t('cmd.unknown'));
+      }
+      return;
+    }
+
     this.busy = true;
     this.input.value = '';
     this.push('user', text);

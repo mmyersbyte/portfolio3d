@@ -10,6 +10,7 @@ const HAIR_LIGHT = '#2b2420';
 
 const SPEED = 1.5;
 const PRESS_TIME = 0.5;
+const LAUGH_TIME = 1.6;
 const FACE_CAMERA = Math.PI / 4;
 
 // poses do corpo (interpoladas): deitar gira o corpo inteiro, sentar dobra pernas e braços
@@ -60,6 +61,9 @@ export class Avatar {
 
     this.waveT = 0;
     this.pressT = 0; // apertando algo na parede (interruptor)
+    this.laughT = 0;
+    this.sleeping = false;
+    this.onSleepChange = null; // (sleeping) => void, pro "zZz" na cena
     this.talking = false;
     this.nextBlink = 2;
 
@@ -196,6 +200,10 @@ export class Avatar {
     this.bubbleAnchor = new THREE.Object3D();
     this.bubbleAnchor.position.y = 2.25;
     this.root.add(this.bubbleAnchor);
+    // deitado na cama a cabeça fica ~1.6 pra trás dos pés: o "zZz" sai dali
+    this.sleepAnchor = new THREE.Object3D();
+    this.sleepAnchor.position.set(0, 0.85, -1.6);
+    this.root.add(this.sleepAnchor);
   }
 
   /**
@@ -452,17 +460,52 @@ export class Avatar {
     return !this.nav.isBlocked(x, z);
   }
 
-  enter(spot) {
+  enter(spot, then) {
     this.spot = spot;
     this.state = 'enter';
     this.targetPose = POSES[spot.pose];
     this.heading = spot.heading;
-    this.startTween(spot.pos, spot.pose === 'lie' ? 0.75 : 0.5, () => (this.state = 'seated'));
+    this.startTween(spot.pos, spot.pose === 'lie' ? 0.75 : 0.5, () => {
+      this.state = 'seated';
+      then?.();
+    });
+  }
+
+  /** Vai pra cama, deita e fecha os olhos. */
+  sleep(onAsleep) {
+    const bed = AVATAR_SPOTS.bed;
+    const fallAsleep = () => {
+      this.sleeping = true;
+      this.onSleepChange?.(true);
+      onAsleep?.();
+    };
+    if (this.spot === bed && this.state === 'seated') fallAsleep();
+    else this.walkTo(bed.approach, () => this.enter(bed, fallAsleep));
+  }
+
+  /** Acorda e levanta da cama. */
+  wakeUp(then) {
+    if (!this.sleeping) return then?.();
+    this.setAwake();
+    setTimeout(() => this.leave(then), 500); // abre o olho, espreguiça e levanta
+  }
+
+  setAwake() {
+    if (!this.sleeping) return;
+    this.sleeping = false;
+    this.onSleepChange?.(false);
+  }
+
+  /** Risada: corpo chacoalha, cabeça pra trás, olhos apertados. */
+  laugh() {
+    this.laughT = LAUGH_TIME;
+    if (this.state === 'idle') this.heading = FACE_CAMERA;
   }
 
   leave(then) {
     const spot = this.spot;
     if (!spot) return then?.();
+    this.setAwake();
     this.state = 'leave';
     this.targetPose = POSES.stand;
     const to = { x: spot.approach.x, y: 0, z: spot.approach.z };
@@ -554,8 +597,19 @@ export class Avatar {
     const swing = Math.sin(this.walkPhase) * 0.55 * this.walkAmount;
 
     this.body.rotation.x = P.lie;
-    this.body.position.y = Math.abs(Math.cos(this.walkPhase)) * 0.04 * this.walkAmount;
-    this.torso.scale.y = 1 + Math.sin(t * 2.2) * 0.012; // respiração
+    let laugh = 0;
+    if (this.laughT > 0) {
+      this.laughT = Math.max(0, this.laughT - dt);
+      laugh = Math.min(1, this.laughT * 3, (LAUGH_TIME - this.laughT) * 6);
+    }
+    this.laughAmount = laugh;
+    this.body.position.y =
+      Math.abs(Math.cos(this.walkPhase)) * 0.04 * this.walkAmount +
+      Math.abs(Math.sin(t * 22)) * 0.035 * laugh;
+    // respiração (mais lenta e funda dormindo)
+    this.torso.scale.y = this.sleeping
+      ? 1 + Math.sin(t * 1.3) * 0.025
+      : 1 + Math.sin(t * 2.2) * 0.012;
 
     this.legs[0].rotation.x = P.leg + swing;
     this.legs[1].rotation.x = P.leg - swing;
@@ -594,15 +648,19 @@ export class Avatar {
     const yaw = THREE.MathUtils.clamp(ndc.x * 0.7, -0.6, 0.6) * facing;
     const pitch = THREE.MathUtils.clamp(-ndc.y * 0.25, -0.2, 0.25) * facing;
     this.head.rotation.y += (yaw - this.head.rotation.y) * k;
-    this.head.rotation.x += (pitch - this.head.rotation.x) * k;
+    const laugh = this.laughAmount ?? 0;
+    // rindo, a cabeça vai pra trás
+    this.head.rotation.x += (pitch - laugh * 0.35 - this.head.rotation.x) * k;
 
     // piscada
     this.nextBlink -= dt;
     const closed = this.nextBlink < 0.12;
     if (this.nextBlink < 0) this.nextBlink = 2 + Math.random() * 3;
-    for (const eye of this.eyes) eye.scale.y = closed ? 0.15 : 1;
+    const eyeOpen = this.sleeping ? 0.12 : closed ? 0.15 : 1 - laugh * 0.65;
+    for (const eye of this.eyes) eye.scale.y = eyeOpen;
 
-    // boca mexendo quando fala
-    this.mouth.scale.y = this.talking ? 1 + Math.abs(Math.sin(t * 16)) * 2.5 : 1;
+    // boca: fala, risada (bem aberta) ou dormindo (fechadinha)
+    if (laugh > 0) this.mouth.scale.y = 2.5 + Math.abs(Math.sin(t * 22)) * 2;
+    else this.mouth.scale.y = this.talking ? 1 + Math.abs(Math.sin(t * 16)) * 2.5 : 1;
   }
 }

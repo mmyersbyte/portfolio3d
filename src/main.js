@@ -30,6 +30,7 @@ const chat = new Chat({
     syncBubble();
   },
   onTalkingChange: (on) => scene?.avatar.setTalking(on),
+  onCommand: (id) => scene?.runCommand(id),
 });
 
 const wardrobePanel = new WardrobePanel({

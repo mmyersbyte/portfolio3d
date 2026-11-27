@@ -194,7 +194,29 @@ export class Environment {
   }
 
   setHour(h) {
+    this.transitionTo(h);
+  }
+
+  /**
+   * Muda a hora com uma transição (o céu "passa" até lá, sempre pra frente).
+   * null volta pro horário real de Brasília.
+   */
+  transitionTo(h) {
     this.fixedHour = h;
+    const to = h ?? brasiliaHour();
+    const delta = (to - this.hour + 24) % 24;
+    this.hourTween = { from: this.hour, delta, t: 0 };
+  }
+
+  /** Comando de clima: muda mais rápido do que o clima "natural". */
+  commandWeather(rain) {
+    this.boost = 1;
+    if (rain) {
+      this.startRain();
+      this.rainTarget = Math.max(this.rainTarget, 0.8);
+    } else {
+      this.stopRain();
+    }
   }
 
   updateWeather(dt) {
@@ -211,7 +233,8 @@ export class Environment {
     }
 
     // a chuva engrossa em ~15 s e vai parando devagar (~1 min até secar o céu)
-    const rate = this.rainTarget > this.rain ? 0.065 : 0.05;
+    this.boost = Math.max(0, (this.boost ?? 0) - dt / 12);
+    const rate = (this.rainTarget > this.rain ? 0.065 : 0.05) * (1 + this.boost * 4);
     this.rain += (this.rainTarget - this.rain) * Math.min(1, dt * rate);
     // vidro molha rápido e seca bem mais devagar que a chuva
     const dry = this.rain > this.wet ? 0.5 : 0.03;
@@ -237,10 +260,17 @@ export class Environment {
 
   update(dt, t) {
     this.clockAcc += dt;
+    const tw = this.hourTween;
+    if (tw) {
+      tw.t = Math.min(1, tw.t + dt / 2.5);
+      const e = tw.t < 0.5 ? 2 * tw.t * tw.t : 1 - (-2 * tw.t + 2) ** 2 / 2;
+      this.hour = (tw.from + tw.delta * e) % 24;
+      if (tw.t === 1) this.hourTween = null;
+      this.clockAcc = 1; // atualiza o despertador junto
+    }
     if (this.clockAcc >= 1) {
       this.clockAcc = 0;
-      if (this.fixedHour == null) this.hour = brasiliaHour();
-      else this.hour = this.fixedHour;
+      if (!this.hourTween) this.hour = this.fixedHour ?? brasiliaHour();
       const hh = String(Math.floor(this.hour)).padStart(2, '0');
       const mm = String(Math.floor((this.hour % 1) * 60)).padStart(2, '0');
       const text = `${hh}:${mm}`;

@@ -217,6 +217,65 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     exp.rig.focus(mid, { zoom, shiftY });
   }
 
+  // ---------- comandos do chat (eu e o quarto) ----------
+  const lastMine = {};
+  const pickLine = (key) => {
+    const pool = t(key);
+    let line;
+    do line = pool[Math.floor(Math.random() * pool.length)];
+    while (pool.length > 1 && line === lastMine[key]);
+    lastMine[key] = line;
+    return line;
+  };
+  /** Eu falo num balão que sobe (dormindo, o balão sai da cabeça na cama). */
+  const meSay = (key) =>
+    labels.say(
+      avatar.sleeping ? avatar.sleepAnchor : avatar.bubbleAnchor,
+      profile.name,
+      pickLine(key),
+    );
+
+  let myZzz = null;
+  avatar.onSleepChange = (sleeping) => {
+    myZzz?.remove();
+    myZzz = sleeping
+      ? labels.add(avatar.sleepAnchor, { text: 'z Z z', className: 'bubble--soft' })
+      : null;
+  };
+
+  function runCommand(id) {
+    switch (id) {
+      case 'wave':
+      case 'laugh':
+        if (avatar.sleeping) return meSay('me.say.asleep');
+        if (id === 'wave') avatar.wave();
+        else avatar.laugh();
+        return meSay(`me.say.${id}`);
+      case 'sleep':
+        meSay('me.say.sleep');
+        avatar.sleep();
+        cat.command('nap'); // Frajola vai dormir na janela
+        return;
+      case 'wake':
+        if (avatar.sleeping) meSay('me.say.wake');
+        avatar.wakeUp();
+        if (cat.obeyUntil === Infinity) cat.release();
+        return;
+      case 'light':
+        return lightSwitch.set(env.toggleLight());
+      case 'sun':
+        return env.commandWeather(false);
+      case 'rain':
+        return env.commandWeather(true);
+      case 'day':
+        return env.transitionTo(14);
+      case 'night':
+        return env.transitionTo(22);
+      case 'now':
+        return env.transitionTo(null);
+    }
+  }
+
   /** Eu falo o comando (balão que sobe), viro pro gato e ele obedece. */
   function commandCat(cmd) {
     labels.say(avatar.bubbleAnchor, profile.name, petLine(`pet.say.${cmd}`));
@@ -241,5 +300,6 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     closeWardrobe,
     commandCat,
     framePet,
+    runCommand,
   };
 }
