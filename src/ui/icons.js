@@ -11,7 +11,8 @@ const PATHS = {
   check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
   // música
   play: '<path d="M7 4.5v15l12-7.5z"/>',
-  pause: '<path d="M8 5v14M16 5v14"/>',
+  pause:
+    '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
   music:
     '<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
   // comandos do chat
