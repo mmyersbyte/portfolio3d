@@ -26,7 +26,7 @@ const NOTES = [
   {
     id: 'instagram',
     title: 'Insta',
-    sub: 'fotos & gato',
+    sub: '@pedrovictorc',
     color: '#ff8fab',
     x: 2.5,
     y: 2.05,

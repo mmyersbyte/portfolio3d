@@ -1,10 +1,10 @@
 import './styles/main.css';
-import { profile, links } from './data/content.js';
+import { profile } from './data/content.js';
 import { t, tr, applyTranslations, toggleLang, onLangChange } from './ui/i18n.js';
 import { Modal } from './ui/Modal.js';
 import { Chat } from './ui/Chat.js';
 import { cvView } from './ui/views/cvView.js';
-import { projectsView } from './ui/views/projectsView.js';
+import { Browser } from './ui/browser/Browser.js';
 import { WardrobePanel } from './ui/WardrobePanel.js';
 import { loadOutfit } from './services/outfitStore.js';
 import { PetPanel } from './ui/PetPanel.js';
@@ -67,7 +67,14 @@ function toast(text) {
   toastTimer = setTimeout(() => el.classList.remove('is-visible'), 2800);
 }
 
-const openLink = (url) => window.open(url, '_blank', 'noopener');
+// navegador do notebook: projetos e redes abrem nele (com botão pro site de verdade)
+const browser = new Browser();
+const openInBrowser = (page) => {
+  chat.close();
+  petPanel.close();
+  wardrobePanel.cancel();
+  browser.open(page);
+};
 
 const actions = {
   chat: () => chat.toggle(),
@@ -79,11 +86,12 @@ const actions = {
   },
   // andou pra longe do guarda-roupa: fecha sem salvar
   onWalk: () => wardrobePanel.cancel(),
-  projects: () => modal.open(projectsView),
+  laptop: () => openInBrowser('home'),
+  projects: () => openInBrowser('projects'),
   cv: () => modal.open(cvView),
-  github: () => openLink(links.github),
-  linkedin: () => openLink(links.linkedin),
-  instagram: () => openLink(links.instagram),
+  github: () => openInBrowser('github'),
+  linkedin: () => openInBrowser('linkedin'),
+  instagram: () => openInBrowser('instagram'),
 };
 
 // ---------- música lo-fi (botão ao lado dos idiomas) ----------

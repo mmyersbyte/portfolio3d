@@ -48,7 +48,14 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   // ---------- clicáveis ----------
   const it = exp.interaction;
   it.register(avatar.root, { label: 'label.avatar', onClick: actions.chat });
-  it.register(laptop, { label: 'label.laptop', onClick: actions.projects });
+  it.register(laptop, {
+    label: 'label.laptop',
+    onClick: () => {
+      actions.laptop();
+      // e eu vou sentar no computador
+      if (avatar.spot !== AVATAR_SPOTS.chair) avatar.use('chair');
+    },
+  });
   it.register(cat.root, { label: 'label.cat', onClick: actions.cat });
   for (const note of notes) {
     it.register(note.group, { label: `label.${note.id}`, onClick: actions[note.id] });

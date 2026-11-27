@@ -6,7 +6,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 - 👕 Clique no guarda-roupa (ou em "Roupa" na barra) para vestir o boneco: roupa, cabeça (boné, gorro, fone, bandana), rosto (óculos, barba) e extras (mochila, corrente, relógio, caneca). Cada item tem miniatura 3D do próprio boneco e, no celular, uma prévia ao vivo girável. A escolha fica salva no navegador de quem visitou
 - ⌨️ No chat, o botão ao lado do X lista os comandos (ou digite `:acenar`, `:rir`, `:dormir`, `:acordar`, `:luz`, `:sol`, `:chuva`, `:dia`, `:noite`, `:agora`). Indo dormir, eu deito na cama e o Frajola dorme no parapeito
 - 🧑 Clique no boneco para conversar comigo (chat com respostas mock por enquanto, a IA com Groq vem depois)
-- 💻 Clique no notebook para ver os projetos
+- 💻 Clique no notebook e abre um navegador: projetos, GitHub (dados reais pela API pública), Instagram, LinkedIn e o Dino Corre, um joguinho de corrida em pixel art
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
 - 🐈‍⬛ O Frajola anda sozinho pelo quarto, desvia dos móveis e às vezes sobe na cama pra dormir. Clicando nele abre a ficha dele e dá pra dar comandos estilo Habbo (pular, falar, sentar, deitar, vem, livre): eu falo num balão que sobe e ele obedece
 - 🌗 A janela mostra o céu na hora real de Brasília (madrugada, amanhecer, dia, tarde, noite) e a luz do quarto acompanha. De vez em quando chove, e depois vai parando aos poucos. O Frajola gosta de ficar no parapeito olhando a chuva
@@ -55,6 +55,7 @@ src/
 │   ├── Cat.js           # gato + máquina de estados
 │   └── pathfinding.js   # NavGrid: A* na grade do piso (com obstáculos dinâmicos)
 ├── ui/                  # chat, modal, i18n, balões 3D→HTML
+│   └── browser/         # navegador do notebook (abas, páginas, DinoGame)
 ├── audio/
 │   └── LofiPlayer.js    # lo-fi procedural (acordes, bateria, vinil) com Web Audio
 ├── services/
@@ -72,6 +73,7 @@ src/
 ## Editando o conteúdo
 
 Tudo fica em `src/data/content.js`. Campos com `{ pt, en }` são traduzidos automaticamente.
+Em `socials` ficam os usuários das redes, e em `instagramPosts` dá pra colar links de posts do Instagram pra aparecerem no navegador do notebook (embed oficial).
 Para mexer na posição dos móveis, edite `src/world/layout.js`: o boneco e o gato usam os mesmos retângulos pra desviar,
 e `AVATAR_SPOTS` define onde ele senta/deita.
 

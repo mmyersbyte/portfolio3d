@@ -10,11 +10,27 @@ export const profile = {
   role: { pt: 'Desenvolvedor Full Stack · JS & Node', en: 'Full Stack Developer · JS & Node' },
 };
 
-export const links = {
-  github: 'https://github.com/mmyersbyte',
-  linkedin: 'https://www.linkedin.com/in/SEU-USUARIO',
-  instagram: 'https://www.instagram.com/SEU-USUARIO',
+/** Usuários nas redes (o navegador do notebook usa pra montar as páginas). */
+export const socials = {
+  github: 'mmyersbyte',
+  instagram: 'pedrovictorc',
+  linkedin: null, // TODO: seu usuário do LinkedIn (o que vem depois de /in/)
 };
+
+export const links = {
+  github: `https://github.com/${socials.github}`,
+  linkedin: socials.linkedin
+    ? `https://www.linkedin.com/in/${socials.linkedin}`
+    : 'https://www.linkedin.com/',
+  instagram: `https://www.instagram.com/${socials.instagram}/`,
+};
+
+/**
+ * Posts do Instagram pra mostrar no navegador (embed oficial do Instagram).
+ * Cole aqui links de posts, ex: 'https://www.instagram.com/p/ABC123/'.
+ * Vazio = mostra só o perfil com o botão pra abrir no Instagram.
+ */
+export const instagramPosts = [];
 
 export const cv = {
   placeholder: true,
