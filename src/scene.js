@@ -4,6 +4,7 @@ import { createFurniture } from './world/Furniture.js';
 import { RoomWindow } from './world/Window.js';
 import { Environment } from './world/Environment.js';
 import { LightSwitch } from './world/LightSwitch.js';
+import { WallClock } from './world/WallClock.js';
 import { createPostIts } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
 import { Wardrobe } from './world/Wardrobe.js';
@@ -27,13 +28,12 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   const exp = new Experience(canvas);
 
   const { lights } = createRoom(exp.scene);
-  const { laptop, bed, chair, lamp, setClock } = createFurniture(exp);
+  const { laptop, bed, chair, lamp } = createFurniture(exp);
   const roomWindow = new RoomWindow(exp.scene);
   // hora de Brasília + chuva: mexe no céu da janela e nas luzes do quarto
   const env = new Environment(exp, {
     window: roomWindow,
     lights: { ...lights, lamp },
-    setClock,
   });
   const notes = createPostIts(exp.scene);
   const wardrobe = new Wardrobe(exp);
@@ -109,6 +109,19 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     wardrobe.setOpen(false);
     exp.rig.reset();
   }
+
+  // ---------- relógio de parede (sempre a hora real de Brasília) ----------
+  const clock = new WallClock(exp);
+  it.register(clock.group, {
+    label: () => t('label.clock').replace('{time}', clock.text),
+    hoverScale: 1.06,
+    onClick: () =>
+      labels.say(
+        avatar.sleeping ? avatar.sleepAnchor : avatar.bubbleAnchor,
+        profile.name,
+        pickLine('me.say.time').replace('{time}', clock.text),
+      ),
+  });
 
   // ---------- interruptor ----------
   const lightSwitch = new LightSwitch(exp.scene);

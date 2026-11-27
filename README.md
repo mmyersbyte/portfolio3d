@@ -42,6 +42,7 @@ src/
 │   ├── Window.js        # janela (céu em pixel art, cortinas, parapeito)
 │   ├── Environment.js   # hora de Brasília + chuva → céu e luzes
 │   ├── LightSwitch.js   # interruptor da luz do quarto
+│   ├── WallClock.js     # relógio de parede (sempre a hora real de Brasília)
 │   ├── Furniture.js     # cama, mesa + notebook, cadeira, planta...
 │   ├── PostIts.js
 │   ├── TileHighlight.js # quadrado branco no piso (hover/destino)

@@ -58,6 +58,9 @@ export const AVATAR_SPOTS = {
   },
 };
 
+/** Relógio de parede no fundo, entre o pôster da cama e os post-its (y = centro). */
+export const WALL_CLOCK = { x: -1.0, y: 2.25 };
+
 /**
  * Interruptor na parede esquerda, ao lado do guarda-roupa (y = altura do centro).
  * Fica do lado de +z: do outro lado, o próprio guarda-roupa esconderia ele da câmera.

@@ -115,11 +115,10 @@ export function brasiliaHour(date = new Date()) {
 }
 
 export class Environment {
-  constructor(exp, { window: win, lights, setClock }) {
+  constructor(exp, { window: win, lights }) {
     this.exp = exp;
     this.win = win;
     this.lights = lights;
-    this.setClock = setClock;
 
     const params = new URLSearchParams(location.search);
     const fixed = params.get('hora');
@@ -155,7 +154,6 @@ export class Environment {
 
     this.skyAcc = 1;
     this.clockAcc = 1;
-    this.lastClock = '';
     this.state = {};
     exp.onUpdate((dt, t) => this.update(dt, t));
   }
@@ -273,6 +271,7 @@ export class Environment {
   }
 
   update(dt, t) {
+    // hora do céu: transição (comandos :dia/:noite) ou relógio real, checado a cada 1 s
     this.clockAcc += dt;
     const tw = this.hourTween;
     if (tw) {
@@ -280,18 +279,9 @@ export class Environment {
       const e = tw.t < 0.5 ? 2 * tw.t * tw.t : 1 - (-2 * tw.t + 2) ** 2 / 2;
       this.hour = (tw.from + tw.delta * e) % 24;
       if (tw.t === 1) this.hourTween = null;
-      this.clockAcc = 1; // atualiza o despertador junto
-    }
-    if (this.clockAcc >= 1) {
+    } else if (this.clockAcc >= 1) {
       this.clockAcc = 0;
-      if (!this.hourTween) this.hour = this.fixedHour ?? brasiliaHour();
-      const hh = String(Math.floor(this.hour)).padStart(2, '0');
-      const mm = String(Math.floor((this.hour % 1) * 60)).padStart(2, '0');
-      const text = `${hh}:${mm}`;
-      if (text !== this.lastClock) {
-        this.lastClock = text;
-        this.setClock?.(text);
-      }
+      this.hour = this.fixedHour ?? brasiliaHour();
     }
 
     this.updateWeather(dt);
