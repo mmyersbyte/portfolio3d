@@ -79,7 +79,7 @@ export async function handleChat({ body, ip = 'unknown', env = process.env }) {
         body: JSON.stringify({
           model,
           messages,
-          temperature: 0.6,
+          temperature: 0.7, // solto, mas sem viajar nos fatos
           max_completion_tokens: 700,
           // modelos gpt-oss "pensam" antes: pouco raciocínio = resposta rápida,
           // e o raciocínio não volta junto do texto
