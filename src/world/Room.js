@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { box, mat, canvasTexture, PIXEL_FONT } from './helpers.js';
-import { ROOM, LAYOUT } from './layout.js';
+import { ROOM, LAYOUT, WINDOW } from './layout.js';
 
 const { half: H, wallHeight: WH, wallThickness: WT } = ROOM;
 
@@ -23,12 +23,11 @@ export function createRoom(scene) {
   createFloor(room);
   createWalls(room);
   createRug(room);
-  createWindow(room);
   createPoster(room);
-  createLights(scene);
+  const lights = createLights(scene);
 
   scene.add(room);
-  return room;
+  return { room, lights };
 }
 
 function createFloor(room) {
@@ -130,51 +129,6 @@ function createRug(room) {
   room.add(rug);
 }
 
-function createWindow(room) {
-  // janela na parede esquerda, noite com lua
-  const g = new THREE.Group();
-  g.position.set(-H + 0.02, 1.95, -0.2);
-  g.rotation.y = Math.PI / 2;
-
-  const sky = canvasTexture(128, 96, (ctx, w, h) => {
-    const grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, '#1b2a5c');
-    grad.addColorStop(1, '#3f4f8f');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#fff';
-    for (const [sx, sy] of [
-      [15, 12],
-      [40, 30],
-      [100, 18],
-      [70, 60],
-      [22, 70],
-      [110, 75],
-    ]) {
-      ctx.fillRect(sx, sy, 3, 3);
-    }
-    ctx.fillStyle = '#fff6c9';
-    ctx.beginPath();
-    ctx.arc(88, 38, 14, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  const glass = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.4, 1.05),
-    new THREE.MeshBasicMaterial({ map: sky }),
-  );
-  glass.position.z = 0.01;
-  g.add(glass);
-
-  const frame = '#fdfdfd';
-  box(1.56, 0.08, 0.08, frame, { y: 0.52, parent: g, shadow: false });
-  box(1.56, 0.08, 0.08, frame, { y: -0.6, parent: g, shadow: false });
-  box(0.08, 1.12, 0.08, frame, { x: -0.74, y: -0.56, parent: g, shadow: false });
-  box(0.08, 1.12, 0.08, frame, { x: 0.74, y: -0.56, parent: g, shadow: false });
-  box(0.05, 1.05, 0.05, frame, { y: -0.52, parent: g, shadow: false });
-  box(1.7, 0.06, 0.2, frame, { y: -0.66, z: 0.06, parent: g });
-  room.add(g);
-}
-
 function createPoster(room) {
   const tex = canvasTexture(192, 256, (ctx, w, h) => {
     ctx.fillStyle = '#264653';
@@ -192,8 +146,10 @@ function createPoster(room) {
   room.add(poster);
 }
 
+/** Luzes do quarto. Cor/intensidade são ajustadas pelo Environment conforme a hora. */
 function createLights(scene) {
-  scene.add(new THREE.HemisphereLight('#c8d4ff', '#6b4f3a', 1.3));
+  const hemi = new THREE.HemisphereLight('#c8d4ff', '#6b4f3a', 1.3);
+  scene.add(hemi);
 
   const sun = new THREE.DirectionalLight('#fff1dc', 2.2);
   sun.position.set(6, 10, 5);
@@ -209,8 +165,10 @@ function createLights(scene) {
   sun.shadow.normalBias = 0.02;
   scene.add(sun);
 
-  // luz fria vinda da janela
-  const moon = new THREE.PointLight('#8fa8ff', 4, 6, 2);
-  moon.position.set(-3.2, 2, -0.2);
-  scene.add(moon);
+  // luz que entra pela janela (lua à noite, sol de dia)
+  const window = new THREE.PointLight('#8fa8ff', 4, 6, 2);
+  window.position.set(-3.1, 1.8, WINDOW.z);
+  scene.add(window);
+
+  return { hemi, sun, window };
 }

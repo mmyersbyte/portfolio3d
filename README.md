@@ -8,6 +8,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 - 💻 Clique no notebook para ver os projetos
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
 - 🐈‍⬛ O Frajola anda sozinho pelo quarto, desvia dos móveis e às vezes sobe na cama pra dormir. Clicando nele abre a ficha dele e dá pra dar comandos estilo Habbo (pular, falar, sentar, deitar, vem, livre): eu falo num balão que sobe e ele obedece
+- 🌗 A janela mostra o céu na hora real de Brasília (madrugada, amanhecer, dia, tarde, noite) e a luz do quarto acompanha. De vez em quando chove, e depois vai parando aos poucos. O Frajola gosta de ficar no parapeito olhando a chuva
 - 🌎 PT/EN, funciona no celular e em telas grandes
 
 ## Rodando
@@ -35,7 +36,9 @@ src/
 │   └── Interaction.js   # raycast de hover/clique (diferencia toque de arrasto)
 ├── world/
 │   ├── layout.js        # planta do quarto: posição dos móveis e obstáculos do gato
-│   ├── Room.js          # piso, paredes, janela, tapete, luzes
+│   ├── Room.js          # piso, paredes, tapete, luzes
+│   ├── Window.js        # janela (céu em pixel art, cortinas, parapeito)
+│   ├── Environment.js   # hora de Brasília + chuva → céu e luzes
 │   ├── Furniture.js     # cama, mesa + notebook, cadeira, planta...
 │   ├── PostIts.js
 │   ├── TileHighlight.js # quadrado branco no piso (hover/destino)
@@ -64,6 +67,15 @@ Para mexer na posição dos móveis, edite `src/world/layout.js`: o boneco e o g
 e `AVATAR_SPOTS` define onde ele senta/deita.
 
 No `pnpm dev`, a cena fica em `window.__scene` pra depurar pelo console.
+
+### Testando hora e clima
+
+A hora segue Brasília (`America/Sao_Paulo`). Pra ver outro horário ou forçar o clima, use a URL:
+
+- `?hora=18:30` congela o relógio nesse horário
+- `?chuva=1` já começa chovendo · `?chuva=0` nunca chove
+
+Pelo console (no dev): `__scene.env.setHour(6.5)`, `__scene.env.setRain(true)`.
 
 ## Chat / IA
 

@@ -10,13 +10,13 @@ export function createFurniture(exp) {
   g.name = 'furniture';
 
   const bed = createBed(g);
-  createNightstand(g);
+  const setClock = createNightstand(g);
   const desk = createDesk(g, exp);
   const chair = createChair(g);
   createPlant(g);
 
   exp.scene.add(g);
-  return { laptop: desk.laptop, bed, chair };
+  return { laptop: desk.laptop, bed, chair, lamp: desk.lamp, setClock };
 }
 
 function createBed(parent) {
@@ -48,15 +48,22 @@ function createNightstand(parent) {
 
   // despertador
   box(0.24, 0.16, 0.1, '#e76f51', { y: 0.55, parent: g });
-  const face = canvasTexture(64, 40, (ctx, cw, ch) => {
+  // visor redesenhável: mostra a hora de Brasília (setClock é chamado pelo Environment)
+  const drawClock = (text) => (ctx, cw, ch) => {
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, cw, ch);
     ctx.fillStyle = '#ff5c5c';
     ctx.font = 'bold 22px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('23:47', cw / 2, ch / 2 + 1);
-  });
+    ctx.fillText(text, cw / 2, ch / 2 + 1);
+  };
+  const face = canvasTexture(64, 40, drawClock('--:--'));
+  const setClock = (text) => {
+    const canvas = face.image;
+    drawClock(text)(canvas.getContext('2d'), canvas.width, canvas.height);
+    face.needsUpdate = true;
+  };
   const display = new THREE.Mesh(
     new THREE.PlaneGeometry(0.18, 0.1),
     new THREE.MeshBasicMaterial({ map: face }),
@@ -64,6 +71,7 @@ function createNightstand(parent) {
   display.position.set(0, 0.63, 0.051);
   g.add(display);
   parent.add(g);
+  return setClock;
 }
 
 function createDesk(parent, exp) {
@@ -89,7 +97,7 @@ function createDesk(parent, exp) {
   laptop.position.set(-0.15, top, 0.05);
   g.add(laptop);
 
-  createLamp(g, w / 2 - 0.3, top, -d / 2 + 0.3);
+  const lamp = createLamp(g, w / 2 - 0.3, top, -d / 2 + 0.3);
 
   // caneca de café
   const mug = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.15, 10), mat('#e9c46a'));
@@ -98,7 +106,7 @@ function createDesk(parent, exp) {
   g.add(mug);
 
   parent.add(g);
-  return { laptop };
+  return { laptop, lamp };
 }
 
 function createLaptop(exp) {
@@ -187,6 +195,7 @@ function createLamp(parent, x, y, z) {
   g.add(light);
   g.traverse((o) => (o.castShadow = o.isMesh));
   parent.add(g);
+  return light;
 }
 
 function createChair(parent) {

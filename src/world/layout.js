@@ -20,11 +20,23 @@ export const LAYOUT = {
   rug: { x: 0.4, z: 0.6, w: 3.6, d: 2.6 },
 };
 
-/** Pontos usados pelo gato pra subir/descer da cama (no pé da cama, pra não deitar em cima de mim). */
+/**
+ * Janela na parede esquerda (x = -4). `bottom` é a altura do parapeito,
+ * fundo o bastante pro gato sentar.
+ */
+export const WINDOW = { z: -0.2, bottom: 1.05, width: 1.5, height: 1.25, sillDepth: 0.42 };
+
+/**
+ * Pontos do gato: de onde ele pula (launch), onde fica (sit/sleep) e onde cai ao descer (land).
+ * Na cama ele fica no pé, pra não deitar em cima de mim.
+ */
 export const CAT_SPOTS = {
   bedLaunch: { x: -1.7, z: -1.5 },
   bedSleep: { x: -2.7, z: -1.5 },
   bedLand: { x: -1.6, z: -0.85 },
+  windowLaunch: { x: -2.85, z: WINDOW.z },
+  windowSit: { x: -3.74, z: WINDOW.z },
+  windowLand: { x: -2.7, z: WINDOW.z + 0.55 },
 };
 
 /**

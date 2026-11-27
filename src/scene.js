@@ -1,6 +1,8 @@
 import { Experience } from './core/Experience.js';
 import { createRoom } from './world/Room.js';
 import { createFurniture } from './world/Furniture.js';
+import { RoomWindow } from './world/Window.js';
+import { Environment } from './world/Environment.js';
 import { createPostIts } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
 import { Wardrobe } from './world/Wardrobe.js';
@@ -23,13 +25,21 @@ import { profile } from './data/content.js';
 export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   const exp = new Experience(canvas);
 
-  createRoom(exp.scene);
-  const { laptop, bed, chair } = createFurniture(exp);
+  const { lights } = createRoom(exp.scene);
+  const { laptop, bed, chair, lamp, setClock } = createFurniture(exp);
+  const roomWindow = new RoomWindow(exp.scene);
+  // hora de Brasília + chuva: mexe no céu da janela e nas luzes do quarto
+  const env = new Environment(exp, {
+    window: roomWindow,
+    lights: { ...lights, lamp },
+    setClock,
+  });
   const notes = createPostIts(exp.scene);
   const wardrobe = new Wardrobe(exp);
   const avatar = new Avatar(exp);
   const cat = new Cat(exp);
   cat.avatar = avatar;
+  cat.env = env;
   const tiles = new TileHighlight(exp);
   const labels = new WorldLabels(exp, labelsEl);
 
@@ -201,6 +211,7 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
 
   return {
     exp,
+    env,
     avatar,
     cat,
     avatarBubble,

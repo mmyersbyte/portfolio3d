@@ -62,6 +62,18 @@ export const strings = {
       'Finalmente. Vou cochilar na sua cama.',
       'Valeu, chefe. Vou patrulhar o quarto.',
     ],
+    'pet.reply.window': [
+      'Vigiando os passarinhos.',
+      'Um dia eu pego aquele pombo.',
+      'Bonita a vista daqui de cima.',
+      'Não tô espiando. Tô supervisionando.',
+    ],
+    'pet.reply.windowRain': [
+      'Chuva… hoje ninguém sai daqui.',
+      'Olha essa água toda. Que nojo.',
+      'Eu é que não saio nesse tempo.',
+      'Barulhinho bom pra tirar um cochilo.',
+    ],
     'pet.reply.visit': [
       'Mrrp? Só vim ver se você ainda tá vivo.',
       'Seu colo tá livre? Pergunta séria.',
@@ -93,6 +105,7 @@ export const strings = {
     'pet.say.come': '{name}, vem aqui!',
     'pet.say.free': '{name}, tá livre!',
     'pet.status.sleeping': 'dormindo',
+    'pet.status.window': 'olhando pela janela',
     'pet.status.waking': 'acordando',
     'pet.status.walking': 'passeando',
     'pet.status.sitting': 'sentado',
@@ -189,6 +202,18 @@ export const strings = {
       "Finally. I'm napping on your bed.",
       "Thanks, boss. I'll patrol the room.",
     ],
+    'pet.reply.window': [
+      'Watching the birds.',
+      "One day I'll catch that pigeon.",
+      'Nice view from up here.',
+      "I'm not spying. I'm supervising.",
+    ],
+    'pet.reply.windowRain': [
+      'Rain… nobody leaves today.',
+      'Look at all that water. Gross.',
+      "I'm not going out in this weather.",
+      'Nice sound for a nap.',
+    ],
     'pet.reply.visit': [
       "Mrrp? Just checking you're still alive.",
       'Is your lap free? Serious question.',
@@ -220,6 +245,7 @@ export const strings = {
     'pet.say.come': '{name}, come here!',
     'pet.say.free': "{name}, you're free!",
     'pet.status.sleeping': 'sleeping',
+    'pet.status.window': 'looking out the window',
     'pet.status.waking': 'waking up',
     'pet.status.walking': 'wandering',
     'pet.status.sitting': 'sitting',

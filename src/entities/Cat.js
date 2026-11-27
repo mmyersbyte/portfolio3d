@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { box, mat } from '../world/helpers.js';
-import { LAYOUT, CAT_SPOTS } from '../world/layout.js';
+import { LAYOUT, CAT_SPOTS, WINDOW } from '../world/layout.js';
 import { NavGrid } from './pathfinding.js';
 
 const FUR = '#17171c';
@@ -110,6 +110,9 @@ export class Cat {
     this.path = [];
     this.onArrive = null;
     this.lastBed = -20; // primeira ida pra cama já pode acontecer cedo
+    this.lastWindow = -10;
+    this.perch = null; // 'bed' | 'window' quando está em cima de algum móvel
+    this.env = null; // ligado em scene.js (pra saber se está chovendo)
     this.nav = new NavGrid({ margin: 0.22 });
     this.avatar = null; // ligado em scene.js: o gato desvia de mim e às vezes vem me visitar
 
@@ -187,6 +190,7 @@ export class Cat {
 
   // ---------- comportamento ----------
 
+  /** Em cima da cama ou do parapeito. */
   get onBed() {
     return this.root.position.y > 0.1;
   }
@@ -197,9 +201,17 @@ export class Cat {
   }
 
   decide(elapsed) {
+    // janela: vai mais vezes quando está chovendo (fica olhando a chuva)
+    const raining = this.env?.isRaining;
+    const windowCooldown = raining ? 15 : 35;
+    if (elapsed - this.lastWindow > windowCooldown && Math.random() < (raining ? 0.5 : 0.22)) {
+      this.walkTo(CAT_SPOTS.windowLaunch, () => this.climb('window'));
+      return;
+    }
+
     const r = Math.random();
     if (elapsed - this.lastBed > 25 && r < 0.35) {
-      this.walkTo(CAT_SPOTS.bedLaunch, () => this.prepareJumpUp());
+      this.walkTo(CAT_SPOTS.bedLaunch, () => this.climb('bed'));
     } else if (r < 0.5) {
       this.setState('sit', rand(3, 6));
     } else if (r < 0.62 && this.avatar?.isStanding) {
@@ -242,16 +254,35 @@ export class Cat {
     this.heading = angleTo(this.root.position, point);
   }
 
-  prepareJumpUp() {
-    this.faceTo(CAT_SPOTS.bedSleep);
-    this.setState('prep', 0.7);
+  /** Agacha, pula na cama (dorme) ou no parapeito (fica olhando lá fora). */
+  climb(where) {
+    const bed = where === 'bed';
+    const spot = bed ? CAT_SPOTS.bedSleep : CAT_SPOTS.windowSit;
+    this.faceTo(spot);
+    this.setState('prep', bed ? 0.7 : 0.9); // janela é mais alta: agacha mais
     this.afterPrep = () =>
-      this.jump(CAT_SPOTS.bedSleep, LAYOUT.bed.top, () => {
-        this.lastBed = this.exp.elapsed;
-        this.heading = Math.PI / 4 + rand(-0.5, 0.5);
-        this.setState('sleep', rand(14, 24));
-        this.onSleepChange?.(true);
+      this.jump(spot, bed ? LAYOUT.bed.top : WINDOW.bottom, () => {
+        this.perch = where;
+        if (bed) {
+          this.lastBed = this.exp.elapsed;
+          this.heading = Math.PI / 4 + rand(-0.5, 0.5);
+          this.setState('sleep', rand(14, 24));
+          this.onSleepChange?.(true);
+        } else {
+          this.lastWindow = this.exp.elapsed;
+          this.heading = -Math.PI / 2; // de costas pra gente, olhando a rua
+          this.lookTimer = rand(3, 6);
+          this.setState('sill', rand(12, 22));
+          if (Math.random() < 0.6) {
+            setTimeout(() => this.say(this.env?.isRaining ? 'windowRain' : 'window'), 900);
+          }
+        }
       });
+  }
+
+  /** Onde ele cai quando desce do móvel em que está. */
+  landSpot() {
+    return this.perch === 'window' ? CAT_SPOTS.windowLand : CAT_SPOTS.bedLand;
   }
 
   jump(to, toY, onLand) {
@@ -303,7 +334,10 @@ export class Cat {
         break;
       case 'come':
         if (this.onBed) {
-          this.jump(CAT_SPOTS.bedLand, 0, () => this.command('come'));
+          this.jump(this.landSpot(), 0, () => {
+            this.perch = null;
+            this.command('come');
+          });
           return;
         }
         this.comeToAvatar();
@@ -342,6 +376,7 @@ export class Cat {
     return (
       {
         sleep: 'sleeping',
+        sill: 'window',
         wake: 'waking',
         walk: 'walking',
         sit: 'sitting',
@@ -388,6 +423,19 @@ export class Cat {
         this.updateJump(dt);
         break;
 
+      case 'sill':
+        // sentado no parapeito; de vez em quando olha pra dentro do quarto
+        this.targetPose = POSES.sit;
+        this.lookTimer -= dt;
+        if (this.lookTimer <= 0) {
+          const outside = Math.abs(this.heading + Math.PI / 2) < 0.1;
+          this.heading = outside ? Math.PI / 4 + rand(-0.3, 0.3) : -Math.PI / 2;
+          this.lookTimer = outside ? rand(2, 3.5) : rand(4, 7);
+        }
+        this.timer -= dt;
+        if (this.timer <= 0) this.setState('wake', 0.6);
+        break;
+
       case 'sleep':
         this.targetPose = POSES.sleep;
         this.timer -= dt;
@@ -410,7 +458,10 @@ export class Cat {
         this.targetPose = POSES.crouch;
         this.timer -= dt;
         if (this.timer <= 0) {
-          this.jump(CAT_SPOTS.bedLand, 0, () => this.setState('idle', rand(1, 3)));
+          this.jump(this.landSpot(), 0, () => {
+            this.perch = null;
+            this.setState('idle', rand(1, 3));
+          });
         }
         break;
     }
