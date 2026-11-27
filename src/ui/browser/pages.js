@@ -234,6 +234,7 @@ const linkedin = {
               <p class="pg-li__role">${esc(li.headline)}</p>
               <p class="pg-li__meta">${esc(tr(li.location))}</p>
               <p class="pg-li__connections">${esc(tr(li.connections))}</p>
+              ${profile.openToWork ? `<span class="open-to-work">${esc(t('cv.openToWork'))}</span>` : ''}
             </div>
             <ul class="pg-li__orgs">
               <li><span class="pg-li__logo">M</span>${esc(li.company)}</li>

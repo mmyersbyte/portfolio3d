@@ -53,11 +53,12 @@ const RULES = [
     en: () => `My daily stack: ${cv.skills.slice(0, 7).join(', ')}.`,
   },
   {
-    match: /(contato|contact|linkedin|insta|email|falar|reach|github)/,
+    match:
+      /(contato|contact|linkedin|insta|email|e-mail|falar|reach|github|vaga|job|contrat|hire|oportunidade)/,
     pt: () =>
-      `Me acha aqui:\nGitHub: ${links.github}\nLinkedIn: ${links.linkedin}\nInstagram: ${links.instagram}`,
+      `Tô aberto a processos seletivos! Me acha aqui:\nE-mail: ${links.email}\nLinkedIn: ${links.linkedin}\nGitHub: ${links.github}\nInstagram: ${links.instagram}`,
     en: () =>
-      `Find me here:\nGitHub: ${links.github}\nLinkedIn: ${links.linkedin}\nInstagram: ${links.instagram}`,
+      `I'm open to hiring processes! Find me here:\nEmail: ${links.email}\nLinkedIn: ${links.linkedin}\nGitHub: ${links.github}\nInstagram: ${links.instagram}`,
   },
   {
     match: /(gato|cat|gatinho|kitty)/,

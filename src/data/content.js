@@ -8,10 +8,9 @@
 export const profile = {
   name: 'Pedro Victor',
   photo: '/images/profile.jpg',
-  role: {
-    pt: 'Desenvolvedor backend-first · Node.js & TypeScript',
-    en: 'Backend-first developer · Node.js & TypeScript',
-  },
+  // título que aparece no topo da tela (geral de propósito)
+  role: { pt: 'Desenvolvedor de Software', en: 'Software Developer' },
+  openToWork: true,
 };
 
 /** Usuários nas redes (o navegador do notebook usa pra montar as páginas). */
@@ -27,6 +26,7 @@ export const links = {
     ? `https://www.linkedin.com/in/${socials.linkedin}`
     : 'https://www.linkedin.com/',
   instagram: `https://www.instagram.com/${socials.instagram}/`,
+  email: 'pedrovictorcastro.dev@gmail.com',
 };
 
 /**
@@ -71,17 +71,22 @@ export const linkedinProfile = {
 export const cv = {
   placeholder: false,
   summary: {
-    pt: 'Desenvolvedor backend-first em Fortaleza, focado em Node.js e TypeScript. Gosto de APIs seguras e bem documentadas: autenticação com cookies httpOnly, validação com Zod/Joi, testes com Vitest, Swagger e deploy com Docker. Tenho sistemas no ar sendo usados de verdade.',
-    en: 'Backend-first developer from Fortaleza, focused on Node.js and TypeScript. I like secure, well-documented APIs: httpOnly cookie auth, Zod/Joi validation, Vitest tests, Swagger and Docker deploys. I have systems live and in real use.',
+    pt: 'Desenvolvedor backend especializado em APIs RESTful com Node.js e TypeScript/JavaScript, com projetos aprovados e usados por pessoas reais. Trabalho com Express e Fastify, PostgreSQL e MongoDB com Query Builders e ORMs como o Prisma, testes automatizados, Swagger e Docker Compose. Hoje atuo remotamente com IA aplicada e operações de sistemas, e estou aberto a processos seletivos para times de desenvolvimento.',
+    en: "Backend developer specialized in RESTful APIs with Node.js and TypeScript/JavaScript, with projects approved and used by real people. I work with Express and Fastify, PostgreSQL and MongoDB using query builders and ORMs like Prisma, automated tests, Swagger and Docker Compose. I currently work remotely with applied AI and systems operations, and I'm open to hiring processes for development teams.",
   },
+
   experience: [
     {
       role: { pt: 'Desenvolvedor de Software', en: 'Software Developer' },
       company: 'Mind Tecnologia I.A',
-      period: { pt: 'atual', en: 'present' },
+      period: { pt: 'atual · remoto', en: 'present · remote' },
+      bullets: {
+        pt: ['Atuação com Inteligência Artificial aplicada e operações com sistemas.'],
+        en: ['Working with applied Artificial Intelligence and systems operations.'],
+      },
     },
     {
-      role: { pt: 'Desenvolvedor freelancer', en: 'Freelance Developer' },
+      role: { pt: 'Desenvolvedor backend freelancer', en: 'Freelance Backend Developer' },
       company: 'LABEM · UNISUL',
       period: { pt: '2025', en: '2025' },
       bullets: {
@@ -96,7 +101,16 @@ export const cv = {
       },
     },
   ],
-  education: [{ school: 'Unichristus' }],
+  education: [
+    {
+      course: {
+        pt: 'Análise e Desenvolvimento de Sistemas (ADS)',
+        en: 'Systems Analysis and Development',
+      },
+      school: 'Unichristus',
+      period: { pt: 'término previsto: 2026', en: 'expected: 2026' },
+    },
+  ],
   // stack real (LinkedIn + README do GitHub + projetos)
   skills: [
     'Java',
@@ -104,16 +118,20 @@ export const cv = {
     'TypeScript',
     'Node.js',
     'Express',
+    'Fastify',
     'PostgreSQL',
     'MongoDB',
+    'Prisma',
     'Vitest',
-    'Docker',
+    'Docker Compose',
     'React Native',
     'Zod',
     'Swagger',
     'AWS S3',
     'Three.js',
   ],
+  // estudando agora
+  learning: ['NestJS'],
   languages: {
     pt: ['Português — nativo'],
     en: ['Portuguese — native'],
@@ -135,7 +153,7 @@ export const projects = [
     highlights: [
       SOLO,
       hl('users', '100+ usuários', '100+ users'),
-      hl('users', '50+ histórias publicadas', '50+ stories published'),
+      hl('users', '100+ histórias publicadas', '100+ stories published'),
       hl('live', 'No ar', 'Live'),
     ],
     description: {
@@ -150,7 +168,7 @@ export const projects = [
     title: 'LABEM',
     highlights: [
       SOLO,
-      hl('freelance', 'Freelance', 'Freelance'),
+      hl('freelance', 'Freelance pago', 'Paid freelance'),
       hl('users', 'Usado por uma equipe real', 'Used by a real team'),
       hl('live', 'Em produção', 'In production'),
     ],

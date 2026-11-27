@@ -2261,3 +2261,50 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 .pg-li__logo--edu {
   background: #0a66c2;
 }
+
+/* ---------- aberto a oportunidades + e-mail no CV ---------- */
+.cv__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-bottom: 14px;
+}
+
+.open-to-work {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 3px 10px;
+  background: #dcfce7;
+  border: 1px solid #16a34a;
+  border-radius: 999px;
+  color: #15803d;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.cv__top .open-to-work {
+  margin-top: 0;
+}
+
+.open-to-work::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 3px rgb(22 163 74 / 0.25);
+}
+
+.cv__email {
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.tags--learning li {
+  background: #fff7d6;
+  border-style: dashed;
+}
