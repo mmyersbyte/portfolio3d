@@ -2442,9 +2442,6 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 @keyframes tour-pulse {
   50% {
     background: var(--accent);
-    box-shadow:
-      var(--shadow),
-      0 0 0 6px rgb(255 209 102 / 0.35);
   }
 }
 
@@ -2602,4 +2599,83 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   margin: 0;
   color: var(--ink-soft);
   font-size: 0.88rem;
+}
+
+/* ---------- topo no celular: tudo numa linha, mesma altura, alinhado ----------
+   antes o nome quebrava em 2 linhas e o botão do tutorial esticava junto do card */
+@media (max-width: 560px) {
+  .topbar {
+    align-items: center;
+    gap: 6px;
+  }
+
+  .topbar__left {
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .brand {
+    min-width: 0;
+    padding: 5px 10px;
+    line-height: 1.2;
+  }
+
+  .brand__name,
+  .brand__role {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .brand__name {
+    font-size: 0.98rem;
+  }
+
+  .brand__role {
+    font-size: 0.7rem;
+  }
+
+  .tour-btn,
+  .music-toggle {
+    flex: 0 0 auto;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+  }
+
+  .topbar__actions {
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lang-toggle {
+    height: 42px;
+    align-items: center;
+  }
+
+  .lang-toggle span {
+    padding: 4px 7px;
+  }
+}
+
+/* celular bem estreito: o seletor mostra só o idioma pra trocar (o outro some),
+   sobrando espaço pro título inteiro embaixo do nome */
+@media (max-width: 400px) {
+  html[lang='pt-BR'] .lang-toggle [data-lang='pt'],
+  html[lang='en'] .lang-toggle [data-lang='en'] {
+    display: none;
+  }
+
+  .lang-toggle {
+    width: 42px;
+    justify-content: center;
+    padding: 0;
+  }
+
+  html[lang='pt-BR'] .lang-toggle [data-lang='en'],
+  html[lang='en'] .lang-toggle [data-lang='pt'] {
+    background: transparent;
+  }
 }

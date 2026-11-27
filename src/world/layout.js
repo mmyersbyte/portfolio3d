@@ -12,7 +12,8 @@ export const LAYOUT = {
   bed: { x: -3.1, z: -2.6, w: 1.8, d: 2.8, top: 0.58 },
   nightstand: { x: -1.8, z: -3.65, w: 0.6, d: 0.6 },
   desk: { x: 1.6, z: -3.4, w: 2.8, d: 1.2, top: 0.95 },
-  chair: { x: 1.5, z: -2.35, w: 0.75, d: 0.75 },
+  // cadeira colada na mesa e alinhada com o notebook (senão as mãos atravessam o tampo)
+  chair: { x: 1.45, z: -2.55, w: 0.75, d: 0.75 },
   plant: { x: 3.5, z: -3.5, w: 0.7, d: 0.7 },
   wardrobe: { x: -3.66, z: 2.3, w: 0.68, d: 1.5, h: 2.15 },
   // posição inicial do boneco (ele anda, então não é obstáculo fixo)
@@ -52,12 +53,15 @@ export const AVATAR_SPOTS = {
     pose: 'sit',
     approach: { x: 0.75, z: -2.15 },
     pos: { x: LAYOUT.chair.x, y: -0.11, z: LAYOUT.chair.z },
-    heading: -Math.PI + 0.25, // virado pro notebook
+    heading: -Math.PI + 0.06, // de frente pro notebook
+    // braços quase retos pra frente: as mãos ficam em cima do teclado (y≈1.0, z≈-3.15)
+    arm: -1.3,
     typing: true,
   },
+
   sofa: {
     pose: 'sit',
-    relaxed: true, // braços largados, nada de digitar
+    arm: -0.3, // braços largados, nada de digitar
     approach: { x: 2.35, z: 2.9 },
     // quadril na altura do assento (pivô da perna fica 0.75 acima dos pés)
     pos: { x: 3.2, y: -0.2, z: 2.9 },

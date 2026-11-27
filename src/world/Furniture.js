@@ -177,7 +177,7 @@ function createChair(parent) {
   const { x, z } = LAYOUT.chair;
   const g = new THREE.Group();
   g.position.set(x, 0, z);
-  g.rotation.y = 0.25;
+  g.rotation.y = 0.1;
   const fabric = '#3d405b';
   const dark = '#22223b';
 
