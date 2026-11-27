@@ -2201,3 +2201,63 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   width: 44px;
   height: 44px;
 }
+
+/* LinkedIn: cabeçalho com empresa/faculdade do lado, como no site */
+.pg-li__intro {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 24px;
+}
+
+.pg-li__pronouns {
+  color: #666;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.pg-li__meta {
+  margin: 4px 0 0;
+  color: #666;
+  font-size: 0.88rem;
+}
+
+.pg-li__connections {
+  margin: 2px 0 0;
+  color: #0a66c2;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.pg-li__orgs {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.pg-li__orgs li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pg-li__logo {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: #1d1b2e;
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+}
+
+.pg-li__logo--edu {
+  background: #0a66c2;
+}

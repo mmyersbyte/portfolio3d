@@ -20,9 +20,13 @@ export const cvView = {
             <strong>${esc(tr(job.role))} · ${esc(job.company)}</strong>
             <small>${esc(tr(job.period))}</small>
           </header>
-          <ul>${tr(job.bullets)
-            .map((b) => `<li>${esc(b)}</li>`)
-            .join('')}</ul>
+          ${
+            job.bullets
+              ? `<ul>${tr(job.bullets)
+                  .map((b) => `<li>${esc(b)}</li>`)
+                  .join('')}</ul>`
+              : ''
+          }
         </section>`,
         )
         .join('')}
@@ -33,10 +37,10 @@ export const cvView = {
           (ed) => `
         <section class="cv__item">
           <header>
-            <strong>${esc(tr(ed.course))}</strong>
-            <small>${esc(ed.period)}</small>
+            <strong>${esc(ed.course ? tr(ed.course) : ed.school)}</strong>
+            ${ed.period ? `<small>${esc(ed.period)}</small>` : ''}
           </header>
-          <div>${esc(ed.school)}</div>
+          ${ed.course ? `<div>${esc(ed.school)}</div>` : ''}
         </section>`,
         )
         .join('')}

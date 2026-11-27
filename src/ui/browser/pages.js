@@ -5,6 +5,7 @@ import {
   cv,
   instagramPosts,
   instagramProfile,
+  linkedinProfile,
 } from '../../data/content.js';
 import { t, tr, getLang } from '../i18n.js';
 import { esc } from '../views/escape.js';
@@ -221,13 +222,24 @@ const linkedin = {
   external: () => links.linkedin,
   title: () => 'LinkedIn',
   render(el) {
+    const li = linkedinProfile;
     el.innerHTML = `
       <div class="pg-li">
         <div class="pg-li__card">
           <div class="pg-li__cover"></div>
-          <img class="pg-li__avatar" src="${esc(profile.photo)}" alt="${esc(profile.name)}" width="110" height="110">
-          <h2>${esc(profile.name)}</h2>
-          <p class="pg-li__role">${esc(tr(profile.role))}</p>
+          <img class="pg-li__avatar" src="${esc(profile.photo)}" alt="${esc(li.name)}" width="110" height="110">
+          <div class="pg-li__intro">
+            <div>
+              <h2>${esc(li.name)} <span class="pg-li__pronouns">${esc(tr(li.pronouns))}</span></h2>
+              <p class="pg-li__role">${esc(li.headline)}</p>
+              <p class="pg-li__meta">${esc(tr(li.location))}</p>
+              <p class="pg-li__connections">${esc(tr(li.connections))}</p>
+            </div>
+            <ul class="pg-li__orgs">
+              <li><span class="pg-li__logo">M</span>${esc(li.company)}</li>
+              <li><span class="pg-li__logo pg-li__logo--edu">U</span>${esc(li.school)}</li>
+            </ul>
+          </div>
           <a class="pg-btn pg-btn--li" href="${esc(links.linkedin)}" target="_blank" rel="noopener">${esc(t('li.connect'))} ↗</a>
           ${socials.linkedin ? '' : `<p class="pg-note">${esc(t('li.pending'))}</p>`}
         </div>
@@ -245,6 +257,10 @@ const linkedin = {
               </div>`,
             )
             .join('')}
+        </section>
+        <section class="pg-li__card pg-li__section">
+          <h3>${esc(t('li.education'))}</h3>
+          ${cv.education.map((ed) => `<div class="pg-li__job"><strong>${esc(ed.school)}</strong></div>`).join('')}
         </section>
       </div>`;
   },

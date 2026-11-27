@@ -18,7 +18,7 @@ export const profile = {
 export const socials = {
   github: 'mmyersbyte',
   instagram: 'pedrovictorc',
-  linkedin: null, // TODO: seu usuário do LinkedIn (o que vem depois de /in/)
+  linkedin: 'pedrovictorcss',
 };
 
 export const links = {
@@ -53,57 +53,54 @@ export const instagramPosts = [
   'https://www.instagram.com/p/C-xrTZCRNFI/',
 ];
 
+/** Dados do LinkedIn (como aparecem lá). */
+export const linkedinProfile = {
+  name: 'Pedro Victor Castro de Sousa',
+  pronouns: { pt: 'Ele/Dele', en: 'He/Him' },
+  headline: 'Desenvolvedor de Software | Java | JavaScript | Node.js',
+  location: { pt: 'Fortaleza, Ceará, Brasil', en: 'Fortaleza, Ceará, Brazil' },
+  company: 'Mind Tecnologia I.A',
+  school: 'Unichristus',
+  connections: { pt: '+500 conexões', en: '500+ connections' },
+};
+
+/**
+ * CV com dados reais (LinkedIn + GitHub). Campos que eu ainda não sei
+ * (cargo/período exatos, curso) ficam de fora em vez de inventados.
+ */
 export const cv = {
-  placeholder: true,
+  placeholder: false,
   summary: {
     pt: 'Desenvolvedor backend-first em Fortaleza, focado em Node.js e TypeScript. Gosto de APIs seguras e bem documentadas: autenticação com cookies httpOnly, validação com Zod/Joi, testes com Vitest, Swagger e deploy com Docker. Tenho sistemas no ar sendo usados de verdade.',
     en: 'Backend-first developer from Fortaleza, focused on Node.js and TypeScript. I like secure, well-documented APIs: httpOnly cookie auth, Zod/Joi validation, Vitest tests, Swagger and Docker deploys. I have systems live and in real use.',
   },
-
   experience: [
     {
-      role: { pt: 'Desenvolvedor Full Stack', en: 'Full Stack Developer' },
-      company: 'Nebula Labs',
-      period: { pt: '2024 — atual', en: '2024 — present' },
-      bullets: {
-        pt: [
-          'APIs REST e WebSocket em Node.js atendendo milhares de usuários diários.',
-          'Migração de front-end legado para Vite + componentes modernos, reduzindo o bundle em 40%.',
-        ],
-        en: [
-          'Built REST and WebSocket APIs in Node.js serving thousands of daily users.',
-          'Migrated a legacy front-end to Vite + modern components, cutting bundle size by 40%.',
-        ],
-      },
+      role: { pt: 'Desenvolvedor de Software', en: 'Software Developer' },
+      company: 'Mind Tecnologia I.A',
+      period: { pt: 'atual', en: 'present' },
     },
     {
-      role: { pt: 'Desenvolvedor Front-end', en: 'Front-end Developer' },
-      company: 'Estúdio Aurora',
-      period: { pt: '2022 — 2024', en: '2022 — 2024' },
+      role: { pt: 'Desenvolvedor freelancer', en: 'Freelance Developer' },
+      company: 'LABEM · UNISUL',
+      period: { pt: '2025', en: '2025' },
       bullets: {
         pt: [
-          'Landing pages interativas com Three.js e animações em WebGL.',
-          'Criação de um design system usado em 6 produtos.',
+          'Sistema em produção usado pela Liga Acadêmica de Biomedicina Estética da UNISUL.',
+          'API em Node.js/Express + MongoDB com JWT em cookies httpOnly, upload de PDFs e logs com Winston.',
         ],
         en: [
-          'Interactive landing pages with Three.js and WebGL animations.',
-          'Created a design system used across 6 products.',
+          "Production system used by UNISUL's Aesthetic Biomedicine academic league.",
+          'Node.js/Express + MongoDB API with JWT in httpOnly cookies, PDF uploads and Winston logging.',
         ],
       },
     },
   ],
-  education: [
-    {
-      course: {
-        pt: 'Análise e Desenvolvimento de Sistemas',
-        en: 'Systems Analysis and Development',
-      },
-      school: 'Universidade Exemplo',
-      period: '2020 — 2023',
-    },
-  ],
-  // stack real (README do GitHub + projetos)
+  education: [{ school: 'Unichristus' }],
+  // stack real (LinkedIn + README do GitHub + projetos)
   skills: [
+    'Java',
+    'JavaScript',
     'TypeScript',
     'Node.js',
     'Express',
@@ -118,8 +115,8 @@ export const cv = {
     'Three.js',
   ],
   languages: {
-    pt: ['Português — nativo', 'Inglês — avançado'],
-    en: ['Portuguese — native', 'English — advanced'],
+    pt: ['Português — nativo'],
+    en: ['Portuguese — native'],
   },
 };
 
