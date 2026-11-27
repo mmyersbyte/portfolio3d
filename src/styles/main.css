@@ -2679,3 +2679,36 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
     background: transparent;
   }
 }
+
+/* ---------- chat encolhido depois de um comando (só celular) ---------- */
+.chat__peek-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .chat.is-peek {
+    /* vira uma barrinha logo acima da barra de atalhos */
+    bottom: calc(var(--safe-b) + 84px);
+    height: auto;
+    cursor: pointer;
+  }
+
+  .chat.is-peek > :not(.chat__header) {
+    display: none;
+  }
+
+  .chat.is-peek .chat__header {
+    border-bottom: 0;
+  }
+
+  .chat.is-peek .chat__status {
+    display: none;
+  }
+
+  .chat.is-peek .chat__peek-hint {
+    display: block;
+    color: var(--accent-2);
+    font-weight: 700;
+    animation: blink 1.6s ease-in-out infinite;
+  }
+}

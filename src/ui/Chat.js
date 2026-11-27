@@ -32,6 +32,12 @@ export class Chat {
       btn.classList.remove('is-sent');
       void btn.offsetWidth;
       btn.classList.add('is-sent');
+      this.peekOnMobile();
+    });
+
+    // encolhido (só celular): tocar no cabeçalho abre o chat de novo
+    this.el.querySelector('.chat__header').addEventListener('click', (e) => {
+      if (this.isPeeking && !e.target.closest('button')) this.unpeek();
     });
     this.history = [];
     this.busy = false;
@@ -67,7 +73,27 @@ export class Chat {
     this.mini.hidden = false;
   }
 
+  get isPeeking() {
+    return this.el.classList.contains('is-peek');
+  }
+
+  /**
+   * No celular o chat tampa o quarto: depois de um comando ele encolhe pra
+   * uma barrinha (só o cabeçalho) e dá pra ver o boneco/quarto reagindo.
+   */
+  peekOnMobile() {
+    if (!matchMedia('(max-width: 767px)').matches) return;
+    this.input.blur(); // fecha o teclado
+    this.el.classList.add('is-peek');
+  }
+
+  unpeek() {
+    this.el.classList.remove('is-peek');
+    this.log.scrollTop = this.log.scrollHeight;
+  }
+
   open() {
+    this.unpeek();
     this.mini.hidden = true;
     if (this.isOpen) return;
     this.el.classList.add('is-open');
@@ -79,6 +105,7 @@ export class Chat {
   }
 
   close() {
+    this.el.classList.remove('is-peek');
     this.mini.hidden = true;
     if (!this.isOpen) return;
     this.el.classList.remove('is-open');
@@ -164,6 +191,7 @@ export class Chat {
       if (cmd) {
         this.onCommand?.(cmd);
         this.note(t('cmd.ran').replace('{name}', t(`cmd.${cmd}`)));
+        this.peekOnMobile();
       } else {
         this.note(t('cmd.unknown'));
       }

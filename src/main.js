@@ -31,6 +31,7 @@ const chat = new Chat({
       wardrobePanel.cancel();
       petPanel.close();
       scene?.avatar.wave();
+      $('hint').classList.add('is-hidden'); // a dica ficava atrás do chat encolhido
     }
     syncBubble();
   },
