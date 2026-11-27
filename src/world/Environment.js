@@ -208,15 +208,29 @@ export class Environment {
     this.hourTween = { from: this.hour, delta, t: 0 };
   }
 
-  /** Comando de clima: muda mais rápido do que o clima "natural". */
-  commandWeather(rain) {
+  /** Comando de chuva: começa mais rápido do que o clima "natural". */
+  commandRain() {
     this.boost = 1;
-    if (rain) {
-      this.startRain();
-      this.rainTarget = Math.max(this.rainTarget, 0.8);
-    } else {
-      this.stopRain();
-    }
+    this.startRain();
+    this.rainTarget = Math.max(this.rainTarget, 0.8);
+  }
+
+  /**
+   * Comando "sol": céu aberto com sol de verdade.
+   * Para a chuva rápido e, se não for dia, o céu passa até o meio-dia.
+   * Retorna o que mudou ('clear' | 'day' | 'both' | null) pra quem chamou comentar.
+   */
+  commandSun() {
+    const wasRaining = this.rain > 0.05 || this.weather === 'raining';
+    const isDay = this.sample(this.hour).day > 0.6;
+    this.boost = 1;
+    this.stopRain();
+    this.weatherTimer = rand(150, 300); // segura o tempo bom por um tempo
+    if (!isDay) this.transitionTo(12);
+    if (wasRaining && !isDay) return 'both';
+    if (wasRaining) return 'clear';
+    if (!isDay) return 'day';
+    return null;
   }
 
   updateWeather(dt) {
@@ -229,12 +243,12 @@ export class Environment {
     } else if (this.weather === 'clearing' && this.rain < 0.01) {
       this.weather = 'clear';
       this.rain = 0;
-      this.weatherTimer = rand(90, 240);
+      this.weatherTimer = Math.max(this.weatherTimer, rand(90, 240));
     }
 
     // a chuva engrossa em ~15 s e vai parando devagar (~1 min até secar o céu)
     this.boost = Math.max(0, (this.boost ?? 0) - dt / 12);
-    const rate = (this.rainTarget > this.rain ? 0.065 : 0.05) * (1 + this.boost * 4);
+    const rate = (this.rainTarget > this.rain ? 0.065 : 0.05) * (1 + this.boost * 7);
     this.rain += (this.rainTarget - this.rain) * Math.min(1, dt * rate);
     // vidro molha rápido e seca bem mais devagar que a chuva
     const dry = this.rain > this.wet ? 0.5 : 0.03;

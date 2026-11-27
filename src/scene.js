@@ -263,10 +263,12 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
         return;
       case 'light':
         return lightSwitch.set(env.toggleLight());
-      case 'sun':
-        return env.commandWeather(false);
+      case 'sun': {
+        const changed = env.commandSun();
+        return changed ? meSay('me.say.sun') : meSay('me.say.sunAlready');
+      }
       case 'rain':
-        return env.commandWeather(true);
+        return env.commandRain();
       case 'day':
         return env.transitionTo(14);
       case 'night':
