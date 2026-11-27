@@ -65,79 +65,158 @@ export const linkedinProfile = {
 };
 
 /**
- * CV com dados reais (LinkedIn + GitHub). Campos que eu ainda não sei
- * (cargo/período exatos, curso) ficam de fora em vez de inventados.
+ * CV (currículo oficial + LinkedIn). Telefone fica de fora de propósito:
+ * o site é público e o contato é por e-mail/LinkedIn.
  */
 export const cv = {
   placeholder: false,
-  summary: {
-    pt: 'Desenvolvedor backend especializado em APIs RESTful com Node.js e TypeScript/JavaScript, com projetos aprovados e usados por pessoas reais. Trabalho com Express e Fastify, PostgreSQL e MongoDB com Query Builders e ORMs como o Prisma, testes automatizados, Swagger e Docker Compose. Hoje atuo remotamente com IA aplicada e operações de sistemas, e estou aberto a processos seletivos para times de desenvolvimento.',
-    en: "Backend developer specialized in RESTful APIs with Node.js and TypeScript/JavaScript, with projects approved and used by real people. I work with Express and Fastify, PostgreSQL and MongoDB using query builders and ORMs like Prisma, automated tests, Swagger and Docker Compose. I currently work remotely with applied AI and systems operations, and I'm open to hiring processes for development teams.",
+  headline: {
+    pt: 'Estudante de Análise e Desenvolvimento de Sistemas | Desenvolvimento, Automação e IA',
+    en: 'Systems Analysis and Development Student | Development, Automation and AI',
   },
-
+  summary: {
+    pt: 'Estudante de Análise e Desenvolvimento de Sistemas, com experiência profissional em automação de CRM, configuração de fluxos inteligentes, integração de ferramentas e soluções de IA. Experiência prática no desenvolvimento de APIs REST, aplicações web e integração com bancos de dados. Busco ampliar minha atuação em desenvolvimento de soluções empresariais e automação de processos, com interesse em tecnologias Microsoft e na Power Platform.',
+    en: 'Systems Analysis and Development student with professional experience in CRM automation, smart workflow setup, tool integration and AI solutions. Hands-on experience building REST APIs, web applications and database integrations. Looking to grow in enterprise solution development and process automation, with interest in Microsoft technologies and the Power Platform.',
+  },
   experience: [
     {
-      role: { pt: 'Desenvolvedor de Software', en: 'Software Developer' },
+      role: { pt: 'Especialista em automação e suporte', en: 'Automation and Support Specialist' },
       company: 'Mind Tecnologia I.A',
-      period: { pt: 'atual · remoto', en: 'present · remote' },
+      period: { pt: 'mar/2026 — atual', en: 'Mar 2026 — present' },
+      meta: {
+        pt: 'Tempo integral · Remoto (Salvador, BA) · Suporte e Automação com IA',
+        en: 'Full-time · Remote (Salvador, BA) · AI Support and Automation',
+      },
       bullets: {
-        pt: ['Atuação com Inteligência Artificial aplicada e operações com sistemas.'],
-        en: ['Working with applied Artificial Intelligence and systems operations.'],
+        pt: [
+          'Implementação de automações e fluxos inteligentes em CRM.',
+          'Configuração de chatbots e assistentes automatizados.',
+          'Uso de APIs de IA, como geração de respostas e classificação de tickets.',
+          'Otimização do atendimento com ferramentas baseadas em IA.',
+          'Integração de sistemas para melhorar a eficiência operacional.',
+        ],
+        en: [
+          'Implemented automations and smart workflows in CRM.',
+          'Set up chatbots and automated assistants.',
+          'Used AI APIs such as response generation and ticket classification.',
+          'Optimized customer support with AI-based tools.',
+          'Integrated systems to improve operational efficiency.',
+        ],
       },
     },
     {
-      role: { pt: 'Desenvolvedor backend freelancer', en: 'Freelance Backend Developer' },
-      company: 'LABEM · UNISUL',
-      period: { pt: '2025', en: '2025' },
+      role: { pt: 'Freelancer Full Stack', en: 'Full Stack Freelancer' },
+      company: '',
+      period: { pt: 'out/2024 — atual', en: 'Oct 2024 — present' },
       bullets: {
         pt: [
-          'Sistema em produção usado pela Liga Acadêmica de Biomedicina Estética da UNISUL.',
-          'API em Node.js/Express + MongoDB com JWT em cookies httpOnly, upload de PDFs e logs com Winston.',
+          'APIs REST para o sistema da LABEM (UNISUL), com autenticação JWT e cookies HTTP-Only.',
+          'Documentação de APIs com Swagger e upload de arquivos com Multer.',
+          'Aplicações com Node.js, TypeScript, PostgreSQL e React.',
+          'Criação do Eco, rede social com mais de 100 usuários cadastrados, publicações, interações e mais de 10 endpoints REST.',
+          'Docker Compose e testes automatizados com Vitest.',
         ],
         en: [
-          "Production system used by UNISUL's Aesthetic Biomedicine academic league.",
-          'Node.js/Express + MongoDB API with JWT in httpOnly cookies, PDF uploads and Winston logging.',
+          'REST APIs for the LABEM (UNISUL) system, with JWT auth and HTTP-Only cookies.',
+          'API documentation with Swagger and file uploads with Multer.',
+          'Applications with Node.js, TypeScript, PostgreSQL and React.',
+          'Built Eco, a social network with 100+ registered users, posts, interactions and 10+ REST endpoints.',
+          'Docker Compose and automated tests with Vitest.',
         ],
+      },
+    },
+    {
+      role: { pt: 'Operador de Crédito', en: 'Credit Operator' },
+      company: 'Santander',
+      period: { pt: 'nov/2022 — jul/2024', en: 'Nov 2022 — Jul 2024' },
+      meta: { pt: 'Presencial', en: 'On-site' },
+      bullets: {
+        pt: [
+          'Atendimento ao cliente, negociação, cumprimento de metas e resolução de demandas sob pressão.',
+        ],
+        en: ['Customer service, negotiation, meeting targets and solving demands under pressure.'],
       },
     },
   ],
   education: [
     {
       course: {
-        pt: 'Análise e Desenvolvimento de Sistemas (ADS)',
+        pt: 'Análise e Desenvolvimento de Sistemas',
         en: 'Systems Analysis and Development',
       },
-      school: 'Unichristus',
-      period: { pt: 'término previsto: 2026', en: 'expected: 2026' },
+      school: 'Universidade Christus (Unichristus)',
+      period: { pt: 'jan/2025 — dez/2027 (previsão)', en: 'Jan 2025 — Dec 2027 (expected)' },
+    },
+    {
+      course: {
+        pt: 'Desenvolvimento com JavaScript (presencial)',
+        en: 'JavaScript Development (in person)',
+      },
+      school: 'Youth Space',
+      period: { pt: '2024 — 2025', en: '2024 — 2025' },
+    },
+    {
+      course: { pt: 'Inglês', en: 'English' },
+      school: 'Youth Space',
+      period: { pt: '2023 — 2025', en: '2023 — 2025' },
     },
   ],
-  // stack real (LinkedIn + README do GitHub + projetos)
+  // conhecimentos técnicos por área (currículo + GitHub)
   skills: [
-    'Java',
-    'JavaScript',
-    'TypeScript',
-    'Node.js',
-    'Express',
-    'Fastify',
-    'PostgreSQL',
-    'MongoDB',
-    'Prisma',
-    'Knex',
-    'Vitest',
-    'Docker Compose',
-    'React Native',
-    'Zod',
-    'Swagger',
-    'AWS S3',
-    'Three.js',
+    {
+      label: { pt: 'Automação e IA', en: 'Automation & AI' },
+      items: [
+        'CRM',
+        'Chatbots',
+        { pt: 'Fluxos inteligentes', en: 'Smart workflows' },
+        { pt: 'APIs de IA', en: 'AI APIs' },
+        { pt: 'Otimização de processos', en: 'Process optimization' },
+      ],
+    },
+    {
+      label: { pt: 'Backend', en: 'Backend' },
+      items: ['Node.js', 'Express', 'Fastify', 'APIs REST', 'JWT', 'Swagger', 'Zod'],
+    },
+    {
+      label: { pt: 'Frontend', en: 'Frontend' },
+      items: ['JavaScript', 'TypeScript', 'React', 'React Native', 'HTML5', 'CSS3', 'Three.js'],
+    },
+    {
+      label: { pt: 'Banco de dados', en: 'Databases' },
+      items: ['PostgreSQL', 'MongoDB', 'SQLite', 'Prisma', 'Knex'],
+    },
+    {
+      label: { pt: 'Ferramentas e qualidade', en: 'Tools & quality' },
+      items: ['Git', 'GitHub', 'Docker Compose', 'Postman', 'Vitest', 'AWS S3'],
+    },
+    {
+      label: { pt: 'Outros', en: 'Other' },
+      items: ['SQL', 'Java', 'Python'],
+    },
   ],
-  // estudando agora
-  learning: ['NestJS'],
+  // estudando / interesse profissional
+  learning: ['NestJS', 'Microsoft Power Platform', 'Low-code / No-code'],
+  courses: [
+    { name: 'APIs com Node.js e Express', hours: 80, school: 'Alura' },
+    { name: 'Conhecendo SQL', hours: 41, school: 'Alura' },
+    { name: 'JavaScript Impressionador', hours: 164, school: 'Hashtag Treinamentos' },
+    { name: 'Node.js', school: 'Rocketseat' },
+    {
+      name: 'Inteligência Artificial e Google Gemini: Criação de Ferramentas e Chatbots Inteligentes',
+      hours: 18,
+      school: 'Alura',
+    },
+    { name: 'Using MongoDB with Node.js', school: 'MongoDB' },
+  ],
   languages: {
-    pt: ['Português — nativo'],
-    en: ['Portuguese — native'],
+    pt: ['Português — nativo', 'Inglês — B2 (Youth Space)'],
+    en: ['Portuguese — native', 'English — B2 (Youth Space)'],
   },
 };
+
+/** Todas as habilidades numa lista só (pro chat). */
+export const allSkills = (lang) =>
+  cv.skills.flatMap((g) => g.items.map((i) => (typeof i === 'string' ? i : i[lang])));
 
 /**
  * Destaques dos projetos (selos coloridos). `tone` define a cor:

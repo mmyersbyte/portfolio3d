@@ -1,4 +1,4 @@
-import { links, projects, cv } from '../data/content.js';
+import { links, projects, allSkills } from '../data/content.js';
 
 /**
  * Camada do chat. Hoje responde com mock; quando o backend (Groq) existir,
@@ -49,8 +49,8 @@ const RULES = [
   },
   {
     match: /(tecnolog|stack|linguage|tech|skill|habilidade|ferramenta|tool)/,
-    pt: () => `Meu dia a dia: ${cv.skills.slice(0, 7).join(', ')}.`,
-    en: () => `My daily stack: ${cv.skills.slice(0, 7).join(', ')}.`,
+    pt: () => `Meu dia a dia: ${allSkills('pt').slice(5, 14).join(', ')}.`,
+    en: () => `My daily stack: ${allSkills('en').slice(5, 14).join(', ')}.`,
   },
   {
     match:

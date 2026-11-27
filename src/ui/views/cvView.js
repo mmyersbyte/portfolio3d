@@ -2,14 +2,19 @@ import { cv, profile, links } from '../../data/content.js';
 import { t, tr } from '../i18n.js';
 import { esc } from './escape.js';
 
+const list = (items) => `<ul>${items.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>`;
+
 export const cvView = {
   title: () => t('modal.cv'),
   render: () => `
     <article class="cv">
       ${cv.placeholder ? `<p class="cv__placeholder">${esc(t('cv.placeholder'))}</p>` : ''}
+      ${cv.headline ? `<p class="cv__headline">${esc(tr(cv.headline))}</p>` : ''}
       <div class="cv__top">
         ${profile.openToWork ? `<span class="open-to-work">${esc(t('cv.openToWork'))}</span>` : ''}
         <a class="cv__email" href="mailto:${esc(links.email)}">${esc(links.email)}</a>
+        <a class="cv__email" href="${esc(links.linkedin)}" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a class="cv__email" href="${esc(links.github)}" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
 
       <h3>${esc(t('cv.summary'))}</h3>
@@ -21,16 +26,11 @@ export const cvView = {
           (job) => `
         <section class="cv__item">
           <header>
-            <strong>${esc(tr(job.role))} · ${esc(job.company)}</strong>
+            <strong>${esc(tr(job.role))}${job.company ? ` · ${esc(job.company)}` : ''}</strong>
             <small>${esc(tr(job.period))}</small>
           </header>
-          ${
-            job.bullets
-              ? `<ul>${tr(job.bullets)
-                  .map((b) => `<li>${esc(b)}</li>`)
-                  .join('')}</ul>`
-              : ''
-          }
+          ${job.meta ? `<p class="cv__meta">${esc(tr(job.meta))}</p>` : ''}
+          ${job.bullets ? list(tr(job.bullets)) : ''}
         </section>`,
         )
         .join('')}
@@ -50,7 +50,15 @@ export const cvView = {
         .join('')}
 
       <h3>${esc(t('cv.skills'))}</h3>
-      <ul class="tags">${cv.skills.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>
+      ${cv.skills
+        .map(
+          (group) => `
+        <div class="cv__skills">
+          <span class="cv__skills-label">${esc(tr(group.label))}</span>
+          <ul class="tags">${group.items.map((s) => `<li>${esc(tr(s))}</li>`).join('')}</ul>
+        </div>`,
+        )
+        .join('')}
 
       ${
         cv.learning?.length
@@ -59,9 +67,19 @@ export const cvView = {
           : ''
       }
 
+      ${
+        cv.courses?.length
+          ? `<h3>${esc(t('cv.courses'))}</h3>
+             <ul class="cv__courses">${cv.courses
+               .map(
+                 (c) =>
+                   `<li><strong>${esc(c.name)}</strong>${c.hours ? ` <span>(${c.hours}h)</span>` : ''} — ${esc(c.school)}</li>`,
+               )
+               .join('')}</ul>`
+          : ''
+      }
+
       <h3>${esc(t('cv.languages'))}</h3>
-      <ul>${tr(cv.languages)
-        .map((l) => `<li>${esc(l)}</li>`)
-        .join('')}</ul>
+      ${list(tr(cv.languages))}
     </article>`,
 };

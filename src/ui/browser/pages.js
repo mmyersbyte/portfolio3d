@@ -254,14 +254,22 @@ const linkedin = {
             .map(
               (job) => `<div class="pg-li__job">
                 <strong>${esc(tr(job.role))}</strong>
-                <span>${esc(job.company)} · ${esc(tr(job.period))}</span>
+                <span>${[job.company, tr(job.period)].filter(Boolean).map(esc).join(' · ')}</span>
+                ${job.meta ? `<span>${esc(tr(job.meta))}</span>` : ''}
               </div>`,
             )
             .join('')}
         </section>
         <section class="pg-li__card pg-li__section">
           <h3>${esc(t('li.education'))}</h3>
-          ${cv.education.map((ed) => `<div class="pg-li__job"><strong>${esc(ed.school)}</strong></div>`).join('')}
+          ${cv.education
+            .map(
+              (ed) => `<div class="pg-li__job">
+                <strong>${esc(ed.school)}</strong>
+                <span>${[ed.course && tr(ed.course), ed.period && tr(ed.period)].filter(Boolean).map(esc).join(' · ')}</span>
+              </div>`,
+            )
+            .join('')}
         </section>
       </div>`;
   },
