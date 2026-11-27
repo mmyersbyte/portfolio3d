@@ -7,7 +7,10 @@
 
 export const profile = {
   name: 'Pedro Victor',
-  role: { pt: 'Desenvolvedor Full Stack · JS & Node', en: 'Full Stack Developer · JS & Node' },
+  role: {
+    pt: 'Desenvolvedor backend-first · Node.js & TypeScript',
+    en: 'Backend-first developer · Node.js & TypeScript',
+  },
 };
 
 /** Usuários nas redes (o navegador do notebook usa pra montar as páginas). */
@@ -35,9 +38,10 @@ export const instagramPosts = [];
 export const cv = {
   placeholder: true,
   summary: {
-    pt: 'Desenvolvedor full stack apaixonado por JavaScript, Node.js e interfaces que dão vontade de clicar. Gosto de transformar ideias em produtos rápidos, acessíveis e bem testados.',
-    en: 'Full stack developer who loves JavaScript, Node.js and interfaces that make you want to click. I enjoy turning ideas into fast, accessible, well-tested products.',
+    pt: 'Desenvolvedor backend-first em Fortaleza, focado em Node.js e TypeScript. Gosto de APIs seguras e bem documentadas: autenticação com cookies httpOnly, validação com Zod/Joi, testes com Vitest, Swagger e deploy com Docker. Tenho sistemas no ar sendo usados de verdade.',
+    en: 'Backend-first developer from Fortaleza, focused on Node.js and TypeScript. I like secure, well-documented APIs: httpOnly cookie auth, Zod/Joi validation, Vitest tests, Swagger and Docker deploys. I have systems live and in real use.',
   },
+
   experience: [
     {
       role: { pt: 'Desenvolvedor Full Stack', en: 'Full Stack Developer' },
@@ -80,17 +84,20 @@ export const cv = {
       period: '2020 — 2023',
     },
   ],
+  // stack real (README do GitHub + projetos)
   skills: [
-    'JavaScript',
     'TypeScript',
     'Node.js',
     'Express',
-    'Three.js',
-    'React',
     'PostgreSQL',
     'MongoDB',
+    'Vitest',
     'Docker',
-    'Git',
+    'React Native',
+    'Zod',
+    'Swagger',
+    'AWS S3',
+    'Three.js',
   ],
   languages: {
     pt: ['Português — nativo', 'Inglês — avançado'],
@@ -98,41 +105,53 @@ export const cv = {
   },
 };
 
+/** Projetos (tirados dos repositórios fixados no GitHub). */
 export const projects = [
+  {
+    title: 'Eco Histórias',
+    description: {
+      pt: 'Rede para contar histórias de forma anônima, com codinomes e avatares fixos. API com JWT em cookies httpOnly, recuperação de senha por e-mail, avatares no S3 e deploy com Docker.',
+      en: 'A network to share stories anonymously, with fixed codenames and avatars. API with JWT in httpOnly cookies, email password recovery, avatars on S3 and Docker deploys.',
+    },
+    tags: ['TypeScript', 'Express', 'PostgreSQL', 'Knex', 'Vitest', 'Docker'],
+    repo: 'https://github.com/mmyersbyte/eco',
+    demo: 'https://ecohistorias.com.br/',
+  },
+  {
+    title: 'LABEM',
+    description: {
+      pt: 'Sistema da Liga Acadêmica de Biomedicina Estética da UNISUL: painéis por perfil, eventos, upload de PDFs e parcerias. Em produção, usado pela liga.',
+      en: "Management system for UNISUL's Aesthetic Biomedicine academic league: role-based dashboards, events, PDF uploads and partnerships. Live and used by the league.",
+    },
+    tags: ['Node.js', 'Express', 'MongoDB', 'JWT', 'Multer', 'Winston'],
+    repo: 'https://github.com/mmyersbyte/labem',
+    demo: 'https://www.labemunisul.com.br/',
+  },
+  {
+    title: 'Desatende',
+    description: {
+      pt: 'App pra registrar reclamações de atendimento (restaurantes, faculdades, companhias aéreas…) e as empresas responderem publicamente. Feito sozinho, do app à API.',
+      en: 'App to report poor customer service (restaurants, colleges, airlines…) where companies answer publicly. Built solo, from the app to the API.',
+    },
+    tags: ['React Native', 'Node.js', 'Express', 'MongoDB', 'Joi'],
+    repo: 'https://github.com/mmyersbyte/appdesatende',
+  },
+  {
+    title: 'WittyWidget Server',
+    description: {
+      pt: 'API de microaprendizado de inglês: uma expressão por dia, com significado e exemplos, pensada pra um widget de Android.',
+      en: 'English micro-learning API: one expression a day, with meaning and examples, built for an Android widget.',
+    },
+    tags: ['TypeScript', 'Express', 'MongoDB', 'Zod', 'Swagger'],
+    repo: 'https://github.com/mmyersbyte/WittyWidgetServer',
+  },
   {
     title: 'Portfolio 3D',
     description: {
-      pt: 'Este quarto aqui! Three.js puro, câmera isométrica, gato com pathfinding e chat com IA.',
-      en: 'This very room! Vanilla Three.js, isometric camera, a cat with pathfinding and an AI chat.',
+      pt: 'Este quarto aqui! Three.js puro, câmera isométrica, gato com pathfinding, clima na hora de Brasília e lo-fi gerado no navegador.',
+      en: 'This very room! Vanilla Three.js, isometric camera, a cat with pathfinding, Brasília-time weather and lo-fi generated in the browser.',
     },
-    tags: ['Three.js', 'Vite', 'Groq'],
-    repo: 'https://github.com/mmyersbyte',
-  },
-  {
-    title: 'API de Tarefas',
-    description: {
-      pt: 'API REST com autenticação JWT, testes e documentação OpenAPI. (exemplo)',
-      en: 'REST API with JWT auth, tests and OpenAPI docs. (example)',
-    },
-    tags: ['Node.js', 'Express', 'PostgreSQL'],
-    repo: 'https://github.com/mmyersbyte',
-  },
-  {
-    title: 'Chat em Tempo Real',
-    description: {
-      pt: 'Salas de chat com WebSocket, presença online e histórico persistido. (exemplo)',
-      en: 'Chat rooms with WebSocket, online presence and persisted history. (example)',
-    },
-    tags: ['Socket.io', 'Redis'],
-    repo: 'https://github.com/mmyersbyte',
-  },
-  {
-    title: 'Dashboard Financeiro',
-    description: {
-      pt: 'Painel com gráficos, filtros e exportação para CSV. (exemplo)',
-      en: 'Dashboard with charts, filters and CSV export. (example)',
-    },
-    tags: ['React', 'Chart.js'],
-    repo: 'https://github.com/mmyersbyte',
+    tags: ['Three.js', 'Vite', 'Web Audio'],
+    repo: 'https://github.com/mmyersbyte/portfolio3d',
   },
 ];

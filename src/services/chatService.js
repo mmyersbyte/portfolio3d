@@ -36,9 +36,9 @@ const RULES = [
   {
     match: /(quem|who|sobre voce|about you|apresenta)/,
     pt: () =>
-      `Sou o Pedro, dev full stack. Curto JavaScript, Node e coisas 3D como esse quarto. ${cv.summary.pt}`,
+      `Sou o Pedro, dev backend-first de Fortaleza. Meu forte é Node.js e TypeScript, mas também curto coisas 3D como esse quarto.`,
     en: () =>
-      `I'm Pedro, a full stack dev. I love JavaScript, Node and 3D stuff like this room. ${cv.summary.en}`,
+      `I'm Pedro, a backend-first dev from Fortaleza. Node.js and TypeScript are my thing, but I also enjoy 3D stuff like this room.`,
   },
   {
     match: /(projet|project|portfolio|trabalho|work)/,
