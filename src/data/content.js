@@ -62,6 +62,55 @@ export const linkedinProfile = {
   company: 'Mind Tecnologia I.A',
   school: 'Unichristus',
   connections: { pt: '+500 conexões', en: '500+ connections' },
+  // "Sobre" exatamente como está no LinkedIn
+  about: {
+    pt: `Sou desenvolvedor backend especializado em APIs RESTful com Node.js e TypeScript / JavaScript.
+
+Experiência em projetos aprovados e utilizados por usuários reais:
+
+✅️ Eco Histórias: rede social de relatos anônimos com mais de 100 histórias publicadas por usuários autenticados.
+🔗 https://ecohistorias.com.br/
+
+✅️ LABEM (Liga Acadêmica da UNISUL): API em produção entregue como meu último freela pago.
+🔗 github.com/mmyersbyte/labem
+
+Aplicando frameworks como Express.js e Fastify. Atualmente aprendendo NestJS.
+Também atuo com testes automatizados, documentação (Swagger), e aplicações com Docker Compose. Utilizo banco de dados SQL (PostgreSQL) e NoSQL (MongoDB), usando Query Builders e ORMs como o Prisma.
+
+Graduação em ADS (Término previsto para 2026)
+
+Atualmente atuando remotamente com Inteligência Artificial aplicada e operações com sistemas, ampliando minha visão prática sobre tecnologia no dia a dia.
+
+Aberto a processos seletivos para times de desenvolvimento.
+
+Busco evoluir como desenvolvedor e contribuir com projetos reais, unindo aprendizado técnico com impacto.
+
+📧 pedrovictorcastro.dev@gmail.com
+💻 GitHub: github.com/mmyersbyte`,
+    en: `I'm a backend developer specialized in RESTful APIs with Node.js and TypeScript / JavaScript.
+
+Experience with projects approved and used by real users:
+
+✅️ Eco Histórias: anonymous stories social network with over 100 stories published by authenticated users.
+🔗 https://ecohistorias.com.br/
+
+✅️ LABEM (UNISUL Academic League): production API delivered as my latest paid freelance job.
+🔗 github.com/mmyersbyte/labem
+
+Working with frameworks like Express.js and Fastify. Currently learning NestJS.
+I also work with automated tests, documentation (Swagger) and Docker Compose apps. I use SQL (PostgreSQL) and NoSQL (MongoDB) databases, with query builders and ORMs like Prisma.
+
+Systems Analysis and Development degree (expected 2026)
+
+Currently working remotely with applied Artificial Intelligence and systems operations, broadening my hands-on view of technology day to day.
+
+Open to hiring processes for development teams.
+
+I want to grow as a developer and contribute to real projects, combining technical learning with impact.
+
+📧 pedrovictorcastro.dev@gmail.com
+💻 GitHub: github.com/mmyersbyte`,
+  },
 };
 
 /**

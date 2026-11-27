@@ -2356,3 +2356,13 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 .cv__courses span {
   color: var(--ink-soft);
 }
+
+/* "Sobre" do LinkedIn: mantém as quebras de linha da bio original */
+.pg-li__about {
+  white-space: pre-line;
+}
+
+.pg-li__about a {
+  color: #0a66c2;
+  font-weight: 600;
+}

@@ -35,6 +35,18 @@ const LANG_COLORS = {
   Go: '#00ADD8',
 };
 
+/** Escapa o texto e transforma URLs, github.com/… e e-mails em links. */
+function linkify(text) {
+  return esc(text).replace(
+    /(https?:\/\/[^\s<]+)|((?:www\.)?github\.com\/[^\s<]+)|([\w.+-]+@[\w-]+\.[\w.]+)/g,
+    (m, url, gh, mail) => {
+      if (mail) return `<a href="mailto:${mail}">${mail}</a>`;
+      const href = url ?? `https://${gh}`;
+      return `<a href="${href}" target="_blank" rel="noopener">${m}</a>`;
+    },
+  );
+}
+
 const fmtDate = (iso) =>
   new Date(iso).toLocaleDateString(getLang() === 'pt' ? 'pt-BR' : 'en-US', {
     day: 'numeric',
@@ -246,7 +258,7 @@ const linkedin = {
         </div>
         <section class="pg-li__card pg-li__section">
           <h3>${esc(t('li.about'))}</h3>
-          <p>${esc(tr(cv.summary))}</p>
+          <p class="pg-li__about">${linkify(tr(li.about))}</p>
         </section>
         <section class="pg-li__card pg-li__section">
           <h3>${esc(t('li.experience'))}</h3>
