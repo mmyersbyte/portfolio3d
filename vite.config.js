@@ -37,7 +37,11 @@ function devChatApi(env) {
       // contador de visitas (sem Redis configurado responde 503 e o post-it mostra "—")
       server.middlewares.use('/api/visits', async (req, res) => {
         const { handleVisits } = await server.ssrLoadModule('/api/_lib/visits.js');
-        const result = await handleVisits({ method: req.method, env });
+        // contador separado no dev: testar localmente não mexe no número do site publicado
+        const result = await handleVisits({
+          method: req.method,
+          env: { ...env, VISITS_KEY: 'portfolio3d:visits:dev' },
+        });
         res.statusCode = result.status;
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(result.body));

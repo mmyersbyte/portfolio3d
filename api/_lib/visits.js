@@ -9,6 +9,7 @@
  * POST soma 1 e devolve o total · GET só devolve o total.
  * (o navegador manda POST no máximo 1x por dia, ver src/services/visits.js)
  */
+// VISITS_KEY permite separar contadores (o `pnpm dev` usa um próprio, pra não inflar o real)
 const KEY = 'portfolio3d:visits';
 const TIMEOUT_MS = 4000;
 
@@ -23,7 +24,7 @@ export async function handleVisits({ method, env = process.env }) {
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
     const op = method === 'POST' ? 'incr' : 'get';
-    const res = await fetch(`${url.replace(/\/$/, '')}/${op}/${KEY}`, {
+    const res = await fetch(`${url.replace(/\/$/, '')}/${op}/${env.VISITS_KEY || KEY}`, {
       method: 'POST',
       signal: controller.signal,
       headers: { Authorization: `Bearer ${token}` },
