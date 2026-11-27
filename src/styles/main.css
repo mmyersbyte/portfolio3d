@@ -2712,3 +2712,12 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
     animation: blink 1.6s ease-in-out infinite;
   }
 }
+
+/* sugestões do chat: no celular rolam de lado (arrasta com o dedo);
+   no PC não dá pra arrastar, então quebram linha e aparecem todas inteiras */
+@media (min-width: 768px) {
+  .chat__suggestions {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
