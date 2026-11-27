@@ -7,7 +7,7 @@ import { LightSwitch } from './world/LightSwitch.js';
 import { WallClock } from './world/WallClock.js';
 import { Speaker } from './world/Speaker.js';
 import { TvCorner } from './world/TvCorner.js';
-import { createPostIts } from './world/PostIts.js';
+import { createPostIts, createVisitsNote } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
 import { Wardrobe } from './world/Wardrobe.js';
 import { PreviewStudio } from './core/PreviewStudio.js';
@@ -38,6 +38,9 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     lights: { ...lights, lamp },
   });
   const notes = createPostIts(exp.scene);
+  const visitsNote = createVisitsNote(exp.scene);
+  visitsNote.setLabel(t('visits.label'));
+  onLangChange(() => visitsNote.setLabel(t('visits.label')));
   const wardrobe = new Wardrobe(exp);
   const avatar = new Avatar(exp);
   const cat = new Cat(exp);
@@ -361,5 +364,6 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     framePet,
     runCommand,
     attachMusic,
+    setVisits: (n) => visitsNote.setCount(n),
   };
 }

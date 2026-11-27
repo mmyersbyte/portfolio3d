@@ -76,3 +76,65 @@ export function createPostIts(scene) {
 
   return notes;
 }
+
+/**
+ * Post-it do contador de visitas (laranja, à esquerda dos outros).
+ * O número chega depois (vem do backend): setCount redesenha a textura.
+ */
+export function createVisitsNote(scene) {
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 256;
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.anisotropy = 4;
+  let count = null;
+  let label = 'visitas';
+
+  const draw = () => {
+    const ctx = canvas.getContext('2d');
+    const w = 256;
+    ctx.fillStyle = '#ffb86b';
+    ctx.fillRect(0, 0, w, w);
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath();
+    ctx.moveTo(w, w - 40);
+    ctx.lineTo(w - 40, w);
+    ctx.lineTo(w, w);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fillRect(w / 2 - 50, 0, 100, 26);
+    ctx.fillStyle = '#1d1b2e';
+    ctx.textAlign = 'center';
+    const text = count == null ? '—' : count.toLocaleString('pt-BR');
+    ctx.font = `bold ${text.length > 5 ? 54 : 68}px ${PIXEL_FONT}`;
+    ctx.fillText(text, w / 2, 140);
+    ctx.font = `30px ${PIXEL_FONT}`;
+    ctx.fillStyle = 'rgba(29,27,46,0.7)';
+    ctx.fillText(label, w / 2, 188);
+    texture.needsUpdate = true;
+  };
+
+  const group = new THREE.Group();
+  group.position.set(-0.15, 2.05, -ROOM.half + 0.03);
+  group.rotation.z = 0.05;
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(SIZE, SIZE),
+    new THREE.MeshStandardMaterial({ map: texture, roughness: 0.9 }),
+  );
+  mesh.castShadow = true;
+  group.add(mesh);
+  scene.add(group);
+  draw();
+
+  return {
+    group,
+    setCount(n) {
+      count = n;
+      draw();
+    },
+    setLabel(text) {
+      label = text;
+      draw();
+    },
+  };
+}

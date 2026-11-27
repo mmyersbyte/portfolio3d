@@ -32,6 +32,7 @@ Requer Node 20+.
 ```
 api/
 ├── chat.js              # POST /api/chat (função da Vercel)
+├── visits.js            # GET/POST /api/visits (contador)
 └── _lib/                # núcleo do chat + conhecimento da IA
 src/
 ├── main.js              # entrada: UI fixa, ações e carregamento do 3D
@@ -110,6 +111,12 @@ um plugin do Vite serve o `/api/chat` usando a mesma função da Vercel.
 
 **Vercel:** em _Settings → Environment Variables_, cadastre `GROQ_API_KEY`
 (e, opcional, `GROQ_MODEL`; padrão `openai/gpt-oss-120b`).
+
+## Contador de visitas
+
+O post-it laranja mostra quantas visitas o site teve (cada navegador conta 1x por dia).
+O número fica num Redis da Upstash (grátis): na Vercel, _Storage → Upstash Redis_, conecte ao projeto
+e as variáveis `KV_REST_API_URL` / `KV_REST_API_TOKEN` são criadas sozinhas. Sem isso o post-it mostra "—".
 
 ## Deploy
 

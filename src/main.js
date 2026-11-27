@@ -10,6 +10,7 @@ import { loadOutfit } from './services/outfitStore.js';
 import { PetPanel } from './ui/PetPanel.js';
 import { LofiPlayer } from './audio/LofiPlayer.js';
 import { icon } from './ui/icons.js';
+import { loadVisits } from './services/visits.js';
 
 const $ = (id) => document.getElementById(id);
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -182,6 +183,7 @@ async function boot() {
   });
   scene.avatar.setOutfit(loadOutfit());
   scene.attachMusic(music);
+  loadVisits().then((n) => scene.setVisits(n));
   wardrobePanel.setStudio(scene.studio);
   // facilita depurar pelo console no `pnpm dev` (não vai pro build)
   if (import.meta.env.DEV) {

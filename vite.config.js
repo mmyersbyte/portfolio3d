@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
 
 /**
- * No `pnpm dev` roda a mesma função do chat que vai pra Vercel (api/_lib/chat.js),
+ * No `pnpm dev` roda as mesmas funções que vão pra Vercel (api/_lib/chat.js e visits.js),
  * lendo a GROQ_API_KEY do .env.local. Assim dá pra testar a IA sem a CLI da Vercel.
  * A chave fica só no servidor do Vite: o navegador só enxerga variáveis VITE_*.
  */
@@ -31,6 +31,15 @@ function devChatApi(env) {
         const { handleChat } = await server.ssrLoadModule('/api/_lib/chat.js');
         const result = await handleChat({ body, ip: req.socket.remoteAddress, env });
         res.statusCode = result.status;
+        res.end(JSON.stringify(result.body));
+      });
+
+      // contador de visitas (sem Redis configurado responde 503 e o post-it mostra "—")
+      server.middlewares.use('/api/visits', async (req, res) => {
+        const { handleVisits } = await server.ssrLoadModule('/api/_lib/visits.js');
+        const result = await handleVisits({ method: req.method, env });
+        res.statusCode = result.status;
+        res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(result.body));
       });
     },
