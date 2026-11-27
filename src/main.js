@@ -108,6 +108,19 @@ music.onChange(renderMusicButton);
 musicBtn.addEventListener('click', () => music.toggle());
 renderMusicButton();
 
+// ---------- teclado do celular ----------
+// iOS não encolhe a página quando o teclado abre: mede o quanto ele cobre
+// e sobe os painéis (chat) por essa altura. No Android o meta viewport já resolve.
+if (window.visualViewport) {
+  const vv = window.visualViewport;
+  const syncKeyboard = () => {
+    const covered = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    document.documentElement.style.setProperty('--kb', `${Math.round(covered)}px`);
+  };
+  vv.addEventListener('resize', syncKeyboard);
+  vv.addEventListener('scroll', syncKeyboard);
+}
+
 // ---------- interface fixa ----------
 document.querySelector('.dock').addEventListener('click', (e) => {
   const btn = e.target.closest('[data-action]');

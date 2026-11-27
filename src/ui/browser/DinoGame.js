@@ -5,7 +5,9 @@
  * Controles: espaço/↑/W pula · ↓/S abaixa · toque/clique pula.
  */
 
-const W = 600;
+// largura lógica: 600 no desktop; no celular em pé fica mais estreita (e o jogo
+// aparece maior), definida no construtor conforme o espaço disponível
+let W = 600;
 const H = 180;
 const GROUND = 150;
 const GRAVITY = 2100;
@@ -81,6 +83,11 @@ function drawSprite(ctx, rows, x, y, colors, px = PX) {
 export class DinoGame {
   constructor(container, strings) {
     this.t = strings; // (key) => texto traduzido
+    this.touch = matchMedia('(pointer: coarse)').matches;
+    // altura desejada na tela: ~55% da largura em telas estreitas (não fica uma faixa fina)
+    const cw = container.clientWidth || 600;
+    const cssH = cw < 560 ? Math.min(cw * 0.55, 260) : (cw * H) / 600;
+    W = Math.round(Math.min(600, Math.max(360, (H * cw) / cssH)));
     this.canvas = document.createElement('canvas');
     this.canvas.width = W;
     this.canvas.height = H;
@@ -331,7 +338,8 @@ export class DinoGame {
       ctx.font = 'bold 18px "Pixelify Sans", monospace';
       ctx.fillText(this.state === 'over' ? this.t('dino.over') : 'Dino Corre', W / 2, 78);
       ctx.font = '13px "Pixelify Sans", monospace';
-      ctx.fillText(this.t(this.state === 'over' ? 'dino.restart' : 'dino.start'), W / 2, 100);
+      const key = this.state === 'over' ? 'dino.restart' : 'dino.start';
+      ctx.fillText(this.t(this.touch ? `${key}Touch` : key), W / 2, 100);
     }
   }
 

@@ -2372,3 +2372,29 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   font-weight: 600;
   overflow-wrap: anywhere;
 }
+
+/* ---------- telas baixas (celular deitado) ----------
+   os painéis ocupam a altura toda; com 390px de altura, o tamanho normal
+   não deixava ver a conversa nem os itens do guarda-roupa */
+@media (max-height: 520px) {
+  .sheet,
+  .wardrobe {
+    top: calc(var(--safe-t) + 8px);
+    bottom: calc(var(--safe-b) + 8px);
+    height: auto;
+  }
+
+  .wardrobe__preview {
+    display: none;
+  }
+
+  .chat-mini {
+    top: calc(var(--safe-t) + 8px);
+    bottom: auto;
+  }
+}
+
+/* teclado aberto no celular: o painel sobe junto (var calculada em main.js) */
+.sheet {
+  margin-bottom: var(--kb, 0px);
+}
