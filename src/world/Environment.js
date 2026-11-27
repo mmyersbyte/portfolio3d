@@ -84,6 +84,10 @@ const KEYS = [
   { h: 24, ...NIGHT },
 ];
 
+// luz do quarto acesa: iluminação fixa, independe da hora e do clima
+const INDOOR = { sun: '#fff1dc', sunI: 2.1, hemi: '#fff4e6', hemiI: 1.55, ceilingI: 3.2 };
+const LIGHT_KEY = 'portfolio3d:light';
+
 const COLOR_KEYS = ['top', 'bottom', 'sun', 'hemi', 'win'];
 const NUM_KEYS = ['day', 'sunI', 'hemiI', 'winI', 'lampI'];
 
@@ -140,6 +144,15 @@ export class Environment {
       this.weatherTimer = rand(60, 180);
     }
 
+    // interruptor: estado salvo no navegador de quem visita
+    try {
+      this.lightOn = localStorage.getItem(LIGHT_KEY) === 'on';
+    } catch {
+      this.lightOn = false;
+    }
+    this.indoor = this.lightOn ? 1 : 0;
+    this.flicker = 0;
+
     this.skyAcc = 1;
     this.clockAcc = 1;
     this.lastClock = '';
@@ -166,6 +179,18 @@ export class Environment {
   stopRain() {
     this.weather = 'clearing';
     this.rainTarget = 0;
+  }
+
+  /** Liga/desliga a luz do quarto. Retorna o novo estado. */
+  toggleLight(on = !this.lightOn) {
+    this.lightOn = on;
+    if (on) this.flicker = 0.3; // piscadinha de lâmpada acendendo
+    try {
+      localStorage.setItem(LIGHT_KEY, on ? 'on' : 'off');
+    } catch {
+      /* sem storage: vale só nesta visita */
+    }
+    return on;
   }
 
   setHour(h) {
@@ -239,11 +264,24 @@ export class Environment {
     // ----- luzes do quarto -----
     const L = this.lights;
     const flash = this.flash;
-    L.sun.color.set(s.sun);
+
+    // interruptor: transição rápida, com uma piscada ao acender
+    this.indoor += ((this.lightOn ? 1 : 0) - this.indoor) * Math.min(1, dt * 12);
+    let indoor = this.indoor;
+    if (this.flicker > 0) {
+      this.flicker -= dt;
+      if (this.flicker > 0.12 && this.flicker < 0.22) indoor *= 0.25;
+    }
+
+    // natural (hora + chuva) misturado com a luz acesa
     // chuva escurece mais de dia (à noite já está escuro, não pode sumir tudo)
-    L.sun.intensity = s.sunI * (1 - rain * 0.5 * s.day) + flash * 1.5;
-    L.hemi.color.set(s.hemi);
-    L.hemi.intensity = s.hemiI * (1 - rain * 0.2 * s.day) + flash * 0.8;
+    const sunI = s.sunI * (1 - rain * 0.5 * s.day);
+    const hemiI = s.hemiI * (1 - rain * 0.2 * s.day);
+    L.sun.color.set(mixColor(s.sun, INDOOR.sun, indoor));
+    L.sun.intensity = sunI + (INDOOR.sunI - sunI) * indoor + flash * 1.5;
+    L.hemi.color.set(mixColor(s.hemi, INDOOR.hemi, indoor));
+    L.hemi.intensity = hemiI + (INDOOR.hemiI - hemiI) * indoor + flash * 0.8;
+    L.ceiling.intensity = INDOOR.ceilingI * indoor;
     L.window.color.set(rain > 0.5 ? mixColor(s.win, '#b8c6dd', rain - 0.5) : s.win);
     L.window.intensity = s.winI * (1 - rain * 0.4) + flash * 8;
     if (L.lamp) L.lamp.intensity = s.lampI;

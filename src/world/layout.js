@@ -58,6 +58,14 @@ export const AVATAR_SPOTS = {
   },
 };
 
+/**
+ * Interruptor na parede esquerda, ao lado do guarda-roupa (y = altura do centro).
+ * Fica do lado de +z: do outro lado, o próprio guarda-roupa esconderia ele da câmera.
+ */
+export const LIGHT_SWITCH = { z: 3.45, y: 1.2 };
+/** Onde eu paro pra apertar o interruptor (de frente pra parede). */
+export const SWITCH_SPOT = { x: -3.15, z: 3.5, heading: -Math.PI / 2 };
+
 /** Onde eu paro pra trocar de roupa (de frente pro guarda-roupa). */
 export const WARDROBE_SPOT = { x: -2.75, z: 2.3, heading: -Math.PI / 2 };
 

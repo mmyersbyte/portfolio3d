@@ -9,6 +9,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
 - 🐈‍⬛ O Frajola anda sozinho pelo quarto, desvia dos móveis e às vezes sobe na cama pra dormir. Clicando nele abre a ficha dele e dá pra dar comandos estilo Habbo (pular, falar, sentar, deitar, vem, livre): eu falo num balão que sobe e ele obedece
 - 🌗 A janela mostra o céu na hora real de Brasília (madrugada, amanhecer, dia, tarde, noite) e a luz do quarto acompanha. De vez em quando chove, e depois vai parando aos poucos. O Frajola gosta de ficar no parapeito olhando a chuva
+- 💡 Interruptor ao lado do guarda-roupa: com a luz acesa o quarto fica iluminado não importa a hora; apagada, só a luz natural (fica salvo no navegador)
 - 🌎 PT/EN, funciona no celular e em telas grandes
 
 ## Rodando
@@ -39,6 +40,7 @@ src/
 │   ├── Room.js          # piso, paredes, tapete, luzes
 │   ├── Window.js        # janela (céu em pixel art, cortinas, parapeito)
 │   ├── Environment.js   # hora de Brasília + chuva → céu e luzes
+│   ├── LightSwitch.js   # interruptor da luz do quarto
 │   ├── Furniture.js     # cama, mesa + notebook, cadeira, planta...
 │   ├── PostIts.js
 │   ├── TileHighlight.js # quadrado branco no piso (hover/destino)

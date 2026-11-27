@@ -9,6 +9,7 @@ const HAIR = '#151312';
 const HAIR_LIGHT = '#2b2420';
 
 const SPEED = 1.5;
+const PRESS_TIME = 0.5;
 const FACE_CAMERA = Math.PI / 4;
 
 // poses do corpo (interpoladas): deitar gira o corpo inteiro, sentar dobra pernas e braços
@@ -58,6 +59,7 @@ export class Avatar {
     this.walkPhase = 0;
 
     this.waveT = 0;
+    this.pressT = 0; // apertando algo na parede (interruptor)
     this.talking = false;
     this.nextBlink = 2;
 
@@ -476,6 +478,11 @@ export class Avatar {
     this.tween = { from, to: new THREE.Vector3(to.x, to.y ?? 0, to.z), t: 0, dur, onDone };
   }
 
+  /** Estica o braço pra frente rapidinho (apertar o interruptor). */
+  press() {
+    this.pressT = PRESS_TIME;
+  }
+
   wave() {
     this.waveT = 1.8;
     // se estiver parado, vira pra quem está falando comigo
@@ -555,9 +562,15 @@ export class Avatar {
 
     // digitando no notebook quando está na cadeira
     const typing = this.state === 'seated' && this.spot?.pose === 'sit' ? 1 : 0;
+    let press = 0;
+    if (this.pressT > 0) {
+      this.pressT = Math.max(0, this.pressT - dt);
+      press = Math.sin((1 - this.pressT / PRESS_TIME) * Math.PI);
+    }
     this.arms.forEach((arm, i) => {
       const side = i === 0 ? 1 : -1;
       arm.rotation.x = P.arm - swing * side * 0.8 + Math.sin(t * 18 + i * 2) * 0.06 * typing;
+      if (i === 0) arm.rotation.x -= press * 1.5; // braço direito vai até a parede
     });
 
     // aceno (braço direito) e leve balanço do esquerdo

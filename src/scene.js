@@ -3,11 +3,12 @@ import { createRoom } from './world/Room.js';
 import { createFurniture } from './world/Furniture.js';
 import { RoomWindow } from './world/Window.js';
 import { Environment } from './world/Environment.js';
+import { LightSwitch } from './world/LightSwitch.js';
 import { createPostIts } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
 import { Wardrobe } from './world/Wardrobe.js';
 import { PreviewStudio } from './core/PreviewStudio.js';
-import { AVATAR_SPOTS, WARDROBE_SPOT } from './world/layout.js';
+import { AVATAR_SPOTS, WARDROBE_SPOT, SWITCH_SPOT } from './world/layout.js';
 import { Avatar } from './entities/Avatar.js';
 import { Cat } from './entities/Cat.js';
 import { WorldLabels } from './ui/WorldLabels.js';
@@ -108,6 +109,26 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     wardrobe.setOpen(false);
     exp.rig.reset();
   }
+
+  // ---------- interruptor ----------
+  const lightSwitch = new LightSwitch(exp.scene);
+  lightSwitch.set(env.lightOn);
+  let switchVisit = 0;
+  it.register(lightSwitch.group, {
+    label: () => (env.lightOn ? 'label.lightOff' : 'label.lightOn'),
+    hoverScale: 1.25,
+    onClick: () => {
+      // eu vou até a parede, estico o braço e a luz muda
+      const id = ++switchVisit;
+      tiles.mark(SWITCH_SPOT);
+      avatar.walkTo(SWITCH_SPOT, () => {
+        if (id !== switchVisit) return;
+        avatar.heading = SWITCH_SPOT.heading;
+        setTimeout(() => avatar.press(), 200);
+        setTimeout(() => lightSwitch.set(env.toggleLight()), 420);
+      });
+    },
+  });
 
   // ---------- andar pelo piso (estilo Habbo) ----------
   const walkableTile = (point) => {

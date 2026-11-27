@@ -170,5 +170,10 @@ function createLights(scene) {
   window.position.set(-3.1, 1.8, WINDOW.z);
   scene.add(window);
 
-  return { hemi, sun, window };
+  // luz de teto (interruptor): começa apagada, o Environment liga/desliga
+  const ceiling = new THREE.PointLight('#ffe4c4', 0, 14, 1);
+  ceiling.position.set(0, ROOM.wallHeight + 0.3, 0);
+  scene.add(ceiling);
+
+  return { hemi, sun, window, ceiling };
 }
