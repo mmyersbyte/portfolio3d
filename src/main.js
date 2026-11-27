@@ -11,6 +11,7 @@ import { PetPanel } from './ui/PetPanel.js';
 import { LofiPlayer } from './audio/LofiPlayer.js';
 import { icon } from './ui/icons.js';
 import { loadVisits } from './services/visits.js';
+import { Tour } from './ui/Tour.js';
 
 const $ = (id) => document.getElementById(id);
 const isTouch = matchMedia('(pointer: coarse)').matches;
@@ -108,6 +109,20 @@ function renderMusicButton() {
 music.onChange(renderMusicButton);
 musicBtn.addEventListener('click', () => music.toggle());
 renderMusicButton();
+
+// ---------- tutorial (botão ao lado do nome) ----------
+new Tour({
+  getScene: () => scene,
+  beforeStart() {
+    chat.close();
+    petPanel.close();
+    wardrobePanel.cancel();
+    browser.close();
+    modal.close();
+    $('hint').classList.add('is-hidden');
+    $('tooltip').classList.remove('is-visible');
+  },
+});
 
 // ---------- teclado do celular ----------
 // iOS não encolhe a página quando o teclado abre: mede o quanto ele cobre

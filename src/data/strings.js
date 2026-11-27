@@ -196,6 +196,45 @@ export const strings = {
     'label.lightOn': 'Acender a luz',
     'label.clock': 'Brasília · {time}',
     'visits.label': 'visitas',
+    'tour.label': 'Tutorial',
+    'tour.button': 'Fazer o tutorial do quarto',
+    'tour.next': 'Próximo',
+    'tour.back': 'Voltar',
+    'tour.skip': 'Pular',
+    'tour.finish': 'Bora explorar!',
+    'tour.welcome.title': 'Bem-vindo ao meu quarto!',
+    'tour.welcome.text':
+      'Esse é o meu portfólio: um quarto 3D onde quase tudo é clicável. Vou te mostrar rapidinho o que dá pra fazer.',
+    'tour.avatar.title': 'Esse sou eu',
+    'tour.avatar.text':
+      'Clique em mim pra conversar. Quem responde é uma IA com as minhas informações: pergunte sobre projetos, experiência ou como me contatar.',
+    'tour.walk.title': 'Dá pra andar',
+    'tour.walk.text':
+      'Clique (ou toque) em qualquer quadradinho do chão e eu vou até lá. Arrastando, você gira a câmera; com a rodinha ou a pinça, dá zoom.',
+    'tour.laptop.title': 'O notebook',
+    'tour.laptop.text':
+      'Abre um navegador com meus projetos, meu GitHub, Instagram, LinkedIn e até um joguinho de dinossauro.',
+    'tour.postits.title': 'Os post-its',
+    'tour.postits.text':
+      'O amarelo é o meu currículo; os outros levam pro GitHub, LinkedIn e Instagram. O laranja conta as visitas do site.',
+    'tour.cat.title': 'Esse é o Frajola',
+    'tour.cat.text':
+      'Meu gato anda sozinho pelo quarto. Clique nele pra ver a ficha e dar comandos: pular, sentar, deitar, vir até mim…',
+    'tour.wardrobe.title': 'O guarda-roupa',
+    'tour.wardrobe.text':
+      'Clique nele pra trocar a minha roupa e os acessórios. O visual que você montar fica salvo no seu navegador.',
+    'tour.sofa.title': 'Cantinho da TV',
+    'tour.sofa.text':
+      'Clique no sofá e eu sento pra assistir: passa um desenho do Frajola na TV. Na cama eu deito, na cadeira eu programo.',
+    'tour.dock.title': 'Atalhos',
+    'tour.dock.text':
+      'Tudo também está aqui embaixo. No chat, o ícone ao lado do X lista comandos como :dormir, :chuva e :noite.',
+    'tour.actions.title': 'Música e idioma',
+    'tour.actions.text':
+      'Toque um lo-fi feito na hora pelo navegador e troque entre português e inglês quando quiser.',
+    'tour.done.title': 'É isso!',
+    'tour.done.text':
+      'O céu da janela segue a hora de Brasília e às vezes chove. Explore à vontade e, se quiser falar comigo, é só chamar no chat.',
     'label.speakerPlay': 'Tocar lo-fi',
     'label.speakerPause': 'Pausar a música',
     'music.play': 'Tocar música lo-fi',
@@ -425,6 +464,45 @@ export const strings = {
     'label.lightOn': 'Turn the light on',
     'label.clock': 'Brasília · {time}',
     'visits.label': 'visits',
+    'tour.label': 'Tutorial',
+    'tour.button': 'Take the room tutorial',
+    'tour.next': 'Next',
+    'tour.back': 'Back',
+    'tour.skip': 'Skip',
+    'tour.finish': "Let's explore!",
+    'tour.welcome.title': 'Welcome to my room!',
+    'tour.welcome.text':
+      'This is my portfolio: a 3D room where almost everything is clickable. Let me quickly show you around.',
+    'tour.avatar.title': "That's me",
+    'tour.avatar.text':
+      'Click me to chat. An AI with my info answers: ask about projects, experience or how to reach me.',
+    'tour.walk.title': 'You can walk around',
+    'tour.walk.text':
+      "Click (or tap) any floor tile and I'll walk there. Drag to rotate the camera; scroll or pinch to zoom.",
+    'tour.laptop.title': 'The laptop',
+    'tour.laptop.text':
+      'Opens a browser with my projects, GitHub, Instagram, LinkedIn and even a little dinosaur game.',
+    'tour.postits.title': 'The post-its',
+    'tour.postits.text':
+      'The yellow one is my resume; the others go to GitHub, LinkedIn and Instagram. The orange one counts site visits.',
+    'tour.cat.title': 'Meet Frajola',
+    'tour.cat.text':
+      'My cat wanders around on his own. Click him to see his profile and give commands: jump, sit, lie down, come to me…',
+    'tour.wardrobe.title': 'The wardrobe',
+    'tour.wardrobe.text':
+      'Click it to change my clothes and accessories. Your outfit stays saved in your browser.',
+    'tour.sofa.title': 'TV corner',
+    'tour.sofa.text':
+      "Click the sofa and I'll sit to watch: a Frajola cartoon plays on the TV. On the bed I lie down, on the chair I code.",
+    'tour.dock.title': 'Shortcuts',
+    'tour.dock.text':
+      'Everything is also down here. In the chat, the icon next to the X lists commands like :sleep, :rain and :night.',
+    'tour.actions.title': 'Music and language',
+    'tour.actions.text':
+      'Play a lo-fi made live by the browser and switch between Portuguese and English anytime.',
+    'tour.done.title': "That's it!",
+    'tour.done.text':
+      'The window sky follows Brasília time and sometimes it rains. Explore freely and, if you want to talk, just open the chat.',
     'label.speakerPlay': 'Play lo-fi',
     'label.speakerPause': 'Pause the music',
     'music.play': 'Play lo-fi music',

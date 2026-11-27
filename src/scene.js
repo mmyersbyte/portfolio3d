@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { Experience } from './core/Experience.js';
 import { createRoom } from './world/Room.js';
 import { createFurniture } from './world/Furniture.js';
@@ -351,6 +352,43 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     if (petFraming) setTimeout(() => framePet(), cmd === 'come' ? 2500 : 400);
   }
 
+  // ---------- tutorial: retângulo na tela dos objetos destacados ----------
+  const tourBox = new THREE.Box3();
+  const tourV = new THREE.Vector3();
+  const tourTargets = {
+    avatar: [avatar.root],
+    floor: [tiles.hover],
+    laptop: [laptop],
+    postits: [...notes.map((n) => n.group), visitsNote.group],
+    cat: [cat.root],
+    wardrobe: [wardrobe.group],
+    sofa: [tvCorner.sofa, tvCorner.tv],
+  };
+  /** Projeta a caixa 3D dos objetos e devolve o retângulo que eles ocupam na tela. */
+  function tourRect(key) {
+    const objects = tourTargets[key];
+    if (!objects) return null;
+    tourBox.makeEmpty();
+    for (const o of objects) tourBox.expandByObject(o);
+    if (tourBox.isEmpty()) return null;
+    const { min, max } = tourBox;
+    let x0 = Infinity;
+    let y0 = Infinity;
+    let x1 = -Infinity;
+    let y1 = -Infinity;
+    for (let c = 0; c < 8; c++) {
+      tourV.set(c & 1 ? max.x : min.x, c & 2 ? max.y : min.y, c & 4 ? max.z : min.z);
+      tourV.project(exp.camera);
+      const x = (tourV.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-tourV.y * 0.5 + 0.5) * window.innerHeight;
+      x0 = Math.min(x0, x);
+      y0 = Math.min(y0, y);
+      x1 = Math.max(x1, x);
+      y1 = Math.max(y1, y);
+    }
+    return { left: x0, top: y0, width: x1 - x0, height: y1 - y0, right: x1, bottom: y1 };
+  }
+
   return {
     exp,
     env,
@@ -365,5 +403,9 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     runCommand,
     attachMusic,
     setVisits: (n) => visitsNote.setCount(n),
+    // acende um tile de exemplo no piso (passo "andar" do tutorial); null apaga
+    demoTile: (tile) => tiles.show(tile),
+    tourTargets,
+    tourRect,
   };
 }

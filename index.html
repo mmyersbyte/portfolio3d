@@ -2,7 +2,10 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <meta name="theme-color" content="#1d1b2e" />
     <meta
       name="description"
@@ -32,9 +35,18 @@
     </div>
 
     <header class="topbar">
-      <div class="brand">
-        <strong class="brand__name" id="brand-name">Pedro Victor</strong>
-        <span class="brand__role" id="brand-role"></span>
+      <div class="topbar__left">
+        <div class="brand">
+          <strong class="brand__name" id="brand-name">Pedro Victor</strong>
+          <span class="brand__role" id="brand-role"></span>
+        </div>
+        <button type="button" class="tour-btn" id="tour-btn" data-i18n-aria="tour.button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M9.5 9.2a2.6 2.6 0 0 1 5 .8c0 1.8-2.5 2.3-2.5 4M12 17.5h.01" />
+          </svg>
+          <span data-i18n="tour.label">Tutorial</span>
+        </button>
       </div>
       <div class="topbar__actions">
         <button
@@ -194,6 +206,18 @@
     </aside>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="tour" id="tour" hidden>
+      <div class="tour__spot" id="tour-spot"></div>
+      <section
+        class="tour__card"
+        id="tour-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tour-title"
+        aria-live="polite"
+      ></section>
+    </div>
 
     <div class="browser" id="browser" hidden>
       <div class="browser__backdrop" data-close></div>

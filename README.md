@@ -13,6 +13,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 - 📺 Cantinho da TV com sofazinho: sentando nele a TV liga e passa um desenho do Frajola correndo atrás de um rato (fora isso, logo quicando ou equalizador do lo-fi)
 - 💡 Interruptor ao lado do guarda-roupa: com a luz acesa o quarto fica iluminado não importa a hora; apagada, só a luz natural (fica salvo no navegador)
 - 🎵 Caixinha de som no criado-mudo toca lo-fi (botão ao lado do PT/EN, clique na caixinha ou `:musica`). A música é gerada na hora pelo navegador (Web Audio): original, sem arquivo e sem direitos autorais
+- 🧭 Botão **Tutorial** ao lado do nome: um passo a passo com holofote mostrando o que dá pra fazer no quarto
 - 🌎 PT/EN, funciona no celular e em telas grandes
 
 ## Rodando

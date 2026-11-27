@@ -2398,3 +2398,152 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 .sheet {
   margin-bottom: var(--kb, 0px);
 }
+
+/* ---------- botão do tutorial (ao lado do card do nome) ---------- */
+.topbar__left {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+  pointer-events: auto;
+}
+
+.tour-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--panel);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  font-family: var(--font-pixel);
+  font-weight: 700;
+}
+
+.tour-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.tour-btn:hover {
+  background: var(--accent);
+}
+
+/* primeira visita: pulsa de leve até a pessoa abrir */
+.tour-btn.is-new {
+  animation: tour-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes tour-pulse {
+  50% {
+    background: var(--accent);
+    box-shadow:
+      var(--shadow),
+      0 0 0 6px rgb(255 209 102 / 0.35);
+  }
+}
+
+@media (max-width: 560px) {
+  .tour-btn {
+    padding: 6px 9px;
+  }
+
+  .tour-btn span {
+    display: none; /* no celular fica só o "?" */
+  }
+}
+
+/* ---------- tutorial: holofote + card ---------- */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.tour[hidden] {
+  display: none;
+}
+
+/* o "furo" claro: a sombra gigante escurece todo o resto da tela */
+.tour__spot {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 3px var(--accent),
+    0 0 0 9999px rgb(10 8 20 / 0.62);
+  pointer-events: none;
+  transition:
+    left 0.35s ease,
+    top 0.35s ease,
+    width 0.35s ease,
+    height 0.35s ease;
+}
+
+.tour__card {
+  position: fixed;
+  width: min(340px, calc(100vw - 24px));
+  padding: 14px 16px 12px;
+  background: var(--panel);
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--line);
+  transition:
+    left 0.35s ease,
+    top 0.35s ease;
+}
+
+.tour__count {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.tour__title {
+  margin: 2px 0 6px;
+  font-family: var(--font-pixel);
+  font-size: 1.15rem;
+}
+
+.tour__text {
+  margin: 0;
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
+.tour__dots {
+  display: flex;
+  gap: 4px;
+  margin: 12px 0 10px;
+}
+
+.tour__dots i {
+  width: 7px;
+  height: 7px;
+  background: #d9d2c3;
+  border-radius: 50%;
+}
+
+.tour__dots i.is-on {
+  width: 18px;
+  background: var(--accent-2);
+  border-radius: 999px;
+}
+
+.tour__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour__spot,
+  .tour__card {
+    transition: none;
+  }
+}
