@@ -6,6 +6,7 @@ import { Environment } from './world/Environment.js';
 import { LightSwitch } from './world/LightSwitch.js';
 import { WallClock } from './world/WallClock.js';
 import { Speaker } from './world/Speaker.js';
+import { TvCorner } from './world/TvCorner.js';
 import { createPostIts } from './world/PostIts.js';
 import { TileHighlight, snapToTile } from './world/TileHighlight.js';
 import { Wardrobe } from './world/Wardrobe.js';
@@ -64,9 +65,9 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   // móveis que o boneco usa: clicar de novo faz ele levantar
   const furnitureLabel = (name) => () =>
     avatar.spot === AVATAR_SPOTS[name] ? 'label.getUp' : `label.${name}`;
-  const useFurniture = (name) => () => {
+  const useFurniture = (name, onSeated) => () => {
     tiles.mark(AVATAR_SPOTS[name].approach);
-    avatar.use(name);
+    avatar.use(name, onSeated);
   };
   it.register(bed, {
     label: furnitureLabel('bed'),
@@ -74,6 +75,19 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     hoverScale: 1.02,
   });
   it.register(chair, { label: furnitureLabel('chair'), onClick: useFurniture('chair') });
+
+  // cantinho da TV: sentar no pufe liga a TV
+  const tvCorner = new TvCorner(exp);
+  it.register(tvCorner.tv, {
+    label: () => (tvCorner.isOn ? 'label.tvOff' : 'label.tvOn'),
+    hoverScale: 1.03,
+    onClick: () => tvCorner.toggle(),
+  });
+  it.register(tvCorner.pouf, {
+    label: furnitureLabel('pouf'),
+    hoverScale: 1.06,
+    onClick: useFurniture('pouf', () => tvCorner.setOn(true)),
+  });
 
   // ---------- guarda-roupa ----------
   it.register(wardrobe.group, {
@@ -143,6 +157,7 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   function attachMusic(player) {
     music = player;
     speaker.attach(player);
+    tvCorner.music = player;
     player.onChange((playing) => (avatar.groove = playing));
   }
 
@@ -301,6 +316,8 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
         return lightSwitch.set(env.toggleLight());
       case 'music':
         return music?.toggle();
+      case 'tv':
+        return tvCorner.toggle();
       case 'sun': {
         const changed = env.commandSun();
         return changed ? meSay('me.say.sun') : meSay('me.say.sunAlready');

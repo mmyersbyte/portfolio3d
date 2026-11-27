@@ -18,6 +18,7 @@ export const COMMAND_GROUPS = [
     commands: [
       { id: 'light', icon: 'bulb', aliases: ['luz', 'light'] },
       { id: 'music', icon: 'music', aliases: ['musica', 'som', 'lofi', 'music'] },
+      { id: 'tv', icon: 'tv', aliases: ['tv', 'televisao'] },
       { id: 'sun', icon: 'sun', aliases: ['sol', 'sun'] },
       { id: 'rain', icon: 'rain', aliases: ['chuva', 'rain'] },
       { id: 'day', icon: 'sunrise', aliases: ['dia', 'day'] },

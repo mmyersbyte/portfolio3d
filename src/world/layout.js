@@ -18,6 +18,10 @@ export const LAYOUT = {
   // posição inicial do boneco (ele anda, então não é obstáculo fixo)
   avatar: { x: 0, z: -0.3, w: 0.7, d: 0.7 },
   rug: { x: 0.4, z: 0.6, w: 3.6, d: 2.6 },
+  // cantinho da TV: TV virada pra direita (+x) e o pufe do lado.
+  // Assim a câmera vê a tela na diagonal e eu de perfil, sem um tampar o outro.
+  tvRack: { x: 1.6, z: 2.9, w: 0.45, d: 1.15, rotY: Math.PI / 2 },
+  pouf: { x: 3.1, z: 2.9, w: 0.72, d: 0.72, top: 0.44 },
 };
 
 /**
@@ -49,6 +53,14 @@ export const AVATAR_SPOTS = {
     approach: { x: 0.75, z: -2.15 },
     pos: { x: LAYOUT.chair.x, y: -0.11, z: LAYOUT.chair.z },
     heading: -Math.PI + 0.25, // virado pro notebook
+    typing: true,
+  },
+  pouf: {
+    pose: 'sit',
+    approach: { x: 3.1, z: 2.0 },
+    // quadril na altura do pufe (pivô da perna fica 0.75 acima dos pés)
+    pos: { x: 3.1, y: -0.21, z: 2.9 },
+    heading: -Math.PI / 2, // virado pra TV (de perfil pra câmera)
   },
   bed: {
     pose: 'lie',
@@ -72,6 +84,13 @@ export const SWITCH_SPOT = { x: -3.15, z: 3.5, heading: -Math.PI / 2 };
 /** Onde eu paro pra trocar de roupa (de frente pro guarda-roupa). */
 export const WARDROBE_SPOT = { x: -2.75, z: 2.3, heading: -Math.PI / 2 };
 
-export const OBSTACLES = ['bed', 'nightstand', 'desk', 'chair', 'plant', 'wardrobe'].map(
-  (key) => LAYOUT[key],
-);
+export const OBSTACLES = [
+  'bed',
+  'nightstand',
+  'desk',
+  'chair',
+  'plant',
+  'wardrobe',
+  'tvRack',
+  'pouf',
+].map((key) => LAYOUT[key]);

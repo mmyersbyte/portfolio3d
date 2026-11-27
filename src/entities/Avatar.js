@@ -446,13 +446,13 @@ export class Avatar {
   }
 
   /** Usar um móvel: 'chair' (sentar) ou 'bed' (deitar). Clicar de novo levanta. */
-  use(name) {
+  use(name, onSeated) {
     const spot = AVATAR_SPOTS[name];
     if (this.spot === spot && this.state === 'seated') {
       this.leave();
       return;
     }
-    this.walkTo(spot.approach, () => this.enter(spot));
+    this.walkTo(spot.approach, () => this.enter(spot, onSeated));
   }
 
   /** Tile é livre pra andar? (usado pelo destaque do piso) */
@@ -615,7 +615,7 @@ export class Avatar {
     this.legs[1].rotation.x = P.leg - swing;
 
     // digitando no notebook quando está na cadeira
-    const typing = this.state === 'seated' && this.spot?.pose === 'sit' ? 1 : 0;
+    const typing = this.state === 'seated' && this.spot?.typing ? 1 : 0;
     let press = 0;
     if (this.pressT > 0) {
       this.pressT = Math.max(0, this.pressT - dt);
