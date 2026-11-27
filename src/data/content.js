@@ -7,6 +7,7 @@
 
 export const profile = {
   name: 'Pedro Victor',
+  photo: '/images/profile.jpg',
   role: {
     pt: 'Desenvolvedor backend-first · Node.js & TypeScript',
     en: 'Backend-first developer · Node.js & TypeScript',
@@ -29,11 +30,28 @@ export const links = {
 };
 
 /**
- * Posts do Instagram pra mostrar no navegador (embed oficial do Instagram).
- * Cole aqui links de posts, ex: 'https://www.instagram.com/p/ABC123/'.
- * Vazio = mostra só o perfil com o botão pra abrir no Instagram.
+ * Perfil do Instagram como aparece lá (números atualizados à mão:
+ * sem a API oficial não dá pra puxar automaticamente).
  */
-export const instagramPosts = [];
+export const instagramProfile = {
+  name: 'Pedro Victor Castro de Sousa',
+  pronouns: { pt: 'ele/dele', en: 'he/him' },
+  bio: 'Fortaleza, 🇧🇷',
+  posts: 4,
+  followers: 735,
+  following: 371,
+};
+
+/**
+ * Posts do Instagram mostrados no navegador (embed oficial), do mais recente
+ * pro mais antigo. Pra adicionar: cole o link do post (sem o ?img_index).
+ */
+export const instagramPosts = [
+  'https://www.instagram.com/p/DeUU8MYEdZE/',
+  'https://www.instagram.com/p/DbEXG39DyZI/',
+  'https://www.instagram.com/p/DaslNBmERXN/',
+  'https://www.instagram.com/p/C-xrTZCRNFI/',
+];
 
 export const cv = {
   placeholder: true,

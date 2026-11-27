@@ -1863,28 +1863,63 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   border-radius: 50%;
 }
 
-.pg-ig__avatar span {
-  display: grid;
-  place-items: center;
+.pg-ig__avatar img {
+  display: block;
   width: 100%;
   height: 100%;
-  background: #1d1b2e;
+  object-fit: cover;
   border: 4px solid #fff;
   border-radius: 50%;
-  color: #fff;
-  font-family: var(--font-pixel);
-  font-size: clamp(1.4rem, 4vw, 2.2rem);
+}
+
+.pg-ig__info {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pg-ig__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.pg-ig__top .pg-btn {
+  margin: 0;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+
+.pg-ig__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pg-ig__name {
+  margin: 0;
+  font-weight: 600;
+}
+
+.pg-ig__name span {
+  margin-left: 4px;
+  color: #737373;
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.pg-ig__bio {
+  margin: -6px 0 0;
 }
 
 .pg-ig__head h2 {
   margin: 0;
   font-size: 1.3rem;
   font-weight: 500;
-}
-
-.pg-ig__head p {
-  margin: 4px 0;
-  font-weight: 600;
 }
 
 .pg-btn--ig {
@@ -1929,8 +1964,19 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 
 .pg-ig__embeds {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   justify-items: center;
-  gap: 16px;
+  align-items: start;
+  gap: 18px;
+}
+
+/* o embed do Instagram tem largura mínima de 326px: no celular ocupa a linha toda */
+.pg-ig__embeds .instagram-media,
+.pg-ig__embeds iframe {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 0 !important;
 }
 
 .pg-ig .pg-note {
@@ -1961,17 +2007,14 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 }
 
 .pg-li__avatar {
-  display: grid;
-  place-items: center;
+  display: block;
   width: 110px;
   height: 110px;
   margin-top: -60px;
+  object-fit: cover;
   background: #1d1b2e;
   border: 4px solid #fff;
   border-radius: 50%;
-  color: #fff;
-  font-family: var(--font-pixel);
-  font-size: 2rem;
 }
 
 .pg-li__card h2 {
@@ -2130,4 +2173,31 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
 .hl--solo {
   color: #fb923c;
   background: rgb(251 146 60 / 0.13);
+}
+
+/* aparece só se o embed do Instagram não carregar (bloqueador, rede...) */
+.pg-ig__embeds blockquote {
+  width: 100%;
+  max-width: 400px;
+  margin: 0;
+}
+
+.pg-ig__fallback {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  aspect-ratio: 4 / 5;
+  padding: 20px;
+  background: linear-gradient(135deg, #fdf0e0, #fbe0ee 50%, #e9ddff);
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  color: #262626;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.pg-ig__fallback .icon {
+  width: 44px;
+  height: 44px;
 }

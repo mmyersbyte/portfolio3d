@@ -8,3 +8,6 @@ dist
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+
+# fotos originais (a versão otimizada fica em public/images)
+src/insta/

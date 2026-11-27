@@ -98,6 +98,8 @@ export const strings = {
     'gh.updated': 'Atualizado em {date}',
     'gh.noDesc': 'Sem descrição',
     'ig.posts': 'Publicações',
+    'ig.postsCount': 'publicações',
+    'ig.viewPost': 'Ver esta publicação no Instagram',
     'ig.open': 'Ver no Instagram',
     'ig.note':
       'O Instagram não deixa abrir o perfil dentro de outros sites, então as fotos abrem direto lá.',
@@ -313,6 +315,8 @@ export const strings = {
     'gh.updated': 'Updated {date}',
     'gh.noDesc': 'No description',
     'ig.posts': 'Posts',
+    'ig.postsCount': 'posts',
+    'ig.viewPost': 'View this post on Instagram',
     'ig.open': 'View on Instagram',
     'ig.note':
       "Instagram doesn't allow showing profiles inside other sites, so photos open right there.",

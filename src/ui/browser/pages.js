@@ -1,4 +1,11 @@
-import { profile, links, socials, cv, instagramPosts } from '../../data/content.js';
+import {
+  profile,
+  links,
+  socials,
+  cv,
+  instagramPosts,
+  instagramProfile,
+} from '../../data/content.js';
 import { t, tr, getLang } from '../i18n.js';
 import { esc } from '../views/escape.js';
 import { icon } from '../icons.js';
@@ -171,19 +178,33 @@ const instagram = {
       ? `<div class="pg-ig__embeds">${instagramPosts
           .map(
             (url) =>
-              `<blockquote class="instagram-media" data-instgrm-permalink="${esc(url)}" data-instgrm-version="14"></blockquote>`,
+              `<blockquote class="instagram-media" data-instgrm-permalink="${esc(url)}" data-instgrm-version="14">
+                <a class="pg-ig__fallback" href="${esc(url)}" target="_blank" rel="noopener">${icon('instagram')}<span>${esc(t('ig.viewPost'))} ↗</span></a>
+              </blockquote>`,
           )
           .join('')}</div>`
       : `<div class="pg-ig__grid" aria-hidden="true">${Array.from({ length: 6 }, () => `<span>${icon('camera')}</span>`).join('')}</div>
          <p class="pg-note">${esc(t('ig.note'))}</p>`;
+    const ig = instagramProfile;
+    const num = (n) => n.toLocaleString(getLang() === 'pt' ? 'pt-BR' : 'en-US');
     el.innerHTML = `
       <div class="pg-ig">
         <header class="pg-ig__head">
-          <div class="pg-ig__avatar"><span>PV</span></div>
-          <div>
-            <h2>${esc(socials.instagram)}</h2>
-            <p>${esc(profile.name)}</p>
-            <a class="pg-btn pg-btn--ig" href="${esc(links.instagram)}" target="_blank" rel="noopener">${esc(t('ig.open'))} ↗</a>
+          <a class="pg-ig__avatar" href="${esc(links.instagram)}" target="_blank" rel="noopener">
+            <img src="${esc(profile.photo)}" alt="${esc(ig.name)}" width="150" height="150">
+          </a>
+          <div class="pg-ig__info">
+            <div class="pg-ig__top">
+              <h2>${esc(socials.instagram)}</h2>
+              <a class="pg-btn pg-btn--ig" href="${esc(links.instagram)}" target="_blank" rel="noopener">${esc(t('ig.open'))} ↗</a>
+            </div>
+            <ul class="pg-ig__stats">
+              <li><b>${num(ig.posts)}</b> ${esc(t('ig.postsCount'))}</li>
+              <li><b>${num(ig.followers)}</b> ${esc(t('gh.followers'))}</li>
+              <li><b>${num(ig.following)}</b> ${esc(t('gh.following'))}</li>
+            </ul>
+            <p class="pg-ig__name">${esc(ig.name)} <span>${esc(tr(ig.pronouns))}</span></p>
+            <p class="pg-ig__bio">${esc(ig.bio)}</p>
           </div>
         </header>
         <h3 class="pg-ig__tab">${icon('camera')} ${esc(t('ig.posts'))}</h3>
@@ -204,7 +225,7 @@ const linkedin = {
       <div class="pg-li">
         <div class="pg-li__card">
           <div class="pg-li__cover"></div>
-          <div class="pg-li__avatar">PV</div>
+          <img class="pg-li__avatar" src="${esc(profile.photo)}" alt="${esc(profile.name)}" width="110" height="110">
           <h2>${esc(profile.name)}</h2>
           <p class="pg-li__role">${esc(tr(profile.role))}</p>
           <a class="pg-btn pg-btn--li" href="${esc(links.linkedin)}" target="_blank" rel="noopener">${esc(t('li.connect'))} ↗</a>
