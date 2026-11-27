@@ -107,15 +107,18 @@ export const cv = {
 
 /**
  * Destaques dos projetos (selos coloridos). `tone` define a cor:
- * users (verde) · live (azul) · freelance (roxo) · academic (amarelo) · personal (rosa)
+ * solo (laranja) · users (verde) · live (azul) · freelance (roxo) · academic (amarelo) · personal (rosa)
  */
 const hl = (tone, pt, en) => ({ tone, label: { pt, en } });
+// todos os projetos foram feitos por mim, do zero
+const SOLO = hl('solo', 'Feito sozinho', 'Built solo');
 
 /** Projetos (tirados dos repositórios fixados no GitHub). */
 export const projects = [
   {
     title: 'Eco Histórias',
     highlights: [
+      SOLO,
       hl('users', '100+ usuários', '100+ users'),
       hl('users', '50+ histórias publicadas', '50+ stories published'),
       hl('live', 'No ar', 'Live'),
@@ -131,6 +134,7 @@ export const projects = [
   {
     title: 'LABEM',
     highlights: [
+      SOLO,
       hl('freelance', 'Freelance', 'Freelance'),
       hl('users', 'Usado por uma equipe real', 'Used by a real team'),
       hl('live', 'Em produção', 'In production'),
@@ -145,10 +149,7 @@ export const projects = [
   },
   {
     title: 'Desatende',
-    highlights: [
-      hl('academic', 'Projeto acadêmico', 'Academic project'),
-      hl('personal', 'Feito sozinho', 'Built solo'),
-    ],
+    highlights: [SOLO, hl('academic', 'Projeto acadêmico', 'Academic project')],
     description: {
       pt: 'App pra registrar reclamações de atendimento e as empresas responderem.',
       en: 'App to report poor customer service and let companies reply.',
@@ -158,7 +159,7 @@ export const projects = [
   },
   {
     title: 'WittyWidget Server',
-    highlights: [hl('personal', 'App pessoal', 'Personal app')],
+    highlights: [SOLO, hl('personal', 'App pessoal', 'Personal app')],
     description: {
       pt: 'Uma expressão em inglês por dia, pra um widget de Android.',
       en: 'One English expression a day, for an Android widget.',
@@ -168,7 +169,7 @@ export const projects = [
   },
   {
     title: 'Portfolio 3D',
-    highlights: [hl('personal', 'Você está aqui', 'You are here')],
+    highlights: [SOLO, hl('personal', 'Você está aqui', 'You are here')],
     description: {
       pt: 'Este quarto aqui, feito com Three.js puro.',
       en: 'This very room, built with vanilla Three.js.',

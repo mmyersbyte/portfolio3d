@@ -2126,3 +2126,8 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   color: #f472b6;
   background: rgb(244 114 182 / 0.12);
 }
+
+.hl--solo {
+  color: #fb923c;
+  background: rgb(251 146 60 / 0.13);
+}
