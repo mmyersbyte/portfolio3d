@@ -11,6 +11,7 @@ import { PetPanel } from './ui/PetPanel.js';
 import { LofiPlayer } from './audio/LofiPlayer.js';
 import { icon } from './ui/icons.js';
 import { loadVisits } from './services/visits.js';
+import { makeVisitsView } from './ui/views/visitsView.js';
 import { Tour } from './ui/Tour.js';
 
 const $ = (id) => document.getElementById(id);
@@ -78,7 +79,11 @@ const openInBrowser = (page) => {
   browser.open(page);
 };
 
+let visitsData = null;
+const visitsView = makeVisitsView(() => visitsData);
+
 const actions = {
+  visits: () => modal.open(visitsView),
   chat: () => chat.toggle(),
   cat: () => petPanel.toggle(),
   wardrobe: () => {
@@ -198,7 +203,10 @@ async function boot() {
   });
   scene.avatar.setOutfit(loadOutfit());
   scene.attachMusic(music);
-  loadVisits().then((n) => scene.setVisits(n));
+  loadVisits().then((data) => {
+    visitsData = data;
+    scene.setVisits(data);
+  });
   wardrobePanel.setStudio(scene.studio);
   // facilita depurar pelo console no `pnpm dev` (não vai pro build)
   if (import.meta.env.DEV) {

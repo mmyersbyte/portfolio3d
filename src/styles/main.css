@@ -2547,3 +2547,59 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
     transition: none;
   }
 }
+
+/* ---------- janela de visitas ---------- */
+.visits {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 6px 0 4px;
+  text-align: center;
+}
+
+.visits__total {
+  display: grid;
+  margin: 0;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.visits__total strong {
+  color: #e07a2c;
+  font-family: var(--font-pixel);
+  font-size: clamp(3rem, 12vw, 4.5rem);
+  line-height: 1;
+}
+
+.visits__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.visits__stats div {
+  display: grid;
+  min-width: 140px;
+  padding: 10px 14px;
+  background: #fff3e0;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+}
+
+.visits__stats span {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+}
+
+.visits__stats strong {
+  font-family: var(--font-pixel);
+  font-size: 1.5rem;
+}
+
+.visits__note,
+.visits__off {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}

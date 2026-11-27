@@ -53,6 +53,8 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   // ---------- clicáveis ----------
   const it = exp.interaction;
   it.register(avatar.root, { label: 'label.avatar', onClick: actions.chat });
+  // post-it de visitas: abre a janelinha com o total, hoje e "você é o visitante nº"
+  it.register(visitsNote.group, { label: 'label.visits', onClick: actions.visits });
   it.register(laptop, {
     label: 'label.laptop',
     onClick: () => {
@@ -402,7 +404,7 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     framePet,
     runCommand,
     attachMusic,
-    setVisits: (n) => visitsNote.setCount(n),
+    setVisits: (data) => visitsNote.setCount(data?.count ?? null),
     // acende um tile de exemplo no piso (passo "andar" do tutorial); null apaga
     demoTile: (tile) => tiles.show(tile),
     tourTargets,
