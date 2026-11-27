@@ -21,7 +21,7 @@ export const petLine = (key) => t(key).replaceAll('{name}', pet.name);
  * `getActivity` devolve o que o gato está fazendo agora (mostrado no cabeçalho).
  */
 export class PetPanel {
-  constructor({ onCommand, onOpenChange, getActivity }) {
+  constructor({ onCommand, onOpenChange, getActivity, onResize }) {
     this.el = document.getElementById('pet');
     this.status = document.getElementById('pet-status');
     this.info = document.getElementById('pet-info');
@@ -29,6 +29,7 @@ export class PetPanel {
     this.onCommand = onCommand;
     this.onOpenChange = onOpenChange;
     this.getActivity = getActivity;
+    this.onResize = onResize; // painel mudou de tamanho (encolheu/voltou): reenquadra a câmera
     this.timer = 0;
 
     document.getElementById('pet-name').textContent = pet.name;
@@ -42,6 +43,12 @@ export class PetPanel {
       btn.classList.remove('is-sent');
       void btn.offsetWidth;
       btn.classList.add('is-sent');
+      this.peekOnMobile();
+    });
+
+    // encolhido (só celular): tocar no cabeçalho volta pros comandos
+    this.el.querySelector('.sheet__header').addEventListener('click', (e) => {
+      if (this.isPeeking && !e.target.closest('button')) this.unpeek();
     });
     onLangChange(() => this.render());
     this.render();
@@ -51,7 +58,25 @@ export class PetPanel {
     return this.el.classList.contains('is-open');
   }
 
+  get isPeeking() {
+    return this.el.classList.contains('is-peek');
+  }
+
+  /** No celular o painel tampa o quarto: depois do comando vira uma barrinha. */
+  peekOnMobile() {
+    if (!matchMedia('(max-width: 767px)').matches || this.isPeeking) return;
+    this.el.classList.add('is-peek');
+    this.onResize?.();
+  }
+
+  unpeek() {
+    if (!this.isPeeking) return;
+    this.el.classList.remove('is-peek');
+    this.onResize?.();
+  }
+
   open() {
+    this.el.classList.remove('is-peek');
     if (this.isOpen) return;
     this.el.classList.add('is-open');
     this.el.setAttribute('aria-hidden', 'false');
@@ -62,6 +87,7 @@ export class PetPanel {
   }
 
   close() {
+    this.el.classList.remove('is-peek');
     if (!this.isOpen) return;
     clearInterval(this.timer);
     this.el.classList.remove('is-open');

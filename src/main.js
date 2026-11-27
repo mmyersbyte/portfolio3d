@@ -52,6 +52,7 @@ const wardrobePanel = new WardrobePanel({
 const petPanel = new PetPanel({
   onCommand: (cmd) => scene?.commandCat(cmd),
   getActivity: () => scene?.cat.activity,
+  onResize: () => scene?.framePet(true),
   onOpenChange(open) {
     if (open) {
       chat.minimize();

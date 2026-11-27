@@ -264,7 +264,11 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
     // faixa livre: entre o cabeçalho e o topo do painel
     const H = window.innerHeight;
     const bandTop = document.querySelector('.topbar').getBoundingClientRect().bottom + 8;
-    const bandBottom = H - document.getElementById('pet').offsetHeight - 16;
+    // topo do painel: altura + distância do rodapé (muda quando ele encolhe pra barrinha).
+    // Calculado pelo CSS e não pelo getBoundingClientRect, que mente durante a animação de entrada
+    const petEl = document.getElementById('pet');
+    const petBottom = parseFloat(getComputedStyle(petEl).bottom) || 8;
+    const bandBottom = H - petEl.offsetHeight - petBottom - 8;
     const band = Math.max(80, bandBottom - bandTop);
 
     // zoom que cabe ~3 unidades de altura (boneco + balão) na faixa e os dois na largura

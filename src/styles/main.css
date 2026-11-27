@@ -2721,3 +2721,35 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
     overflow-x: visible;
   }
 }
+
+/* ---------- painel do gato encolhido depois de um comando (só celular) ---------- */
+.pet__peek-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .pet.is-peek {
+    bottom: calc(var(--safe-b) + 84px);
+    height: auto;
+    cursor: pointer;
+  }
+
+  .pet.is-peek > :not(.sheet__header) {
+    display: none;
+  }
+
+  .pet.is-peek .sheet__header {
+    border-bottom: 0;
+  }
+
+  .pet.is-peek .pet__status {
+    display: none;
+  }
+
+  .pet.is-peek .pet__peek-hint {
+    display: block;
+    color: var(--accent-2);
+    font-weight: 700;
+    animation: blink 1.6s ease-in-out infinite;
+  }
+}
