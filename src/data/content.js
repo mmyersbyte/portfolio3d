@@ -120,14 +120,37 @@ I want to grow as a developer and contribute to real projects, combining technic
 export const cv = {
   placeholder: false,
   headline: {
-    pt: 'Estudante de Análise e Desenvolvimento de Sistemas | Desenvolvimento, Automação e IA',
-    en: 'Systems Analysis and Development Student | Development, Automation and AI',
+    pt: 'Desenvolvedor de Software | Backend e Aplicações Web',
+    en: 'Software Developer | Backend and Web Applications',
   },
+
   summary: {
-    pt: 'Estudante de Análise e Desenvolvimento de Sistemas, com experiência profissional em automação de CRM, configuração de fluxos inteligentes, integração de ferramentas e soluções de IA. Experiência prática no desenvolvimento de APIs REST, aplicações web e integração com bancos de dados. Busco ampliar minha atuação em desenvolvimento de soluções empresariais e automação de processos, com interesse em tecnologias Microsoft e na Power Platform.',
-    en: 'Systems Analysis and Development student with professional experience in CRM automation, smart workflow setup, tool integration and AI solutions. Hands-on experience building REST APIs, web applications and database integrations. Looking to grow in enterprise solution development and process automation, with interest in Microsoft technologies and the Power Platform.',
+    pt: 'Desenvolvedor de Software com foco em backend e aplicações web, possuindo experiência prática em projetos para usuários reais e atuação profissional com automação e inteligência artificial.',
+    en: 'Software Developer focused on backend and web applications, with hands-on experience in projects for real users and professional work with automation and artificial intelligence.',
   },
+
   experience: [
+    {
+      role: { pt: 'Freelancer Full Stack', en: 'Full Stack Freelancer' },
+      company: '',
+      period: { pt: 'out/2024 — atual', en: 'Oct 2024 — present' },
+      bullets: {
+        pt: [
+          'APIs REST para o sistema da LABEM (UNISUL), com autenticação JWT e cookies HTTP-Only.',
+          'Documentação de APIs com Swagger e upload de arquivos com Multer.',
+          'Aplicações com Node.js, TypeScript, PostgreSQL e React.',
+          'Criação do Eco, rede social com mais de 100 usuários cadastrados, publicações, interações e mais de 10 endpoints REST.',
+          'Docker Compose e testes automatizados com Vitest.',
+        ],
+        en: [
+          'REST APIs for the LABEM (UNISUL) system, with JWT auth and HTTP-Only cookies.',
+          'API documentation with Swagger and file uploads with Multer.',
+          'Applications with Node.js, TypeScript, PostgreSQL and React.',
+          'Built Eco, a social network with 100+ registered users, posts, interactions and 10+ REST endpoints.',
+          'Docker Compose and automated tests with Vitest.',
+        ],
+      },
+    },
     {
       role: { pt: 'Especialista em automação e suporte', en: 'Automation and Support Specialist' },
       company: 'Mind Tecnologia I.A',
@@ -150,27 +173,6 @@ export const cv = {
           'Used AI APIs such as response generation and ticket classification.',
           'Optimized customer support with AI-based tools.',
           'Integrated systems to improve operational efficiency.',
-        ],
-      },
-    },
-    {
-      role: { pt: 'Freelancer Full Stack', en: 'Full Stack Freelancer' },
-      company: '',
-      period: { pt: 'out/2024 — atual', en: 'Oct 2024 — present' },
-      bullets: {
-        pt: [
-          'APIs REST para o sistema da LABEM (UNISUL), com autenticação JWT e cookies HTTP-Only.',
-          'Documentação de APIs com Swagger e upload de arquivos com Multer.',
-          'Aplicações com Node.js, TypeScript, PostgreSQL e React.',
-          'Criação do Eco, rede social com mais de 100 usuários cadastrados, publicações, interações e mais de 10 endpoints REST.',
-          'Docker Compose e testes automatizados com Vitest.',
-        ],
-        en: [
-          'REST APIs for the LABEM (UNISUL) system, with JWT auth and HTTP-Only cookies.',
-          'API documentation with Swagger and file uploads with Multer.',
-          'Applications with Node.js, TypeScript, PostgreSQL and React.',
-          'Built Eco, a social network with 100+ registered users, posts, interactions and 10+ REST endpoints.',
-          'Docker Compose and automated tests with Vitest.',
         ],
       },
     },
@@ -213,16 +215,6 @@ export const cv = {
   // conhecimentos técnicos por área (currículo + GitHub)
   skills: [
     {
-      label: { pt: 'Automação e IA', en: 'Automation & AI' },
-      items: [
-        'CRM',
-        'Chatbots',
-        { pt: 'Fluxos inteligentes', en: 'Smart workflows' },
-        { pt: 'APIs de IA', en: 'AI APIs' },
-        { pt: 'Otimização de processos', en: 'Process optimization' },
-      ],
-    },
-    {
       label: { pt: 'Backend', en: 'Backend' },
       items: ['Node.js', 'Express', 'Fastify', 'APIs REST', 'JWT', 'Swagger', 'Zod'],
     },
@@ -239,12 +231,22 @@ export const cv = {
       items: ['Git', 'GitHub', 'Docker Compose', 'Postman', 'Vitest', 'AWS S3'],
     },
     {
+      label: { pt: 'Automação e IA', en: 'Automation & AI' },
+      items: [
+        'CRM',
+        'Chatbots',
+        { pt: 'Fluxos inteligentes', en: 'Smart workflows' },
+        { pt: 'APIs de IA', en: 'AI APIs' },
+        { pt: 'Otimização de processos', en: 'Process optimization' },
+      ],
+    },
+    {
       label: { pt: 'Outros', en: 'Other' },
       items: ['SQL', 'Java', 'Python'],
     },
   ],
-  // estudando / interesse profissional
-  learning: ['NestJS', 'Microsoft Power Platform', 'Low-code / No-code'],
+  // estudando agora
+  learning: ['NestJS'],
   courses: [
     { name: 'APIs com Node.js e Express', hours: 80, school: 'Alura' },
     { name: 'Conhecendo SQL', hours: 41, school: 'Alura' },
