@@ -463,7 +463,8 @@ export class Avatar {
   enter(spot, then) {
     this.spot = spot;
     this.state = 'enter';
-    this.targetPose = POSES[spot.pose];
+    // sofá: sentado mas com os braços relaxados (sem pose de digitar)
+    this.targetPose = spot.relaxed ? { ...POSES[spot.pose], arm: -0.3 } : POSES[spot.pose];
     this.heading = spot.heading;
     this.startTween(spot.pos, spot.pose === 'lie' ? 0.75 : 0.5, () => {
       this.state = 'seated';

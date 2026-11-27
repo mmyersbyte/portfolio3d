@@ -10,7 +10,7 @@ Meu portfólio interativo: um quarto isométrico em 3D, estilo pixel/voxel, feit
 - 📝 Os post-its na parede levam pro CV, GitHub, LinkedIn e Instagram
 - 🐈‍⬛ O Frajola anda sozinho pelo quarto, desvia dos móveis e às vezes sobe na cama pra dormir. Clicando nele abre a ficha dele e dá pra dar comandos estilo Habbo (pular, falar, sentar, deitar, vem, livre): eu falo num balão que sobe e ele obedece
 - 🌗 A janela mostra o céu na hora real de Brasília (madrugada, amanhecer, dia, tarde, noite) e a luz do quarto acompanha. De vez em quando chove, e depois vai parando aos poucos. O Frajola gosta de ficar no parapeito olhando a chuva
-- 📺 Cantinho da TV com pufe: sentando no pufe a TV liga (logo quicando, ou equalizador se o lo-fi estiver tocando)
+- 📺 Cantinho da TV com sofazinho: sentando nele a TV liga e passa um desenho do Frajola correndo atrás de um rato (fora isso, logo quicando ou equalizador do lo-fi)
 - 💡 Interruptor ao lado do guarda-roupa: com a luz acesa o quarto fica iluminado não importa a hora; apagada, só a luz natural (fica salvo no navegador)
 - 🎵 Caixinha de som no criado-mudo toca lo-fi (botão ao lado do PT/EN, clique na caixinha ou `:musica`). A música é gerada na hora pelo navegador (Web Audio): original, sem arquivo e sem direitos autorais
 - 🌎 PT/EN, funciona no celular e em telas grandes
@@ -46,7 +46,7 @@ src/
 │   ├── LightSwitch.js   # interruptor da luz do quarto
 │   ├── WallClock.js     # relógio de parede (sempre a hora real de Brasília)
 │   ├── Speaker.js       # caixinha de som + notinhas que sobem
-│   ├── TvCorner.js      # TV + pufe
+│   ├── TvCorner.js      # TV, rack, sofá e o desenho animado
 │   ├── Furniture.js     # cama, mesa + notebook, cadeira, planta...
 │   ├── PostIts.js
 │   ├── TileHighlight.js # quadrado branco no piso (hover/destino)

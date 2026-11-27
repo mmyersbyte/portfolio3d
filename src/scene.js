@@ -76,18 +76,20 @@ export function startScene({ canvas, labelsEl, tooltipEl, actions, onReady }) {
   });
   it.register(chair, { label: furnitureLabel('chair'), onClick: useFurniture('chair') });
 
-  // cantinho da TV: sentar no pufe liga a TV
+  // cantinho da TV: sentar no sofá liga a TV
   const tvCorner = new TvCorner(exp);
   it.register(tvCorner.tv, {
     label: () => (tvCorner.isOn ? 'label.tvOff' : 'label.tvOn'),
     hoverScale: 1.03,
     onClick: () => tvCorner.toggle(),
   });
-  it.register(tvCorner.pouf, {
-    label: furnitureLabel('pouf'),
-    hoverScale: 1.06,
-    onClick: useFurniture('pouf', () => tvCorner.setOn(true)),
+  it.register(tvCorner.sofa, {
+    label: furnitureLabel('sofa'),
+    hoverScale: 1.03,
+    onClick: useFurniture('sofa', () => tvCorner.setOn(true)),
   });
+  // sentado no sofá com a TV ligada = passa o desenho
+  tvCorner.isWatching = () => avatar.spot === AVATAR_SPOTS.sofa && avatar.state === 'seated';
 
   // ---------- guarda-roupa ----------
   it.register(wardrobe.group, {

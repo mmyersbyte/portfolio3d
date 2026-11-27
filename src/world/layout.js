@@ -18,10 +18,10 @@ export const LAYOUT = {
   // posição inicial do boneco (ele anda, então não é obstáculo fixo)
   avatar: { x: 0, z: -0.3, w: 0.7, d: 0.7 },
   rug: { x: 0.4, z: 0.6, w: 3.6, d: 2.6 },
-  // cantinho da TV: TV virada pra direita (+x) e o pufe do lado.
+  // cantinho da TV: TV virada pra direita (+x) e o sofazinho de frente pra ela.
   // Assim a câmera vê a tela na diagonal e eu de perfil, sem um tampar o outro.
-  tvRack: { x: 1.6, z: 2.9, w: 0.45, d: 1.15, rotY: Math.PI / 2 },
-  pouf: { x: 3.1, z: 2.9, w: 0.72, d: 0.72, top: 0.44 },
+  tvRack: { x: 1.55, z: 2.9, w: 0.52, d: 1.5, rotY: Math.PI / 2 },
+  sofa: { x: 3.28, z: 2.9, w: 0.8, d: 1.45, rotY: -Math.PI / 2 },
 };
 
 /**
@@ -55,11 +55,12 @@ export const AVATAR_SPOTS = {
     heading: -Math.PI + 0.25, // virado pro notebook
     typing: true,
   },
-  pouf: {
+  sofa: {
     pose: 'sit',
-    approach: { x: 3.1, z: 2.0 },
-    // quadril na altura do pufe (pivô da perna fica 0.75 acima dos pés)
-    pos: { x: 3.1, y: -0.21, z: 2.9 },
+    relaxed: true, // braços largados, nada de digitar
+    approach: { x: 2.35, z: 2.9 },
+    // quadril na altura do assento (pivô da perna fica 0.75 acima dos pés)
+    pos: { x: 3.2, y: -0.2, z: 2.9 },
     heading: -Math.PI / 2, // virado pra TV (de perfil pra câmera)
   },
   bed: {
@@ -92,5 +93,5 @@ export const OBSTACLES = [
   'plant',
   'wardrobe',
   'tvRack',
-  'pouf',
+  'sofa',
 ].map((key) => LAYOUT[key]);
