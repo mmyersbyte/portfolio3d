@@ -122,6 +122,7 @@ export const cv = {
     'PostgreSQL',
     'MongoDB',
     'Prisma',
+    'Knex',
     'Vitest',
     'Docker Compose',
     'React Native',
