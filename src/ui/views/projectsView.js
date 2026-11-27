@@ -15,6 +15,13 @@ export const projectsView = {
             (p) => `
           <article class="project">
             <h3>${esc(p.title)}</h3>
+            ${
+              p.highlights?.length
+                ? `<ul class="highlights">${p.highlights
+                    .map((h) => `<li class="hl hl--${esc(h.tone)}">${esc(tr(h.label))}</li>`)
+                    .join('')}</ul>`
+                : ''
+            }
             <p>${esc(tr(p.description))}</p>
             <ul class="tags">${p.tags.map((tag) => `<li>${esc(tag)}</li>`).join('')}</ul>
             <div class="project__links">

@@ -105,13 +105,24 @@ export const cv = {
   },
 };
 
+/**
+ * Destaques dos projetos (selos coloridos). `tone` define a cor:
+ * users (verde) · live (azul) · freelance (roxo) · academic (amarelo) · personal (rosa)
+ */
+const hl = (tone, pt, en) => ({ tone, label: { pt, en } });
+
 /** Projetos (tirados dos repositórios fixados no GitHub). */
 export const projects = [
   {
     title: 'Eco Histórias',
+    highlights: [
+      hl('users', '100+ usuários', '100+ users'),
+      hl('users', '50+ histórias publicadas', '50+ stories published'),
+      hl('live', 'No ar', 'Live'),
+    ],
     description: {
-      pt: 'Rede para contar histórias de forma anônima, com codinomes e avatares fixos. API com JWT em cookies httpOnly, recuperação de senha por e-mail, avatares no S3 e deploy com Docker.',
-      en: 'A network to share stories anonymously, with fixed codenames and avatars. API with JWT in httpOnly cookies, email password recovery, avatars on S3 and Docker deploys.',
+      pt: 'Rede social pra contar histórias de forma anônima.',
+      en: 'Social network to share stories anonymously.',
     },
     tags: ['TypeScript', 'Express', 'PostgreSQL', 'Knex', 'Vitest', 'Docker'],
     repo: 'https://github.com/mmyersbyte/eco',
@@ -119,9 +130,14 @@ export const projects = [
   },
   {
     title: 'LABEM',
+    highlights: [
+      hl('freelance', 'Freelance', 'Freelance'),
+      hl('users', 'Usado por uma equipe real', 'Used by a real team'),
+      hl('live', 'Em produção', 'In production'),
+    ],
     description: {
-      pt: 'Sistema da Liga Acadêmica de Biomedicina Estética da UNISUL: painéis por perfil, eventos, upload de PDFs e parcerias. Em produção, usado pela liga.',
-      en: "Management system for UNISUL's Aesthetic Biomedicine academic league: role-based dashboards, events, PDF uploads and partnerships. Live and used by the league.",
+      pt: 'Sistema de gestão da Liga de Biomedicina Estética da UNISUL.',
+      en: "Management system for UNISUL's Aesthetic Biomedicine league.",
     },
     tags: ['Node.js', 'Express', 'MongoDB', 'JWT', 'Multer', 'Winston'],
     repo: 'https://github.com/mmyersbyte/labem',
@@ -129,27 +145,33 @@ export const projects = [
   },
   {
     title: 'Desatende',
+    highlights: [
+      hl('academic', 'Projeto acadêmico', 'Academic project'),
+      hl('personal', 'Feito sozinho', 'Built solo'),
+    ],
     description: {
-      pt: 'App pra registrar reclamações de atendimento (restaurantes, faculdades, companhias aéreas…) e as empresas responderem publicamente. Feito sozinho, do app à API.',
-      en: 'App to report poor customer service (restaurants, colleges, airlines…) where companies answer publicly. Built solo, from the app to the API.',
+      pt: 'App pra registrar reclamações de atendimento e as empresas responderem.',
+      en: 'App to report poor customer service and let companies reply.',
     },
     tags: ['React Native', 'Node.js', 'Express', 'MongoDB', 'Joi'],
     repo: 'https://github.com/mmyersbyte/appdesatende',
   },
   {
     title: 'WittyWidget Server',
+    highlights: [hl('personal', 'App pessoal', 'Personal app')],
     description: {
-      pt: 'API de microaprendizado de inglês: uma expressão por dia, com significado e exemplos, pensada pra um widget de Android.',
-      en: 'English micro-learning API: one expression a day, with meaning and examples, built for an Android widget.',
+      pt: 'Uma expressão em inglês por dia, pra um widget de Android.',
+      en: 'One English expression a day, for an Android widget.',
     },
     tags: ['TypeScript', 'Express', 'MongoDB', 'Zod', 'Swagger'],
     repo: 'https://github.com/mmyersbyte/WittyWidgetServer',
   },
   {
     title: 'Portfolio 3D',
+    highlights: [hl('personal', 'Você está aqui', 'You are here')],
     description: {
-      pt: 'Este quarto aqui! Three.js puro, câmera isométrica, gato com pathfinding, clima na hora de Brasília e lo-fi gerado no navegador.',
-      en: 'This very room! Vanilla Three.js, isometric camera, a cat with pathfinding, Brasília-time weather and lo-fi generated in the browser.',
+      pt: 'Este quarto aqui, feito com Three.js puro.',
+      en: 'This very room, built with vanilla Three.js.',
     },
     tags: ['Three.js', 'Vite', 'Web Audio'],
     repo: 'https://github.com/mmyersbyte/portfolio3d',
