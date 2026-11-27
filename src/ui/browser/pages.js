@@ -10,6 +10,7 @@ import {
 import { t, tr, getLang } from '../i18n.js';
 import { esc } from '../views/escape.js';
 import { icon } from '../icons.js';
+import { linkify } from '../format.js';
 import { projectsView } from '../views/projectsView.js';
 import { DinoGame } from './DinoGame.js';
 
@@ -34,18 +35,6 @@ const LANG_COLORS = {
   Vue: '#41b883',
   Go: '#00ADD8',
 };
-
-/** Escapa o texto e transforma URLs, github.com/… e e-mails em links. */
-function linkify(text) {
-  return esc(text).replace(
-    /(https?:\/\/[^\s<]+)|((?:www\.)?github\.com\/[^\s<]+)|([\w.+-]+@[\w-]+\.[\w.]+)/g,
-    (m, url, gh, mail) => {
-      if (mail) return `<a href="mailto:${mail}">${mail}</a>`;
-      const href = url ?? `https://${gh}`;
-      return `<a href="${href}" target="_blank" rel="noopener">${m}</a>`;
-    },
-  );
-}
 
 const fmtDate = (iso) =>
   new Date(iso).toLocaleDateString(getLang() === 'pt' ? 'pt-BR' : 'en-US', {

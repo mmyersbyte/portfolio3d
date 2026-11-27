@@ -2366,3 +2366,9 @@ html[lang='en'] .lang-toggle [data-lang='en'] {
   color: #0a66c2;
   font-weight: 600;
 }
+
+.msg--bot a {
+  color: var(--accent-2);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}

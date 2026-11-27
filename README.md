@@ -30,6 +30,9 @@ Requer Node 20+.
 ## Estrutura
 
 ```
+api/
+├── chat.js              # POST /api/chat (função da Vercel)
+└── _lib/                # núcleo do chat + conhecimento da IA
 src/
 ├── main.js              # entrada: UI fixa, ações e carregamento do 3D
 ├── scene.js             # monta a cena e liga os clicáveis às ações (import dinâmico)
@@ -61,7 +64,7 @@ src/
 ├── audio/
 │   └── LofiPlayer.js    # lo-fi procedural (acordes, bateria, vinil) com Web Audio
 ├── services/
-│   ├── chatService.js   # mock hoje; POST pro backend quando existir
+│   ├── chatService.js   # chama /api/chat (IA) e cai nas respostas prontas se falhar
 │   └── outfitStore.js   # roupa escolhida no localStorage (validada ao carregar)
 ├── data/
 │   ├── content.js       # ✏️ CV, links e projetos (edite aqui)
@@ -90,16 +93,23 @@ A hora segue Brasília (`America/Sao_Paulo`). Pra ver outro horário ou forçar 
 
 Pelo console (no dev): `__scene.env.setHour(6.5)`, `__scene.env.setRain(true)`.
 
-## Chat / IA
+## Chat / IA (Groq)
 
-O front já está preparado. Quando o backend existir, defina no `.env` (e na Vercel):
+O boneco conversa usando a API do Groq. A chave fica **só no servidor**:
 
-```
-VITE_CHAT_ENDPOINT=/api/chat
-```
+- `api/chat.js`: função serverless da Vercel (`POST /api/chat`)
+- `api/_lib/chat.js`: validação, limite por IP, timeout e troca automática de modelo
+  (se um modelo estiver fora do ar ou no limite do plano, tenta o próximo)
+- `api/_lib/knowledge.js`: o "conhecimento" da IA, montado a partir de `src/data/*`
+  (CV, projetos, bio do LinkedIn, Frajola, comandos). Atualizou os dados, a IA já sabe.
 
-O chat faz `POST { messages: [{ role, content }], lang }` e espera `{ reply }`.
-Na Vercel, uma função em `api/chat.js` resolve isso sem servidor separado (a chave do Groq fica só no backend).
+Se o backend falhar ou não existir, o chat usa as respostas prontas de `src/services/chatService.js`.
+
+**Local:** crie `.env.local` (veja `.env.example`) com `GROQ_API_KEY=...` e rode `pnpm dev`:
+um plugin do Vite serve o `/api/chat` usando a mesma função da Vercel.
+
+**Vercel:** em _Settings → Environment Variables_, cadastre `GROQ_API_KEY`
+(e, opcional, `GROQ_MODEL`; padrão `openai/gpt-oss-120b`).
 
 ## Deploy
 

@@ -1,23 +1,30 @@
 import { links, projects, allSkills } from '../data/content.js';
 
 /**
- * Camada do chat. Hoje responde com mock; quando o backend (Groq) existir,
- * basta definir VITE_CHAT_ENDPOINT e ele faz POST { messages, lang } → { reply }.
+ * Camada do chat: pergunta pra IA (backend /api/chat, que fala com o Groq).
+ * Se o backend não existir ou falhar (sem chave, fora do ar, limite...),
+ * cai nas respostas prontas daqui de baixo — o chat nunca fica quebrado.
+ * VITE_CHAT_ENDPOINT troca o endereço; "off" desliga a IA de vez.
  */
-const ENDPOINT = import.meta.env.VITE_CHAT_ENDPOINT;
+const ENDPOINT = import.meta.env.VITE_CHAT_ENDPOINT || '/api/chat';
 
 export async function askAvatar(messages, lang) {
-  if (ENDPOINT) {
-    const res = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, lang }),
-    });
-    if (!res.ok) throw new Error(`chat ${res.status}`);
-    const data = await res.json();
-    return data.reply;
+  if (ENDPOINT !== 'off') {
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, lang }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.reply) return data.reply;
+      }
+    } catch {
+      /* sem backend: usa as respostas prontas */
+    }
   }
-  await new Promise((r) => setTimeout(r, 500 + Math.random() * 700));
+  await new Promise((r) => setTimeout(r, 400 + Math.random() * 500));
   return mockReply(messages.at(-1)?.content ?? '', lang);
 }
 

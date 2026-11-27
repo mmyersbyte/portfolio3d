@@ -3,6 +3,7 @@ import { t, getLang, onLangChange } from './i18n.js';
 import { COMMAND_GROUPS, parseCommand, mainAlias } from '../data/commands.js';
 import { esc } from './views/escape.js';
 import { icon } from './icons.js';
+import { richText } from './format.js';
 
 /**
  * Painel de chat (bottom sheet no celular, lateral no desktop).
@@ -145,7 +146,9 @@ export class Chat {
     this.history.push({ role, content });
     const msg = document.createElement('div');
     msg.className = `msg msg--${role === 'user' ? 'user' : 'bot'}`;
-    msg.textContent = content;
+    // resposta da IA pode ter **negrito** e links; o que o visitante digita é sempre texto puro
+    if (role === 'user') msg.textContent = content;
+    else msg.innerHTML = richText(content);
     this.log.append(msg);
     this.log.scrollTop = this.log.scrollHeight;
   }
